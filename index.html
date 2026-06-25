@@ -1,0 +1,1699 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0c14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pontos">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Calculadora de Pontos</title>
+<style>
+  /* ===== THEMES ===== */
+  :root, [data-theme="dark"] {
+    --ground: #0c0e18;
+    --surface: #151928;
+    --raised: #1c2038;
+    --border: rgba(70, 78, 120, .35);
+    --border-top: rgba(90, 98, 140, .3);
+    --text: #e8e6e0;
+    --text-1: #c8c5be;
+    --text-2: #9ea3c2;
+    --text-3: #606688;
+    --accent: #2dd4bf;
+    --accent-soft: rgba(45,212,191,.12);
+    --green: #34d399;
+    --green-soft: rgba(52,211,153,.1);
+    --orange: #fb923c;
+    --red: #f43f5e;
+    --blue: #60a5fa;
+    --blue-soft: rgba(96,165,250,.1);
+    --purple: #a78bfa;
+    --purple-soft: rgba(167,139,250,.1);
+    --shadow: 0 2px 8px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.2);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,.35), 0 12px 32px rgba(0,0,0,.25);
+    --picker-filter: invert(.7);
+    --input-bg: #0e1120;
+    --orb1: rgba(45,212,191,.08);
+    --orb2: rgba(52,211,153,.06);
+    --orb3: rgba(96,165,250,.06);
+    --orb4: rgba(167,139,250,.04);
+  }
+  [data-theme="light"] {
+    --ground: #f0f2f7;
+    --surface: #ffffff;
+    --raised: #f3f4f8;
+    --border: rgba(160, 168, 200, .35);
+    --border-top: rgba(255, 255, 255, .8);
+    --text: #1c1e2a;
+    --text-1: #2e3040;
+    --text-2: #4c5170;
+    --text-3: #8890a8;
+    --accent: #0d9488;
+    --accent-soft: rgba(13,148,136,.1);
+    --green: #059669;
+    --green-soft: rgba(5,150,105,.08);
+    --orange: #ea580c;
+    --red: #e11d48;
+    --blue: #2563eb;
+    --blue-soft: rgba(37,99,235,.08);
+    --purple: #7c3aed;
+    --purple-soft: rgba(124,58,237,.08);
+    --shadow: 0 2px 8px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.07);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,.07), 0 12px 32px rgba(0,0,0,.09);
+    --picker-filter: none;
+    --input-bg: #f0f2f7;
+    --orb1: rgba(13,148,136,.06);
+    --orb2: rgba(5,150,105,.05);
+    --orb3: rgba(37,99,235,.05);
+    --orb4: rgba(124,58,237,.03);
+  }
+  [data-theme="contrast"] {
+    --ground: #000000;
+    --surface: #111111;
+    --raised: #1a1a1a;
+    --border: rgba(100, 100, 100, .5);
+    --border-top: rgba(150, 150, 150, .3);
+    --text: #ffffff;
+    --text-1: #eeeeee;
+    --text-2: #cccccc;
+    --text-3: #888888;
+    --accent: #5eead4;
+    --accent-soft: rgba(94,234,212,.12);
+    --green: #6ee7b7;
+    --green-soft: rgba(110,231,183,.1);
+    --orange: #fdba74;
+    --red: #fb7185;
+    --blue: #93c5fd;
+    --blue-soft: rgba(147,197,253,.12);
+    --purple: #c4b5fd;
+    --purple-soft: rgba(196,181,253,.12);
+    --shadow: 0 2px 8px rgba(0,0,0,.5), 0 8px 24px rgba(0,0,0,.4);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,.6), 0 12px 32px rgba(0,0,0,.5);
+    --picker-filter: invert(.8);
+    --input-bg: #0a0a0a;
+    --orb1: rgba(94,234,212,.04);
+    --orb2: rgba(110,231,183,.03);
+    --orb3: rgba(147,197,253,.03);
+    --orb4: rgba(196,181,253,.02);
+  }
+
+  /* ===== RESET ===== */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--ground);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    transition: background .3s, color .3s;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ===== BG ORBS ===== */
+  .bg-orbs { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .bg-orbs::before, .bg-orbs::after, .bg-orbs .orb3, .bg-orbs .orb4 {
+    content: ''; position: absolute; border-radius: 50%; filter: blur(100px); transition: background .5s;
+  }
+  .bg-orbs::before { width: 500px; height: 500px; top: -120px; left: -120px; background: var(--orb1); animation: orbFloat1 18s ease-in-out infinite; }
+  .bg-orbs::after { width: 450px; height: 450px; bottom: 5%; right: -80px; background: var(--orb2); animation: orbFloat2 22s ease-in-out infinite; }
+  .bg-orbs .orb3 { width: 400px; height: 400px; top: 35%; left: 50%; transform: translateX(-50%); background: var(--orb3); animation: orbFloat3 20s ease-in-out infinite; }
+  .bg-orbs .orb4 { width: 350px; height: 350px; top: 60%; left: 15%; background: var(--orb4); animation: orbFloat4 24s ease-in-out infinite; }
+  @keyframes orbFloat1 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(60px,40px) scale(1.1)} 66%{transform:translate(-30px,60px) scale(.95)} }
+  @keyframes orbFloat2 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-50px,-30px) scale(1.05)} 66%{transform:translate(40px,-50px) scale(.9)} }
+  @keyframes orbFloat3 { 0%,100%{transform:translateX(-50%) scale(1)} 50%{transform:translateX(-40%) translateY(-30px) scale(1.08)} }
+  @keyframes orbFloat4 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(50px,-40px) scale(1.1)} }
+
+  /* ===== DAYBAR ===== */
+  .daybar { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: var(--border); z-index: 60; opacity: 0; transition: opacity .4s; }
+  .daybar.visible { opacity: 1; }
+  .daybar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent) 0%, var(--blue) 35%, var(--orange) 70%, var(--red) 100%); transition: width 1s linear; }
+
+  /* ===== LAYOUT ===== */
+  .app { position: relative; z-index: 1; max-width: 1600px; margin: 0 auto; padding: 20px 16px 100px; }
+  .card-grid { display: flex; flex-wrap: wrap; gap: 16px; }
+  .card-grid > * { flex: 1 1 auto; min-width: min(100%, 360px); }
+
+  /* ===== HEADER ===== */
+  .header { text-align: center; padding: 12px 0 24px; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .brand { font-size: .62rem; font-weight: 700; letter-spacing: .18em; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+  .brand svg { flex-shrink: 0; }
+  .theme-switcher {
+    display: flex; gap: 2px; background: var(--raised); border: 1px solid var(--border);
+    border-radius: 8px; padding: 2px;
+  }
+  .theme-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 28px; border: none; border-radius: 6px; background: transparent; color: var(--text-3); cursor: pointer; transition: all .2s; }
+  .theme-btn:hover { color: var(--text-2); }
+  .theme-btn.active { background: var(--accent-soft); color: var(--accent); }
+  .theme-btn svg { width: 16px; height: 16px; }
+  .clock { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: 3rem; font-weight: 300; letter-spacing: .04em; color: var(--text); text-shadow: 0 0 24px var(--accent-soft); }
+  .clock-sec { font-size: 1rem; color: var(--text-2); vertical-align: super; margin-left: 2px; }
+  .timer { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .78rem; color: var(--text-2); margin-top: 2px; min-height: 1.3em; }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top-color: var(--border-top);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: background .3s, border-color .3s, box-shadow .3s, transform .2s;
+    position: relative;
+  }
+  .card:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--card-stripe, linear-gradient(90deg, var(--accent), var(--blue)));
+    z-index: 3; pointer-events: none;
+  }
+  .card::after {
+    content: ''; position: absolute; top: 3px; left: 0; right: 0; height: 64px;
+    background: var(--card-glow, linear-gradient(180deg, rgba(45,212,191,.06), transparent));
+    z-index: 0; pointer-events: none;
+  }
+  .card > * { position: relative; z-index: 1; }
+  .card-head { padding: 12px 18px; font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-1); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .card-head-left { display: flex; align-items: center; gap: 8px; }
+  .card-head-left svg { width: 16px; height: 16px; color: var(--card-accent, var(--accent)); flex-shrink: 0; }
+  .card-head-period { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .78rem; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--blue); }
+  .card-body { padding: 16px 18px; }
+
+  /* ===== CARD ART PER-SECTION ===== */
+  #secRegistro { --card-stripe: linear-gradient(135deg, #2dd4bf, #60a5fa); --card-glow: linear-gradient(180deg, rgba(45,212,191,.08), transparent); --card-accent: #2dd4bf; }
+  #secBanco { --card-stripe: linear-gradient(135deg, #60a5fa, #a78bfa); --card-glow: linear-gradient(180deg, rgba(96,165,250,.08), transparent); --card-accent: #60a5fa; }
+  #secPrevisao { --card-stripe: linear-gradient(135deg, #34d399, #2dd4bf); --card-glow: linear-gradient(180deg, rgba(52,211,153,.07), transparent); --card-accent: #34d399; }
+  #secSaidaDesejada { --card-stripe: linear-gradient(135deg, #818cf8, #c084fc); --card-glow: linear-gradient(180deg, rgba(129,140,248,.07), transparent); --card-accent: #818cf8; }
+  #secProjecao { --card-stripe: linear-gradient(135deg, #a78bfa, #f472b6); --card-glow: linear-gradient(180deg, rgba(167,139,250,.08), transparent); --card-accent: #a78bfa; }
+  #secHoraExtra { --card-stripe: linear-gradient(135deg, #fb923c, #f43f5e); --card-glow: linear-gradient(180deg, rgba(251,146,60,.07), transparent); --card-accent: #fb923c; }
+  #secResumo { --card-stripe: linear-gradient(135deg, #2dd4bf, #34d399); --card-glow: linear-gradient(180deg, rgba(45,212,191,.06), transparent); --card-accent: #2dd4bf; }
+  #secCardFeriados { --card-stripe: linear-gradient(135deg, #fbbf24, #fb923c); --card-glow: linear-gradient(180deg, rgba(251,191,36,.06), transparent); --card-accent: #fbbf24; }
+  #secCardAbonos { --card-stripe: linear-gradient(135deg, #c084fc, #818cf8); --card-glow: linear-gradient(180deg, rgba(192,132,252,.06), transparent); --card-accent: #c084fc; }
+  #secCardFerias { --card-stripe: linear-gradient(135deg, #22d3ee, #2dd4bf); --card-glow: linear-gradient(180deg, rgba(34,211,238,.06), transparent); --card-accent: #22d3ee; }
+  #secCardAtestados { --card-stripe: linear-gradient(135deg, #fb7185, #f43f5e); --card-glow: linear-gradient(180deg, rgba(251,113,133,.06), transparent); --card-accent: #fb7185; }
+  #secHistorico { --card-stripe: linear-gradient(135deg, #60a5fa, #818cf8); --card-glow: linear-gradient(180deg, rgba(96,165,250,.06), transparent); --card-accent: #60a5fa; }
+  #secConfig { --card-stripe: linear-gradient(135deg, #94a3b8, #2dd4bf); --card-glow: linear-gradient(180deg, rgba(148,163,184,.06), transparent); --card-accent: #94a3b8; }
+
+  /* ===== FORM ===== */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field { display: flex; flex-direction: column; gap: 3px; }
+  .field label { font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-1); display: flex; align-items: center; gap: 5px; }
+  .field label svg, .lbl-ico { width: 13px; height: 13px; color: var(--card-accent, var(--accent)); flex-shrink: 0; stroke-width: 2; }
+  .field input, .field select {
+    background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+    font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace;
+    font-size: 1.05rem; padding: 8px 10px; outline: none; width: 100%;
+    transition: border-color .2s, background .3s, box-shadow .2s;
+    -webkit-appearance: none; -moz-appearance: textfield; min-height: 44px;
+  }
+  .field input:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .field input::placeholder { color: var(--text-3); }
+  .field input[readonly] { opacity: .55; cursor: default; }
+  input[type="time"]::-webkit-calendar-picker-indicator,
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: var(--picker-filter); cursor: pointer; }
+
+  /* ===== PRESETS ===== */
+  .presets { display: flex; gap: 6px; margin-top: 8px; }
+  .preset-btn {
+    flex: 1; padding: 8px 6px; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--raised); color: var(--text-1); font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace;
+    font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .2s; text-align: center;
+  }
+  .preset-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .preset-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+  /* ===== STATS ===== */
+  .stats { display: flex; gap: 16px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .stat { flex: 1; text-align: center; }
+  .stat-label { font-size: .68rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-2); }
+  .stat-value { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: 1.05rem; font-weight: 600; color: var(--text); }
+  .positive { color: var(--green) !important; }
+  .negative { color: var(--red) !important; }
+  .warn { color: var(--orange) !important; }
+  .accent-c { color: var(--accent) !important; }
+
+  /* ===== BOARD ===== */
+  .board-empty { padding: 32px 16px; text-align: center; color: var(--text-2); font-size: .9rem; }
+  .strip { display: grid; grid-template-columns: 4px 1fr; grid-template-rows: auto auto; border-bottom: 1px solid var(--border); transition: background .15s; }
+  .strip:last-child { border-bottom: none; }
+  .strip:hover { background: var(--raised); }
+  .strip-accent { grid-row: 1 / -1; background: var(--text-3); transition: background .3s; }
+  .strip-main { display: flex; align-items: center; padding: 12px 14px; gap: 10px; }
+  .strip-time { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: 1.5rem; font-weight: 600; min-width: 72px; transition: color .3s; color: var(--text-3); }
+  .strip-info { flex: 1; min-width: 0; }
+  .strip-label { font-size: .88rem; font-weight: 600; color: var(--text-1); line-height: 1.2; }
+  .strip-desc { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .72rem; color: var(--text-2); }
+  .strip-badge { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 4px 10px; border-radius: 5px; white-space: nowrap; color: var(--text-3); }
+  .strip[data-color="green"] .strip-accent { background: var(--green); }
+  .strip[data-color="amber"] .strip-accent { background: var(--accent); }
+  .strip[data-color="orange"] .strip-accent { background: var(--orange); }
+  .strip[data-color="red"] .strip-accent { background: var(--red); }
+  .strip.passed .strip-time { color: var(--green); opacity: .75; }
+  .strip.passed .strip-label { color: var(--text-3); }
+  .strip.passed .strip-badge { color: var(--green); background: var(--green-soft); }
+  .strip.next .strip-time { color: var(--accent); text-shadow: 0 0 12px var(--accent-soft); }
+  .strip.next .strip-label { color: var(--text); }
+  .strip.next .strip-badge { color: var(--accent); background: var(--accent-soft); }
+  .strip.future .strip-accent { background: var(--text-3) !important; }
+  .strip-progress { grid-column: 2; height: 2px; background: var(--border); overflow: hidden; }
+  .strip-fill { height: 100%; background: var(--accent); transition: width 1s linear; }
+  .strip.bank { border-top: 1px dashed var(--border); }
+  .strip.bank .strip-accent { background: var(--accent); }
+
+  /* ===== GAUGE ===== */
+  .gauge-container { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 20px 16px 12px; }
+  .gauge-svg { width: 140px; height: 140px; flex-shrink: 0; }
+  .gauge-track { fill: none; stroke: var(--border); stroke-width: 10; }
+  .gauge-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke .3s; }
+  .gauge-center-text { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; fill: var(--text); }
+  .gauge-time { font-size: 20px; font-weight: 700; }
+  .gauge-label { font-size: 10px; fill: var(--text-1); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+  .gauge-info { display: flex; flex-direction: column; gap: 6px; min-width: 100px; }
+  .gauge-info-item { display: flex; flex-direction: column; gap: 1px; }
+  .gauge-info-label { font-size: .68rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-2); }
+  .gauge-info-value { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: 1.05rem; font-weight: 600; }
+  @media (max-width: 360px) {
+    .gauge-container { gap: 12px; padding: 14px 10px 8px; }
+    .gauge-svg { width: 110px; height: 110px; }
+    .gauge-time { font-size: 15px; }
+    .gauge-label { font-size: 8px; }
+    .gauge-info-value { font-size: .82rem; }
+  }
+
+  /* ===== REVERSE ===== */
+  .reverse-results { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+  .reverse-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-radius: 6px; }
+  .reverse-label { font-size: .88rem; color: var(--text-1); }
+  .reverse-time { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: 1.1rem; font-weight: 600; color: var(--blue); }
+
+  /* ===== BANK ===== */
+  .bank-results { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .bank-item { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; }
+  .bank-label { font-size: .88rem; color: var(--text-1); }
+  .bank-value { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .95rem; font-weight: 500; color: var(--text); }
+  .bank-sep { border: none; border-top: 1px dashed var(--border); margin: 4px 0; }
+
+  /* ===== OVERTIME ===== */
+  .overtime-results { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+  .overtime-detail { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .75rem; color: var(--text-2); margin-top: 2px; }
+
+  /* ===== CALENDAR ===== */
+  .cal-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+  .cal-stat { text-align: center; padding: 10px 6px; background: var(--raised); border: 1px solid var(--border); border-radius: 10px; transition: background .3s; }
+  .cal-stat-val { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: 1.4rem; font-weight: 700; }
+  .cal-stat-lbl { font-size: .68rem; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--text-2); line-height: 1.2; margin-top: 2px; }
+  .toggle-section { border-top: 1px solid var(--border); margin-top: 12px; }
+  .toggle-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px 0; background: none; border: none; color: var(--text-1); font-family: inherit; font-size: .78rem; font-weight: 700; letter-spacing: .06em; cursor: pointer; text-transform: uppercase; transition: color .15s; }
+  .toggle-btn:hover { color: var(--accent); }
+  .toggle-left { display: flex; align-items: center; gap: 8px; }
+  .toggle-left svg { width: 15px; height: 15px; color: var(--accent); flex-shrink: 0; }
+  .toggle-arrow { transition: transform .2s; font-size: .7rem; color: var(--text-3); }
+  .toggle-section.open .toggle-arrow { transform: rotate(180deg); }
+  .toggle-content { display: none; padding-bottom: 8px; }
+  .toggle-section.open .toggle-content { display: block; }
+  .range-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .range-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: .88rem; color: var(--text-1); transition: background .3s; }
+  .range-item-icon { width: 16px; height: 16px; color: var(--purple); flex-shrink: 0; }
+  .range-item-text { flex: 1; }
+  .range-item-days { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .78rem; color: var(--blue); font-weight: 500; }
+  .btn-remove { background: none; border: none; color: var(--red); font-size: .85rem; cursor: pointer; padding: 2px 6px; border-radius: 4px; line-height: 1; opacity: .6; transition: opacity .15s; }
+  .btn-remove:hover { opacity: 1; }
+  .add-row { display: flex; gap: 8px; align-items: flex-end; }
+  .add-row .field { flex: 1; }
+  .btn-add { background: var(--accent); border: none; color: var(--ground); font-family: inherit; font-size: .78rem; font-weight: 700; padding: 0 14px; min-height: 44px; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+  .btn-add:hover { opacity: .85; }
+  .holiday-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; max-height: 340px; overflow-y: auto; }
+  .holiday-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; font-size: 1.05rem; color: var(--text-1); cursor: pointer; transition: background .15s; }
+  .holiday-item:hover { background: var(--ground); }
+  .holiday-item input[type="checkbox"] { accent-color: var(--accent); width: 20px; height: 20px; cursor: pointer; flex-shrink: 0; }
+  .holiday-date { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: 1.05rem; color: var(--text-2); min-width: 48px; font-weight: 500; }
+  .holiday-date-edit {
+    font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace;
+    font-size: 1.05rem; background: var(--input-bg); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); padding: 8px 10px; width: 150px; min-height: 44px;
+    outline: none; transition: border-color .2s;
+  }
+  .holiday-date-edit:focus { border-color: var(--accent); }
+  .holiday-date-edit::-webkit-calendar-picker-indicator { filter: var(--picker-filter); cursor: pointer; }
+  .holiday-name { flex: 1; }
+  .holiday-custom { color: var(--purple); }
+  .holiday-list::-webkit-scrollbar { width: 4px; }
+  .holiday-list::-webkit-scrollbar-track { background: transparent; }
+  .holiday-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .empty-hint { font-size: .82rem; color: var(--text-2); padding: 6px 0; font-style: italic; }
+
+  /* ===== HISTORY ===== */
+  .history-list { max-height: 360px; overflow-y: auto; }
+  .history-list::-webkit-scrollbar { width: 4px; }
+  .history-list::-webkit-scrollbar-track { background: transparent; }
+  .history-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .history-row { display: flex; align-items: center; padding: 10px 6px; border-bottom: 1px solid var(--border); gap: 8px; font-size: .85rem; }
+  .history-row:last-child { border-bottom: none; }
+  .history-date { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .82rem; color: var(--text-2); min-width: 44px; font-weight: 600; }
+  .history-times { flex: 1; font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .88rem; color: var(--text-1); }
+  .history-worked { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .88rem; font-weight: 600; min-width: 42px; text-align: center; }
+  .history-balance { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .82rem; font-weight: 500; min-width: 52px; text-align: right; }
+
+  /* ===== CONFIG ===== */
+  .config-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); gap: 10px; }
+  .config-row:last-child { border-bottom: none; }
+  .config-label { font-size: .88rem; color: var(--text-1); }
+  .config-actions { display: flex; gap: 6px; }
+  .btn-config { padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--raised); color: var(--text); font-family: inherit; font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; }
+  .btn-config:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .btn-config.active { background: var(--green-soft); border-color: var(--green); color: var(--green); }
+
+  /* ===== PRIMARY BUTTON ===== */
+  .btn-primary { width: 100%; padding: 12px; border: none; border-radius: 8px; background: var(--accent); color: var(--ground); font-family: inherit; font-size: .88rem; font-weight: 700; cursor: pointer; transition: opacity .15s, transform .1s; margin-bottom: 14px; letter-spacing: .03em; }
+  .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: .35; cursor: default; transform: none; }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-around;
+    padding: 6px 0 env(safe-area-inset-bottom, 8px); z-index: 50;
+    background: var(--surface); border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(0,0,0,.2);
+  }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 8px; border: none; background: none; color: var(--text-3); font-size: .62rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: color .2s; text-transform: uppercase; letter-spacing: .04em; font-family: inherit; }
+  .nav-item svg { width: 22px; height: 22px; }
+  .nav-item.active { color: var(--accent); }
+  .nav-item:hover { color: var(--text-2); }
+  @media (min-width: 680px) {
+    .bottom-nav { max-width: 400px; left: 50%; transform: translateX(-50%); border-radius: 14px 14px 0 0; }
+    .nav-item { padding: 6px 12px; font-size: .6rem; }
+    .nav-item svg { width: 22px; height: 22px; }
+  }
+
+  /* ===== PAGES ===== */
+  .card[data-page] { display: none; }
+  .card[data-page].page-active { display: block; }
+
+  /* ===== FERIAS SLOTS ===== */
+  .ferias-slot { padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .ferias-slot:last-child { border-bottom: none; }
+  .ferias-slot-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .ferias-slot-title { font-size: .78rem; font-weight: 700; color: var(--text-1); text-transform: uppercase; letter-spacing: .06em; }
+  .ferias-days { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .78rem; color: var(--blue); font-weight: 600; margin-left: auto; }
+  .ferias-total { padding: 10px 0 0; font-size: .88rem; font-weight: 700; color: var(--green); text-align: right; }
+  .holiday-dim { opacity: .4; }
+  .holiday-period-badge, .abono-period-badge { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .65rem; font-weight: 600; color: var(--green); background: var(--green-soft); padding: 2px 8px; border-radius: 4px; margin-left: auto; flex-shrink: 0; }
+  .abono-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: .88rem; }
+  .abono-item:last-child { border-bottom: none; }
+  .abono-date { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .85rem; color: var(--text-1); min-width: 44px; font-weight: 600; }
+  .abono-tipo { font-size: .85rem; color: var(--purple); font-weight: 500; }
+  .abono-dim { opacity: .4; }
+
+  /* ===== PROJECAO ===== */
+  .proj-config { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .proj-list { display: flex; flex-direction: column; gap: 6px; max-height: 420px; overflow-y: auto; padding-right: 2px; }
+  .proj-day { background: var(--raised); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .proj-today { border-color: var(--accent); border-width: 2px; }
+  .proj-day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .proj-date { font-size: .95rem; color: var(--text); font-weight: 700; }
+  .proj-date small { font-weight: 500; color: var(--text-2); text-transform: uppercase; font-size: .75rem; }
+  .proj-saida-wrap { display: flex; align-items: center; gap: 4px; }
+  .proj-saida-input {
+    font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace;
+    font-size: 1.05rem; font-weight: 700; color: var(--blue); background: transparent; border: 1px solid transparent;
+    border-radius: 6px; padding: 6px 10px; width: 130px; outline: none; transition: border-color .2s, background .2s;
+  }
+  .proj-saida-input:hover { border-color: var(--border); background: var(--input-bg); }
+  .proj-saida-input:focus { border-color: var(--accent); background: var(--input-bg); }
+  .proj-saida-input.locked { color: var(--orange); }
+  .proj-reset { background: none; border: none; color: var(--text-3); cursor: pointer; font-size: 1rem; padding: 0 2px; line-height: 1; }
+  .proj-reset:hover { color: var(--red); }
+  .proj-locked { border-left: 3px solid var(--orange); }
+  .proj-falta { opacity: .55; border-left: 3px solid var(--red); }
+  .proj-falta .proj-day-detail { display: none; }
+  .proj-falta-badge { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .75rem; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: .04em; }
+  .proj-falta-btn { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-3); cursor: pointer; font-size: .65rem; font-weight: 600; padding: 3px 8px; text-transform: uppercase; letter-spacing: .03em; transition: all .2s; white-space: nowrap; font-family: inherit; }
+  .proj-falta-btn:hover { border-color: var(--red); color: var(--red); }
+  .proj-falta-btn.active { background: color-mix(in srgb, var(--red) 12%, transparent); border-color: var(--red); color: var(--red); }
+  .proj-day-detail { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .proj-field { display: flex; align-items: center; gap: 4px; }
+  .proj-field label { font-size: .68rem; color: var(--text-2); text-transform: uppercase; font-weight: 600; letter-spacing: .04em; display: inline-flex; align-items: center; gap: 3px; }
+  .proj-field label svg { width: 11px; height: 11px; color: var(--card-accent, var(--accent)); flex-shrink: 0; stroke-width: 2; }
+  .proj-field input {
+    font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace;
+    font-size: 1rem; background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 10px; color: var(--text); outline: none; transition: border-color .2s;
+  }
+  .proj-field input:focus { border-color: var(--accent); }
+  .proj-field input[type="time"] { width: 130px; }
+  .proj-field input[type="number"] { width: 65px; -moz-appearance: textfield; }
+  .proj-field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .proj-work { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .88rem; color: var(--text-1); font-weight: 500; margin-left: auto; }
+  .proj-summary { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .proj-final { display: flex; justify-content: space-between; align-items: center; font-size: 1.05rem; font-weight: 700; }
+  .proj-warn { font-size: .88rem; color: var(--red); margin-bottom: 8px; padding: 8px 12px; background: color-mix(in srgb, var(--red) 10%, transparent); border-radius: 8px; font-weight: 600; }
+  @media (max-width: 480px) { .proj-config { grid-template-columns: 1fr 1fr; } .proj-field input[type="time"] { width: 110px; } .proj-saida-input { width: 110px !important; } }
+
+  /* ===== SUB-ELEMENTS ===== */
+  .reverse-item, .range-item {
+    background: var(--raised); border: 1px solid var(--border); border-radius: 8px;
+  }
+
+  /* ===== HIGH CONTRAST ===== */
+  [data-theme="contrast"] .card { border-width: 2px; }
+  [data-theme="contrast"] .field input, [data-theme="contrast"] .field select { border-width: 2px; }
+  [data-theme="contrast"] .strip-accent { width: 5px; }
+  [data-theme="contrast"] .strip { grid-template-columns: 5px 1fr; }
+  [data-theme="contrast"] .strip-time, [data-theme="contrast"] .strip-label { font-weight: 700; }
+  [data-theme="contrast"] .stat-value { font-weight: 700; }
+  [data-theme="contrast"] .cal-stat-val { font-weight: 800; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 360px) {
+    .app { padding: 10px 8px 80px; }
+    .clock { font-size: 2rem; }
+    .brand { font-size: .55rem; }
+    .timer { font-size: .7rem; }
+    .card-head { padding: 8px 12px; font-size: .6rem; }
+    .card-body { padding: 10px 12px; }
+    .grid-2 { gap: 8px; }
+    .field label { font-size: .6rem; }
+    .field input, .field select { font-size: .9rem; padding: 6px 8px; }
+    .strip-time { font-size: 1.1rem; min-width: 50px; }
+    .strip-main { padding: 8px 8px; gap: 6px; }
+    .strip-label { font-size: .75rem; }
+    .strip-badge { font-size: .6rem; padding: 2px 6px; }
+    .stat-label { font-size: .55rem; }
+    .stat-value { font-size: .85rem; }
+    .reverse-item { padding: 6px 8px; }
+    .reverse-label { font-size: .72rem; }
+    .reverse-time { font-size: .9rem; }
+    .bank-label, .bank-value { font-size: .72rem; }
+    .cal-summary { grid-template-columns: repeat(2, 1fr); }
+    .cal-stat-val { font-size: 1rem; }
+    .cal-stat-lbl { font-size: .52rem; }
+    .add-row { flex-direction: column; }
+    .add-row .btn-add { width: 100%; }
+    .history-times { font-size: .78rem; }
+    .history-worked { font-size: .78rem; }
+    .history-balance { font-size: .72rem; min-width: 42px; }
+  }
+  @media (min-width: 361px) and (max-width: 480px) {
+    .app { padding: 14px 12px 90px; }
+    .clock { font-size: 2.6rem; }
+  }
+  @media (min-width: 481px) and (max-width: 679px) {
+    .app { max-width: 520px; padding: 24px 20px 100px; }
+    .clock { font-size: 3.2rem; }
+    .card-body { padding: 16px 20px; }
+    .grid-2 { gap: 14px; }
+    .field input, .field select { font-size: 1.1rem; padding: 10px 12px; }
+    .strip-time { font-size: 1.55rem; }
+    .strip-main { padding: 14px 16px; }
+  }
+  @media (min-width: 680px) {
+    .app { padding: 28px 24px 100px; }
+    .header { padding: 16px 0 28px; }
+    .brand { font-size: .68rem; }
+    .clock { font-size: 3.4rem; }
+    .timer { font-size: .85rem; }
+    .card { border-radius: 16px; }
+    .card-head { padding: 14px 20px; font-size: .8rem; }
+    .card-body { padding: 18px 22px; }
+    .grid-2 { gap: 16px; }
+    .card-grid { gap: 18px; }
+    .field label { font-size: .78rem; }
+    .field input, .field select { font-size: 1.1rem; padding: 10px 14px; min-height: 48px; border-radius: 8px; }
+    .strip-time { font-size: 1.55rem; min-width: 76px; }
+    .strip-main { padding: 14px 16px; gap: 12px; }
+    .strip-label { font-size: .92rem; }
+    .strip-desc { font-size: .75rem; }
+    .strip-badge { font-size: .78rem; padding: 5px 12px; }
+    .stats { gap: 20px; margin-top: 14px; padding-top: 14px; }
+    .stat-value { font-size: 1.1rem; }
+    .reverse-item { padding: 10px 14px; border-radius: 8px; }
+    .reverse-label { font-size: .92rem; }
+    .reverse-time { font-size: 1.15rem; }
+    .bank-label { font-size: .92rem; }
+    .bank-value { font-size: 1rem; }
+    .gauge-info-value { font-size: 1.1rem; }
+    .gauge-info-label { font-size: .72rem; }
+    .history-date { font-size: .85rem; }
+    .history-times { font-size: .92rem; }
+    .history-worked { font-size: .92rem; }
+    .history-balance { font-size: .85rem; }
+    .nav-item { font-size: .65rem; }
+    .nav-item svg { width: 24px; height: 24px; }
+  }
+  @media (min-width: 1080px) {
+    .app { padding: 36px 32px 100px; }
+    .clock { font-size: 3.6rem; }
+    .card-grid { gap: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; } }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.65} }
+  .strip.next .strip-time { animation: pulse 2.5s ease-in-out infinite; }
+</style>
+
+<div class="bg-orbs"><div class="orb3"></div><div class="orb4"></div></div>
+<div class="daybar" id="daybar"><div class="daybar-fill" id="daybarFill"></div></div>
+
+<div class="app">
+  <header class="header">
+    <div class="header-top">
+      <div class="brand">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        CALCULADORA DE PONTOS
+      </div>
+      <div class="theme-switcher">
+        <button class="theme-btn" data-theme-val="light" title="Claro" onclick="setTheme('light')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button class="theme-btn active" data-theme-val="dark" title="Escuro" onclick="setTheme('dark')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="theme-btn" data-theme-val="contrast" title="Alto Contraste" onclick="setTheme('contrast')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="clock" id="clock">--:--</div>
+    <div class="timer" id="timer"></div>
+  </header>
+
+  <div class="card-grid">
+
+  <!-- REGISTRO -->
+  <section class="card page-active" id="secRegistro" data-page="ponto">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Registro
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="grid-2">
+        <div class="field">
+          <label for="entrada"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Entrada</label>
+          <input type="time" id="entrada">
+        </div>
+        <div class="field">
+          <label for="almoco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Almo&ccedil;o (min)</label>
+          <input type="number" id="almoco" value="30" min="0" max="180" step="5">
+        </div>
+      </div>
+      <div class="presets">
+        <button class="preset-btn active" data-mins="30" onclick="setPreset(30)">30min</button>
+        <button class="preset-btn" data-mins="45" onclick="setPreset(45)">45min</button>
+        <button class="preset-btn" data-mins="60" onclick="setPreset(60)">1h</button>
+      </div>
+      <div class="toggle-section" id="secIntervalo">
+        <button class="toggle-btn" onclick="toggleSection('secIntervalo')">
+          <span class="toggle-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
+            Intervalo Real
+          </span>
+          <span class="toggle-arrow">&#9660;</span>
+        </button>
+        <div class="toggle-content">
+          <div class="grid-2">
+            <div class="field">
+              <label for="saidaAlmoco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sa&iacute;da Almo&ccedil;o</label>
+              <input type="time" id="saidaAlmoco">
+            </div>
+            <div class="field">
+              <label for="voltaAlmoco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>Volta Almo&ccedil;o</label>
+              <input type="time" id="voltaAlmoco">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stats" id="statsRow" style="display:none">
+        <div class="stat">
+          <div class="stat-label">Trabalhado</div>
+          <div class="stat-value" id="trabalhado">--:--</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Saldo OKR</div>
+          <div class="stat-value" id="saldoOkrVal">--:--</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BANCO DE HORAS -->
+  <section class="card page-active" id="secBanco" data-page="ponto">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Banco de Horas
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label for="saldoIcarus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Saldo Icarus de ontem</label>
+        <input type="text" id="saldoIcarus" placeholder="-12:10" inputmode="text">
+      </div>
+      <div id="bankResults"></div>
+    </div>
+  </section>
+
+  <!-- PREVISAO DE SAIDA -->
+  <section class="card card-full page-active" id="secPrevisao" data-page="ponto">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Previs&atilde;o de Sa&iacute;da
+      </span>
+    </div>
+    <div id="gauge"></div>
+    <div id="board">
+      <div class="board-empty">Insira o hor&aacute;rio de entrada</div>
+    </div>
+  </section>
+
+  <!-- SAIDA DESEJADA -->
+  <section class="card page-active" id="secSaidaDesejada" data-page="ponto">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Sa&iacute;da Desejada
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label for="saidaDesejada"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Quero sair &agrave;s</label>
+        <input type="time" id="saidaDesejada">
+      </div>
+      <div class="reverse-results" id="reverseResults"></div>
+    </div>
+  </section>
+
+  <!-- PROJECAO -->
+  <section class="card page-active" id="secProjecao" data-page="ponto">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
+        Proje&ccedil;&atilde;o para Zerar Banco
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="proj-config">
+        <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Entrada padr&atilde;o</label><input type="time" id="projEntrada" value="08:00" onblur="renderProjection()"></div>
+        <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sa&iacute;da m&aacute;xima</label><input type="time" id="projSaidaMax" value="18:00" onblur="renderProjection()"></div>
+        <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Almo&ccedil;o (min)</label><input type="number" id="projAlmoco" value="60" min="0" max="180" onblur="renderProjection()"></div>
+      </div>
+      <div id="projResult"></div>
+    </div>
+  </section>
+
+  <!-- HORA EXTRA CLT -->
+  <section class="card" id="secHoraExtra" data-page="mais">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Hora Extra CLT
+      </span>
+      <span class="card-head-period" id="overtimeRate"></span>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label for="valorHora"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Valor/hora (R$)</label>
+        <input type="number" id="valorHora" placeholder="50.00" step="0.01" min="0" inputmode="decimal">
+      </div>
+      <div id="overtimeResults"></div>
+    </div>
+  </section>
+
+  <!-- RESUMO PERIODO -->
+  <section class="card" id="secResumo" data-page="calendario">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Resumo do Per&iacute;odo
+      </span>
+      <span class="card-head-period" id="periodLabel"></span>
+    </div>
+    <div class="card-body">
+      <div class="cal-summary" id="calSummary"></div>
+    </div>
+  </section>
+
+  <!-- FERIADOS -->
+  <section class="card" id="secCardFeriados" data-page="calendario">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Feriados do Ano
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="holiday-list" id="holidayList"></div>
+      <div class="add-row" style="margin-top:8px">
+        <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Data</label><input type="date" id="feriadoData"></div>
+        <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Nome</label><input type="text" id="feriadoNome" placeholder="Feriado municipal"></div>
+        <button class="btn-add" onclick="addCustomHoliday()">+</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABONOS -->
+  <section class="card" id="secCardAbonos" data-page="calendario">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+        Abonos
+      </span>
+    </div>
+    <div class="card-body">
+      <div id="abonoList"></div>
+      <div class="add-row" style="margin-top:8px">
+        <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Data</label><input type="date" id="abonoData"></div>
+        <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Tipo</label><select id="abonoTipo" onchange="toggleAbonoHoras()"><option value="integral">Dia inteiro</option><option value="parcial">Horas</option></select></div>
+        <div class="field" id="abonoHorasField" style="display:none"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Horas</label><input type="number" id="abonoHoras" min="1" max="8" value="4"></div>
+        <button class="btn-add" onclick="addAbono()">+</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FERIAS -->
+  <section class="card" id="secCardFerias" data-page="calendario">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        F&eacute;rias (at&eacute; 3 per&iacute;odos)
+      </span>
+    </div>
+    <div class="card-body">
+      <div id="feriasSlots"></div>
+    </div>
+  </section>
+
+  <!-- ATESTADOS -->
+  <section class="card" id="secCardAtestados" data-page="calendario">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Atestados
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="range-list" id="atestadoList"></div>
+      <div class="add-row">
+        <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>In&iacute;cio</label><input type="date" id="atestadoInicio"></div>
+        <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Fim</label><input type="date" id="atestadoFim"></div>
+        <button class="btn-add" onclick="addAtestado()">+</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTORICO -->
+  <section class="card card-full" id="secHistorico" data-page="mais">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Hist&oacute;rico
+      </span>
+    </div>
+    <div class="card-body">
+      <button class="btn-primary" id="btnSaveToday" onclick="saveToday()">Registrar Sa&iacute;da</button>
+      <div class="history-list" id="historyList"></div>
+      <div class="toggle-section" id="secAddHistory">
+        <button class="toggle-btn" onclick="toggleSection('secAddHistory')">
+          <span class="toggle-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Adicionar Registro
+          </span>
+          <span class="toggle-arrow">&#9660;</span>
+        </button>
+        <div class="toggle-content">
+          <div class="grid-2" style="margin-bottom:8px">
+            <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Data</label><input type="date" id="histData"></div>
+            <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Almo&ccedil;o (min)</label><input type="number" id="histAlmoco" value="30" min="0" max="180"></div>
+          </div>
+          <div class="grid-2">
+            <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Entrada</label><input type="time" id="histEntrada"></div>
+            <div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sa&iacute;da</label><input type="time" id="histSaida"></div>
+          </div>
+          <button class="btn-add" style="width:100%;margin-top:8px" onclick="addHistoryRecord()">Adicionar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIGURACOES -->
+  <section class="card card-full" id="secConfig" data-page="mais">
+    <div class="card-head">
+      <span class="card-head-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Configura&ccedil;&otilde;es
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="config-row">
+        <span class="config-label">Notifica&ccedil;&otilde;es de sa&iacute;da (5 min antes)</span>
+        <button class="btn-config" id="btnNotif" onclick="toggleNotifications()">Ativar</button>
+      </div>
+      <div class="config-row">
+        <span class="config-label">Backup dos dados</span>
+        <div class="config-actions">
+          <button class="btn-config" onclick="exportData()">Exportar</button>
+          <button class="btn-config" onclick="importData()">Importar</button>
+          <input type="file" id="importFile" accept=".json" style="display:none">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-item active" data-page="ponto" onclick="switchPage('ponto')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span>Ponto</span>
+  </button>
+  <button class="nav-item" data-page="calendario" onclick="switchPage('calendario')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span>Calend&aacute;rio</span>
+  </button>
+  <button class="nav-item" data-page="mais" onclick="switchPage('mais')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+    <span>Mais</span>
+  </button>
+</nav>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ===== THEME =====
+  window.setTheme = function (t) {
+    document.documentElement.setAttribute('data-theme', t);
+    document.querySelectorAll('.theme-btn').forEach(function (btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-theme-val') === t);
+    });
+    try { localStorage.setItem('calc-theme', t); } catch (e) {}
+  };
+  (function () { var s; try { s = localStorage.getItem('calc-theme'); } catch (e) {} if (s) setTheme(s); })();
+
+  // ===== CONSTANTS =====
+  var TARGETS = [
+    { id: 'okr',      label: 'OKR',           desc: '8h',    mins: 480, color: 'green' },
+    { id: 'completo', label: 'Completo',       desc: '8h38',  mins: 518, color: 'green' },
+    { id: 'extra',    label: 'Hora Extra',     desc: '8h59',  mins: 539, color: 'amber' },
+    { id: 'limite',   label: 'Limite CLT',     desc: '10h48', mins: 648, color: 'red' }
+  ];
+  var ABONO = 48, PLR_LIMIT = -528, CLT_BASE = 528, TOLERANCIA = 10;
+
+  // ===== DATE HELPERS =====
+  function toStr(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function fromStr(s) { var p = s.split('-').map(Number); return new Date(p[0], p[1]-1, p[2]); }
+  function addDays(d, n) { var r = new Date(d); r.setDate(r.getDate()+n); return r; }
+  function isWeekend(d) { var day = d.getDay(); return day === 0 || day === 6; }
+  function fmtDateBr(s) { var p = s.split('-'); return p[2]+'/'+p[1]; }
+
+  // ===== PERIOD =====
+  function getCurrentPeriod() {
+    var t = new Date(), y = t.getFullYear(), m = t.getMonth(), d = t.getDate();
+    if (d >= 26) return { inicio: new Date(y,m,26), fim: new Date(y,m+1,25) };
+    return { inicio: new Date(y,m-1,26), fim: new Date(y,m,25) };
+  }
+
+  // ===== EASTER =====
+  function easter(year) {
+    var a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4;
+    var f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3);
+    var h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4;
+    var l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+    var month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+    return new Date(year,month-1,day);
+  }
+  function getNationalHolidays(year) {
+    var e = easter(year);
+    return [
+      {date:toStr(new Date(year,0,1)),name:'Confraternização Universal'},
+      {date:toStr(addDays(e,-48)),name:'Carnaval'},
+      {date:toStr(new Date(year,2,23)),name:'Aniversário de Florianópolis'},
+      {date:toStr(addDays(e,-2)),name:'Paixão de Cristo'},
+      {date:toStr(new Date(year,3,21)),name:'Tiradentes'},
+      {date:toStr(new Date(year,4,1)),name:'Dia do Trabalhador'},
+      {date:toStr(addDays(e,60)),name:'Corpus Christi'},
+      {date:toStr(new Date(year,8,7)),name:'Independência do Brasil'},
+      {date:toStr(new Date(year,9,12)),name:'Nossa Senhora Aparecida'},
+      {date:toStr(new Date(year,10,2)),name:'Finados'},
+      {date:toStr(new Date(year,10,15)),name:'Proclamação da República'},
+      {date:toStr(new Date(year,10,20)),name:'Dia da Consciência Negra'},
+      {date:toStr(new Date(year,11,25)),name:'Natal'},
+      {date:toStr(new Date(year,11,26)),name:'Abono de Natal'},
+      {date:toStr(new Date(year,11,31)),name:'Abono de Ano Novo'}
+    ];
+  }
+
+  // ===== STATE =====
+  var period = getCurrentPeriod();
+  var ferias = [null,null,null], atestados = [], abonos = [], holidays = [], allYearHolidays = [], disabledHolidays = {}, customHolidays = [], holidayOverrides = {};
+  var history = [];
+  var projOverrides = {};
+  var notificationsEnabled = false, notifiedToday = {}, notifDate = toStr(new Date());
+
+  function applyOverrides(list) {
+    return list.map(function (h) {
+      var key = h.name + '_' + h.date.substring(0, 4);
+      return holidayOverrides[key] ? { date: holidayOverrides[key], name: h.name } : h;
+    });
+  }
+  function initHolidays() {
+    var years = {}, d = new Date(period.inicio);
+    while (d <= period.fim) { years[d.getFullYear()] = true; d = addDays(d, 1); }
+    var periodNational = [];
+    Object.keys(years).forEach(function (y) { periodNational = periodNational.concat(getNationalHolidays(parseInt(y))); });
+    periodNational = applyOverrides(periodNational);
+    var ini = toStr(period.inicio), fim = toStr(period.fim);
+    holidays = periodNational.filter(function (h) { return h.date >= ini && h.date <= fim; });
+    customHolidays.forEach(function (ch) {
+      if (ch.date >= ini && ch.date <= fim && !holidays.some(function (h) { return h.date === ch.date; }))
+        holidays.push(ch);
+    });
+    holidays.sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    var currentYear = new Date().getFullYear();
+    var yearList = getNationalHolidays(currentYear);
+    yearList = applyOverrides(yearList);
+    allYearHolidays = yearList.slice();
+    customHolidays.forEach(function (ch) {
+      if (ch.date.substring(0,4) === String(currentYear) && !allYearHolidays.some(function (h) { return h.date === ch.date; }))
+        allYearHolidays.push(ch);
+    });
+    allYearHolidays.sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+  }
+  function getActiveHolidayDates() {
+    var set = {};
+    holidays.concat(customHolidays).forEach(function (h) { if (!disabledHolidays[h.date]) set[h.date] = true; });
+    return set;
+  }
+  function isInRanges(dateStr, ranges) {
+    return ranges.some(function (r) { return r && dateStr >= r.inicio && dateStr <= r.fim; });
+  }
+  function getAbonoIntegralDates() {
+    var ini=toStr(period.inicio),fim=toStr(period.fim),set={};
+    abonos.forEach(function(a){ if(a.tipo==='integral'&&a.date>=ini&&a.date<=fim) set[a.date]=true; });
+    return set;
+  }
+  function calcCalendar() {
+    var hd = getActiveHolidayDates(), abonoInt = getAbonoIntegralDates(), todayStr = toStr(new Date());
+    var diasUteis=0, diasTrab=0, diasFerias=0, diasAtest=0, diasAbono=0, diasRest=0, abonoMinutos=0;
+    var ini=toStr(period.inicio),fim=toStr(period.fim);
+    var d = new Date(period.inicio);
+    while (d <= period.fim) {
+      var ds = toStr(d);
+      if (!isWeekend(d) && !hd[ds] && !abonoInt[ds]) {
+        diasUteis++;
+        if (isInRanges(ds, ferias)) diasFerias++;
+        else if (isInRanges(ds, atestados)) diasAtest++;
+        else {
+          var abonoParc = null;
+          abonos.forEach(function(a){ if(a.tipo==='parcial'&&a.date===ds) abonoParc=a; });
+          if(abonoParc) abonoMinutos+=abonoParc.minutos;
+          if (ds < todayStr) diasTrab++;
+          else diasRest++;
+        }
+      } else if(!isWeekend(d) && abonoInt[ds]) {
+        diasAbono++;
+      }
+      d = addDays(d, 1);
+    }
+    return {diasUteis:diasUteis,diasTrab:diasTrab,diasFerias:diasFerias,diasAtest:diasAtest,diasAbono:diasAbono,diasRest:diasRest,abonoMinutos:abonoMinutos};
+  }
+
+  // ===== TIME HELPERS =====
+  function nowMins() { var d=new Date(); return d.getHours()*60+d.getMinutes(); }
+  function nowSecs() { var d=new Date(); return d.getHours()*3600+d.getMinutes()*60+d.getSeconds(); }
+  function parseTime(v) { if(!v) return null; var p=v.split(':').map(Number); return p[0]*60+p[1]; }
+  function fmtTime(m) { if(m==null||isNaN(m)) return '--:--'; var mm=((m%1440)+1440)%1440; return String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0'); }
+  function fmtDur(m) { var a=Math.abs(Math.round(m)); return Math.floor(a/60)+':'+String(a%60).padStart(2,'0'); }
+  function fmtSaldo(m) { return (m<0?'-':'+')+fmtDur(m); }
+  function parseSaldo(s) {
+    if(!s||!s.trim()) return null;
+    s=s.trim(); var neg=s.charAt(0)==='-'; var clean=s.replace(/^[+-]/,'');
+    var p=clean.split(':'); if(p.length!==2) return null;
+    var t=(parseInt(p[0])||0)*60+(parseInt(p[1])||0);
+    return neg?-t:t;
+  }
+  function fmtRem(mins) { if(mins<=0) return 'LIVRE'; var h=Math.floor(mins/60),m=mins%60; return h===0?m+'min':h+'h'+String(m).padStart(2,'0'); }
+  function nowTimeStr() { var d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+
+  // ===== GETSTATE =====
+  function getState() {
+    var cal = calcCalendar();
+    return {
+      entrada: parseTime($('entrada').value),
+      almoco: parseInt($('almoco').value) || 30,
+      saidaDesejada: parseTime($('saidaDesejada').value),
+      saldoIcarus: parseSaldo($('saldoIcarus').value),
+      valorHora: parseFloat($('valorHora').value) || 0,
+      diasUteis:cal.diasUteis, diasTrab:cal.diasTrab,
+      diasAtest:cal.diasAtest, diasFerias:cal.diasFerias, diasAbono:cal.diasAbono,
+      diasRest:cal.diasRest, abonoMinutos:cal.abonoMinutos
+    };
+  }
+
+  // ===== CALCULATIONS =====
+  function calcExits(st) {
+    if (st.entrada == null) return [];
+    return TARGETS.map(function (t) {
+      return { id:t.id, label:t.label, desc:t.desc, color:t.color, exit:st.entrada+t.mins+st.almoco };
+    });
+  }
+  function calcBank(st) {
+    if (st.saldoIcarus == null || !st.diasUteis) return null;
+    var dr = st.diasRest; if (dr <= 0) return null;
+    var abono = st.diasTrab * ABONO, saldoPos = st.saldoIcarus + abono + (st.abonoMinutos||0);
+    var porDia = saldoPos / dr, margemPlr = saldoPos - PLR_LIMIT, plrPorDia = margemPlr / dr;
+    var saidaBonus = null, expectAmanha = null, porDiaAmanha = null;
+    if (st.entrada != null) {
+      saidaBonus = st.entrada + 480 + st.almoco - saldoPos / dr;
+      var now = nowMins(), worked = Math.max(0, now - st.entrada - st.almoco);
+      var saldoOkrHoje = worked - 480;
+      expectAmanha = saldoPos + saldoOkrHoje;
+      if (dr > 1) porDiaAmanha = expectAmanha / (dr - 1);
+    }
+    return {diasRest:dr,abono:abono,saldoPos:saldoPos,porDia:porDia,margemPlr:margemPlr,plrPorDia:plrPorDia,saidaBonus:saidaBonus,expectAmanha:expectAmanha,porDiaAmanha:porDiaAmanha};
+  }
+
+  // ===== NOTIFICATIONS =====
+  function checkNotifications(st) {
+    if (!notificationsEnabled || st.entrada == null) return;
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    var cd = toStr(new Date());
+    if (cd !== notifDate) { notifiedToday = {}; notifDate = cd; }
+    var now = nowMins();
+    calcExits(st).forEach(function (e) {
+      var rem = e.exit - now;
+      if (rem > 0 && rem <= 5 && !notifiedToday[e.id]) {
+        notifiedToday[e.id] = true;
+        try { new Notification('Calculadora de Pontos', { body: e.label+' ('+e.desc+') em '+rem+' min — saída às '+fmtTime(e.exit), tag:'calc-'+e.id }); } catch(err){}
+      }
+    });
+  }
+  window.toggleNotifications = function () {
+    if (!notificationsEnabled) {
+      if (!('Notification' in window)) { alert('Seu navegador não suporta notificações. Abra via HTTP (não file://).'); return; }
+      Notification.requestPermission().then(function (p) {
+        if (p === 'granted') {
+          notificationsEnabled = true;
+          $('btnNotif').textContent = 'Desativar';
+          $('btnNotif').classList.add('active');
+          save();
+        }
+      });
+    } else {
+      notificationsEnabled = false;
+      $('btnNotif').textContent = 'Ativar';
+      $('btnNotif').classList.remove('active');
+      save();
+    }
+  };
+
+  // ===== LUNCH INTERVAL =====
+  function updateLunchFromInterval() {
+    var saida = parseTime($('saidaAlmoco').value);
+    var volta = parseTime($('voltaAlmoco').value);
+    if (saida != null && volta != null && volta > saida) {
+      $('almoco').value = volta - saida;
+      $('almoco').setAttribute('readonly', '');
+      document.querySelectorAll('.preset-btn').forEach(function(b){b.classList.remove('active');});
+    } else {
+      $('almoco').removeAttribute('readonly');
+    }
+    render();
+  }
+
+  // ===== PRESETS =====
+  window.setPreset = function (mins) {
+    $('almoco').value = mins;
+    $('almoco').removeAttribute('readonly');
+    $('saidaAlmoco').value = '';
+    $('voltaAlmoco').value = '';
+    document.querySelectorAll('.preset-btn').forEach(function (b) {
+      b.classList.toggle('active', parseInt(b.getAttribute('data-mins')) === mins);
+    });
+    render();
+  };
+
+  // ===== SVG ICONS =====
+  var svgFerias = '<svg class="range-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>';
+  var svgAtest = '<svg class="range-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+
+  // ===== RENDERERS =====
+  function renderPeriodLabel() { $('periodLabel').textContent = fmtDateBr(toStr(period.inicio))+' — '+fmtDateBr(toStr(period.fim)); }
+
+  function renderCalSummary(st) {
+    var ausencias = st.diasFerias + st.diasAtest + st.diasAbono;
+    var items = [
+      {v:st.diasUteis,l:'Úteis',c:''},
+      {v:st.diasTrab,l:'Trabalhados',c:'accent-c'},
+      {v:st.diasRest,l:'Restantes',c:st.diasRest<=3?'warn':''},
+      {v:ausencias,l:'Ausências',c:ausencias>0?'negative':''}
+    ];
+    if(st.abonoMinutos>0) items.push({v:fmtDur(st.abonoMinutos),l:'Crédito Abono',c:'positive'});
+    $('calSummary').innerHTML = items.map(function(i){
+      return '<div class="cal-stat"><div class="cal-stat-val '+i.c+'">'+i.v+'</div><div class="cal-stat-lbl">'+i.l+'</div></div>';
+    }).join('');
+  }
+
+  function renderHolidays() {
+    var ini=toStr(period.inicio),fim=toStr(period.fim);
+    $('holidayList').innerHTML = allYearHolidays.map(function(h){
+      var inPeriod=h.date>=ini&&h.date<=fim;
+      var checked=!disabledHolidays[h.date]?'checked':'';
+      var isCustom=customHolidays.some(function(c){return c.date===h.date;});
+      var cls=isCustom?' holiday-custom':'';
+      var rm=isCustom?'<button class="btn-remove" onclick="removeCustomHoliday(\''+h.date+'\')">×</button>':'';
+      var nameEsc=h.name.replace(/'/g,"\\'");
+      var badge=inPeriod?'<span class="holiday-period-badge">período</span>':'';
+      var dim=inPeriod?'':' holiday-dim';
+      return '<div class="holiday-item'+dim+'"><input type="checkbox" '+checked+' onchange="toggleHoliday(\''+h.date+'\',this.checked)">'+
+        '<input type="date" class="holiday-date-edit" value="'+h.date+'" onchange="updateHolidayDate(\''+nameEsc+'\',\''+h.date+'\',this.value)">'+
+        '<span class="holiday-name'+cls+'">'+h.name+'</span>'+badge+rm+'</div>';
+    }).join('');
+  }
+
+  function renderAbonos() {
+    var ini=toStr(period.inicio),fim=toStr(period.fim);
+    var c=$('abonoList');
+    if(!abonos.length){c.innerHTML='<div class="empty-hint">Nenhum abono registrado</div>';return;}
+    var sorted=abonos.slice().sort(function(a,b){return a.date<b.date?-1:1;});
+    c.innerHTML=sorted.map(function(a,idx){
+      var inPeriod=a.date>=ini&&a.date<=fim;
+      var dim=inPeriod?'':' abono-dim';
+      var badge=inPeriod?'<span class="abono-period-badge">período</span>':'';
+      var tipoLabel=a.tipo==='integral'?'Dia inteiro':fmtDur(a.minutos)+' de abono';
+      var realIdx=abonos.indexOf(a);
+      return '<div class="abono-item'+dim+'"><span class="abono-date">'+fmtDateBr(a.date)+'</span><span class="abono-tipo">'+tipoLabel+'</span>'+badge+'<button class="btn-remove" onclick="removeAbono('+realIdx+')">×</button></div>';
+    }).join('');
+  }
+
+  function renderRangeList(containerId, ranges, removeFunc, icon) {
+    var c = $(containerId);
+    if (!ranges.length) { c.innerHTML = '<div class="empty-hint">Nenhum registro</div>'; return; }
+    c.innerHTML = ranges.map(function(r, idx){
+      var days = Math.round((fromStr(r.fim)-fromStr(r.inicio))/86400000)+1;
+      return '<div class="range-item">'+icon+'<span class="range-item-text">'+fmtDateBr(r.inicio)+' — '+fmtDateBr(r.fim)+'</span><span class="range-item-days">'+days+'d</span><button class="btn-remove" onclick="'+removeFunc+'('+idx+')">×</button></div>';
+    }).join('');
+  }
+
+  function renderGauge(st) {
+    var g=$('gauge');
+    if(st.entrada==null){g.innerHTML='';return;}
+    var now=nowMins(),worked=Math.max(0,now-st.entrada-st.almoco);
+    var target=518,targetLabel='Completo';
+    TARGETS.forEach(function(t){if(worked>=t.mins){target=t.mins;targetLabel=t.label;}});
+    var nextTarget=null;
+    for(var i=0;i<TARGETS.length;i++){if(TARGETS[i].mins>worked){nextTarget=TARGETS[i];break;}}
+    if(!nextTarget)nextTarget=TARGETS[TARGETS.length-1];
+    var remaining=Math.max(0,nextTarget.mins-worked);
+    var pct=Math.min(100,(worked/nextTarget.mins)*100);
+    var r=60,circ=2*Math.PI*r,offset=circ-(pct/100)*circ;
+    var col=pct>=100?'var(--green)':pct>=80?'var(--accent)':pct>=60?'var(--orange)':'var(--text-3)';
+    if(worked>=648)col='var(--red)';
+    var remText=remaining<=0?'LIVRE':fmtDur(remaining);
+    var workedText=fmtDur(worked);
+    g.innerHTML='<div class="gauge-container">'+
+      '<svg class="gauge-svg" viewBox="0 0 140 140">'+
+      '<circle class="gauge-track" cx="70" cy="70" r="'+r+'" transform="rotate(-90 70 70)"/>'+
+      '<circle class="gauge-fill" cx="70" cy="70" r="'+r+'" transform="rotate(-90 70 70)" stroke="'+col+'" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'"/>'+
+      '<text class="gauge-center-text gauge-time" x="70" y="66" text-anchor="middle" dominant-baseline="middle">'+remText+'</text>'+
+      '<text class="gauge-center-text gauge-label" x="70" y="84" text-anchor="middle">p/ '+nextTarget.label+'</text>'+
+      '</svg>'+
+      '<div class="gauge-info">'+
+      '<div class="gauge-info-item"><span class="gauge-info-label">Trabalhado</span><span class="gauge-info-value accent-c">'+workedText+'</span></div>'+
+      '<div class="gauge-info-item"><span class="gauge-info-label">Próximo alvo</span><span class="gauge-info-value">'+nextTarget.label+' · '+nextTarget.desc+'</span></div>'+
+      '<div class="gauge-info-item"><span class="gauge-info-label">Progresso</span><span class="gauge-info-value">'+Math.min(100,Math.round(pct))+'%</span></div>'+
+      '</div></div>';
+  }
+
+  function renderBoard(st) {
+    var board=$('board'), exits=calcExits(st);
+    if(!exits.length){board.innerHTML='<div class="board-empty">Insira o horário de entrada</div>';return;}
+    var now=nowMins(),foundNext=false,html='';
+    exits.forEach(function(e){
+      var rem=e.exit-now,status='future';
+      if(rem<=0)status='passed'; else if(!foundNext){status='next';foundNext=true;}
+      var badge=status==='passed'?'LIVRE':fmtRem(rem),prog='';
+      if(status==='next'){var pct=Math.min(100,Math.max(0,((now-st.entrada)/(e.exit-st.entrada))*100));prog='<div class="strip-progress"><div class="strip-fill" style="width:'+pct.toFixed(1)+'%"></div></div>';}
+      html+='<div class="strip '+status+'" data-color="'+e.color+'"><div class="strip-accent"></div><div class="strip-main"><span class="strip-time">'+fmtTime(e.exit)+'</span><div class="strip-info"><div class="strip-label">'+e.label+'</div><div class="strip-desc">'+e.desc+'</div></div><span class="strip-badge">'+badge+'</span></div>'+prog+'</div>';
+    });
+    board.innerHTML=html;
+  }
+
+  function renderReverse(st) {
+    var c=$('reverseResults');
+    if(st.saidaDesejada==null){c.innerHTML='';return;}
+    var show=TARGETS.filter(function(t){return t.id==='okr'||t.id==='completo'||t.id==='limite';});
+    c.innerHTML=show.map(function(t){
+      var entry=st.saidaDesejada-t.mins-st.almoco;
+      return '<div class="reverse-item"><span class="reverse-label">'+t.label+' · '+t.desc+'</span><span class="reverse-time">'+fmtTime(entry)+'</span></div>';
+    }).join('');
+  }
+
+  function renderBank(st) {
+    var c=$('bankResults'),bank=calcBank(st);
+    if(!bank){c.innerHTML='';return;}
+    var items=[
+      {l:'Abono acumulado',v:fmtDur(bank.abono),c:'positive'},
+      {l:'Saldo pós abono',v:fmtSaldo(bank.saldoPos),c:bank.saldoPos<0?'negative':'positive'},
+      {l:'Dias restantes',v:bank.diasRest,c:''},
+      {l:'Hrs/dia para zerar',v:fmtSaldo(bank.porDia),c:bank.porDia<0?'negative':'positive'}
+    ];
+    if(bank.saidaBonus!=null&&st.entrada!=null)
+      items.push({l:'Saída bônus abono',v:fmtTime(Math.round(bank.saidaBonus)),c:'accent-c'});
+    if(bank.expectAmanha!=null){
+      items.push({l:'sep'});
+      items.push({l:'Expectativa amanhã',v:fmtSaldo(bank.expectAmanha),c:bank.expectAmanha<0?'negative':'positive'});
+      if(bank.porDiaAmanha!=null)
+        items.push({l:'Hrs/dia amanhã',v:fmtSaldo(bank.porDiaAmanha),c:bank.porDiaAmanha<0?'negative':'positive'});
+    }
+    items.push({l:'sep'});
+    items.push({l:'Margem PLR',v:fmtSaldo(bank.margemPlr),c:bank.margemPlr>0?'positive':'negative'});
+    items.push({l:'Tolerância/dia',v:fmtDur(bank.plrPorDia),c:bank.plrPorDia>0?'positive':'warn'});
+    c.innerHTML='<div class="bank-results">'+items.map(function(i){
+      if(i.l==='sep') return '<hr class="bank-sep">';
+      return '<div class="bank-item"><span class="bank-label">'+i.l+'</span><span class="bank-value '+i.c+'">'+i.v+'</span></div>';
+    }).join('')+'</div>';
+  }
+
+  function renderOvertime(st) {
+    var c=$('overtimeResults'),rateEl=$('overtimeRate');
+    if(!st.valorHora||st.valorHora<=0){c.innerHTML='';rateEl.textContent='';return;}
+    var todayStr=toStr(new Date()),hd=getActiveHolidayDates(),today=new Date();
+    var isHol=isWeekend(today)||!!hd[todayStr];
+    var mult=isHol?2.0:1.5, rateLabel=isHol?'100%':'50%';
+    rateEl.textContent=rateLabel;
+    var valorMin=st.valorHora/60;
+    var targets=TARGETS.filter(function(t){return t.mins>CLT_BASE;});
+    var html='<div class="overtime-results">';
+    targets.forEach(function(t){
+      var extra=t.mins-CLT_BASE;
+      var valor=extra*valorMin*mult;
+      html+='<div class="reverse-item"><div><span class="reverse-label">'+t.label+' · '+t.desc+'</span><div class="overtime-detail">'+fmtDur(extra)+' extra × '+rateLabel+'</div></div><span class="reverse-time positive">R$ '+valor.toFixed(2)+'</span></div>';
+    });
+    if(st.entrada!=null){
+      var now=nowMins(),worked=Math.max(0,now-st.entrada-st.almoco);
+      if(worked>CLT_BASE){
+        var curExtra=worked-CLT_BASE,curVal=curExtra*valorMin*mult;
+        html+='<div class="reverse-item" style="border-top:1px dashed var(--border);margin-top:6px;padding-top:10px"><span class="reverse-label">Acumulado agora ('+fmtDur(curExtra)+' HE)</span><span class="reverse-time accent-c">R$ '+curVal.toFixed(2)+'</span></div>';
+      }
+    }
+    html+='</div>';
+    c.innerHTML=html;
+  }
+
+  function renderStats(st) {
+    var row=$('statsRow');
+    if(st.entrada==null){row.style.display='none';return;}
+    row.style.display='';
+    var now=nowMins(),elapsed=Math.max(0,now-st.entrada),worked=Math.max(0,elapsed-st.almoco),saldo=worked-480;
+    $('trabalhado').textContent=fmtDur(worked);
+    $('saldoOkrVal').textContent=fmtSaldo(saldo);
+    $('saldoOkrVal').className='stat-value '+(saldo>=0?'positive':'negative');
+  }
+
+  function renderHistory() {
+    var c=$('historyList'),btn=$('btnSaveToday');
+    var entrada=parseTime($('entrada').value);
+    btn.disabled=(entrada==null);
+    var todayStr=toStr(new Date());
+    var exists=history.some(function(r){return r.date===todayStr;});
+    btn.textContent=exists?'Atualizar Saída':'Registrar Saída';
+    if(!history.length){c.innerHTML='<div class="empty-hint">Nenhum registro no histórico</div>';return;}
+    var sorted=history.slice().sort(function(a,b){return b.date<a.date?-1:(b.date>a.date?1:0);});
+    c.innerHTML=sorted.slice(0,30).map(function(r){
+      var ent=parseTime(r.entrada),sai=parseTime(r.saida),alm=r.almoco||30;
+      var worked=(ent!=null&&sai!=null)?Math.max(0,sai-ent-alm):0;
+      var balance=worked-480;
+      var bc=balance>=0?'positive':'negative';
+      return '<div class="history-row"><span class="history-date">'+fmtDateBr(r.date)+'</span><span class="history-times">'+
+        (r.entrada||'--:--')+' → '+(r.saida||'--:--')+'</span><span class="history-worked">'+fmtDur(worked)+
+        '</span><span class="history-balance '+bc+'">'+fmtSaldo(balance)+'</span><button class="btn-remove" onclick="removeHistory(\''+r.date+'\')">×</button></div>';
+    }).join('');
+  }
+
+  function updateClock() {
+    var d=new Date();
+    $('clock').innerHTML=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+'<span class="clock-sec">'+String(d.getSeconds()).padStart(2,'0')+'</span>';
+  }
+  function updateTimer() {
+    var entrada=parseTime($('entrada').value);
+    if(entrada==null){$('timer').textContent='';return;}
+    var now=nowSecs(),entry=entrada*60;
+    if(now<entry){$('timer').textContent='';return;}
+    var e=now-entry;
+    $('timer').textContent='No local há '+Math.floor(e/3600)+':'+String(Math.floor((e%3600)/60)).padStart(2,'0')+':'+String(e%60).padStart(2,'0');
+  }
+  function updateDaybar(st) {
+    var bar=$('daybar'),fill=$('daybarFill');
+    if(st.entrada==null){bar.classList.remove('visible');return;}
+    bar.classList.add('visible');
+    var exits=calcExits(st);if(!exits.length)return;
+    var last=exits[exits.length-1].exit,now=nowMins();
+    if(now<=st.entrada){fill.style.width='0%';return;}
+    if(now>=last){fill.style.width='100%';return;}
+    fill.style.width=Math.min(100,Math.max(0,((now-st.entrada)/(last-st.entrada))*100)).toFixed(1)+'%';
+  }
+
+  // ===== PROJECAO =====
+  function getRemainingWorkDays() {
+    var hd=getActiveHolidayDates(),abonoInt=getAbonoIntegralDates(),todayStr=toStr(new Date()),days=[];
+    var d=new Date(period.inicio);
+    while(d<=period.fim){
+      var ds=toStr(d);
+      if(ds>=todayStr&&!isWeekend(d)&&!hd[ds]&&!abonoInt[ds]&&!isInRanges(ds,ferias)&&!isInRanges(ds,atestados))
+        days.push(ds);
+      d=addDays(d,1);
+    }
+    return days;
+  }
+  function distributeWork(dayConfigs,totalWork){
+    var allocated=dayConfigs.map(function(){return 0;});
+    if(totalWork<=0){var s=Math.max(0,totalWork/dayConfigs.length);return allocated.map(function(){return s;});}
+    var remaining=totalWork,uncapped=dayConfigs.map(function(_,i){return i;});
+    for(var iter=0;iter<20&&remaining>0.5&&uncapped.length>0;iter++){
+      var share=remaining/uncapped.length,newUn=[],dist=0;
+      uncapped.forEach(function(i){
+        var canAdd=dayConfigs[i].maxWork-allocated[i];
+        if(share<=canAdd){allocated[i]+=share;dist+=share;newUn.push(i);}
+        else{allocated[i]+=canAdd;dist+=canAdd;}
+      });
+      remaining-=dist;uncapped=newUn;
+    }
+    return allocated;
+  }
+  var projRendering=false;
+  window.renderProjection=function(){
+    projRendering=true;
+    var c=$('projResult'),st=getState(),bank=calcBank(st);
+    if(!bank){c.innerHTML='<div class="empty-hint">Preencha o saldo do Ícarus</div>';projRendering=false;return;}
+    var days=getRemainingWorkDays();
+    if(!days.length){c.innerHTML='<div class="empty-hint">Nenhum dia restante no período</div>';projRendering=false;return;}
+    var saldoPos=bank.saldoPos;
+    var entradaDef=parseTime($('projEntrada').value)||480;
+    var saidaMaxMins=parseTime($('projSaidaMax').value)||1080;
+    var almocoDef=parseInt($('projAlmoco').value)||60;
+    var todayStr=toStr(new Date()),entradaHoje=parseTime($('entrada').value);
+    var weekDays=['dom','seg','ter','qua','qui','sex','sáb'];
+    var dayConfigs=days.map(function(ds){
+      var ov=projOverrides[ds]||{};
+      var falta=!!ov.falta;
+      var entrada=(ds===todayStr&&entradaHoje!=null&&ov.entrada==null)?entradaHoje:(ov.entrada!=null?ov.entrada:entradaDef);
+      var almoco=ov.almoco!=null?ov.almoco:almocoDef;
+      var maxWork=falta?0:Math.max(0,saidaMaxMins-entrada-almoco);
+      var saidaLock=ov.saida!=null?ov.saida:null;
+      return {date:ds,entrada:entrada,almoco:almoco,maxWork:maxWork,saidaLock:saidaLock,falta:falta};
+    });
+    var totalWorkNeeded=432*days.length-saldoPos;
+    var lockedWork=0,freeConfigs=[],freeIndices=[];
+    var allocated=dayConfigs.map(function(){return 0;});
+    dayConfigs.forEach(function(dc,i){
+      if(dc.falta){
+        allocated[i]=0;
+      } else if(dc.saidaLock!=null){
+        var w=Math.max(0,dc.saidaLock-dc.entrada-dc.almoco);
+        allocated[i]=w;lockedWork+=w;
+      } else {
+        freeConfigs.push(dc);freeIndices.push(i);
+      }
+    });
+    var freeWork=totalWorkNeeded-lockedWork;
+    var freeAlloc=distributeWork(freeConfigs,freeWork);
+    freeIndices.forEach(function(idx,j){allocated[idx]=freeAlloc[j];});
+    var html='<div class="proj-list">',totalAlloc=0;
+    dayConfigs.forEach(function(dc,i){
+      var work=Math.max(0,allocated[i]);totalAlloc+=work;
+      var saida=Math.round(dc.entrada+work+dc.almoco);
+      var isLocked=dc.saidaLock!=null;
+      if(isLocked)saida=dc.saidaLock;
+      var dayName=weekDays[fromStr(dc.date).getDay()];
+      var isToday=dc.date===todayStr;
+      var cls='proj-day'+(isToday?' proj-today':'')+(dc.falta?' proj-falta':(isLocked?' proj-locked':''));
+      html+='<div class="'+cls+'"><div class="proj-day-header">';
+      html+='<span class="proj-date">'+fmtDateBr(dc.date)+' <small>'+dayName+'</small></span>';
+      html+='<div class="proj-saida-wrap">';
+      if(dc.falta){
+        html+='<span class="proj-falta-badge">Falta</span>';
+      } else {
+        html+='<input type="time" class="proj-saida-input'+(isLocked?' locked':'')+'" value="'+fmtTime(saida)+'" onblur="setProjDay(\''+dc.date+'\',\'saida\',this.value)">';
+        if(isLocked)html+='<button class="proj-reset" onclick="resetProjSaida(\''+dc.date+'\')" title="Resetar">&times;</button>';
+      }
+      html+='<button class="proj-falta-btn'+(dc.falta?' active':'')+'" onclick="toggleProjFalta(\''+dc.date+'\')">'+(dc.falta?'Desmarcar':'Falta')+'</button>';
+      html+='</div>';
+      html+='</div><div class="proj-day-detail">';
+      html+='<div class="proj-field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Ent</label><input type="time" value="'+fmtTime(dc.entrada)+'" onblur="setProjDay(\''+dc.date+'\',\'entrada\',this.value)"></div>';
+      html+='<div class="proj-field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Alm</label><input type="number" value="'+dc.almoco+'" min="0" max="180" onblur="setProjDay(\''+dc.date+'\',\'almoco\',this.value)"></div>';
+      html+='<span class="proj-work">'+fmtDur(work)+'</span>';
+      html+='</div></div>';
+    });
+    html+='</div>';
+    var saldoFinal=Math.round(saldoPos);
+    dayConfigs.forEach(function(_,i){saldoFinal+=Math.round(allocated[i]-432);});
+    var deficit=Math.round(freeWork-freeAlloc.reduce(function(a,b){return a+b;},0));
+    html+='<div class="proj-summary">';
+    if(deficit>1)html+='<div class="proj-warn">Não é possível zerar com a saída máxima atual. Déficit: '+fmtDur(deficit)+'</div>';
+    html+='<div class="proj-final"><span>Saldo projetado</span><span class="'+(Math.abs(saldoFinal)<2?'positive':saldoFinal>=0?'positive':'negative')+'">'+fmtSaldo(saldoFinal)+'</span></div>';
+    html+='</div>';
+    c.innerHTML=html;
+    projRendering=false;
+  };
+  window.setProjDay=function(date,field,value){
+    if(projRendering)return;
+    if(!projOverrides[date])projOverrides[date]={};
+    if(field==='entrada')projOverrides[date].entrada=parseTime(value);
+    else if(field==='almoco')projOverrides[date].almoco=parseInt(value)||60;
+    else if(field==='saida')projOverrides[date].saida=parseTime(value);
+    renderProjection();
+  };
+  window.resetProjSaida=function(date){
+    if(projOverrides[date])delete projOverrides[date].saida;
+    renderProjection();
+  };
+  window.toggleProjFalta=function(date){
+    if(projRendering)return;
+    if(!projOverrides[date])projOverrides[date]={};
+    projOverrides[date].falta=!projOverrides[date].falta;
+    if(!projOverrides[date].falta)delete projOverrides[date].falta;
+    renderProjection();
+  };
+
+  // ===== MAIN RENDER =====
+  function render() {
+    var st=getState();
+    renderCalSummary(st);renderGauge(st);renderBoard(st);renderReverse(st);
+    renderBank(st);renderOvertime(st);renderStats(st);renderHistory();
+    updateDaybar(st);checkNotifications(st);save();
+  }
+  function renderFeriasSlots() {
+    var html='';
+    for(var i=0;i<3;i++){
+      var f=ferias[i]||null;
+      var iniVal=f?f.inicio:'';
+      var fimVal=f?f.fim:'';
+      var info='';
+      if(f){var d=Math.round((fromStr(f.fim)-fromStr(f.inicio))/86400000)+1;info='<span class="ferias-days">'+d+' dias</span>';}
+      html+='<div class="ferias-slot"><div class="ferias-slot-header"><svg class="lbl-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 21.5a2.5 2.5 0 0 1-5 0V12"/><path d="M13 7.35a6.5 6.5 0 0 1 9 6 6.5 6.5 0 0 0-9-6Z"/><path d="M13 7.35a6.5 6.5 0 0 0-11 4.5 6.5 6.5 0 0 1 11-4.5Z"/></svg><span class="ferias-slot-title">Período '+(i+1)+'</span>'+
+        (f?'<button class="btn-remove" onclick="clearFerias('+i+')">×</button>':'')+info+'</div>'+
+        '<div class="grid-2"><div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Início</label><input type="date" id="ferias'+i+'Inicio" value="'+iniVal+'" onchange="setFerias('+i+')"></div>'+
+        '<div class="field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Fim</label><input type="date" id="ferias'+i+'Fim" value="'+fimVal+'" onchange="setFerias('+i+')"></div></div></div>';
+    }
+    var total=0;
+    ferias.forEach(function(f){if(f)total+=Math.round((fromStr(f.fim)-fromStr(f.inicio))/86400000)+1;});
+    if(total>0) html+='<div class="ferias-total">Total: '+total+' dias</div>';
+    $('feriasSlots').innerHTML=html;
+  }
+  function renderAll() {
+    initHolidays();renderPeriodLabel();renderHolidays();renderFeriasSlots();
+    renderRangeList('atestadoList',atestados,'removeAtestado',svgAtest);
+    renderAbonos();render();renderProjection();
+  }
+
+  // ===== PAGE NAVIGATION =====
+  window.switchPage = function(page){
+    document.querySelectorAll('[data-page]').forEach(function(el){
+      el.classList.toggle('page-active',el.getAttribute('data-page')===page);
+    });
+    document.querySelectorAll('.nav-item').forEach(function(n){
+      n.classList.toggle('active',n.getAttribute('data-page')===page);
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  // ===== GLOBAL ACTIONS =====
+  window.toggleSection = function(id){ $(id).classList.toggle('open'); };
+  window.toggleHoliday = function(date,en){ if(en)delete disabledHolidays[date];else disabledHolidays[date]=true; render(); };
+  window.addCustomHoliday = function(){
+    var date=$('feriadoData').value,name=$('feriadoNome').value.trim();
+    if(!date||!name)return;
+    if(!customHolidays.some(function(h){return h.date===date;})){
+      customHolidays.push({date:date,name:name,custom:true});
+      $('feriadoData').value='';$('feriadoNome').value='';renderAll();
+    }
+  };
+  window.removeCustomHoliday = function(date){ customHolidays=customHolidays.filter(function(h){return h.date!==date;}); delete disabledHolidays[date]; renderAll(); };
+  window.updateHolidayDate = function(name,oldDate,newDate){
+    if(!newDate||newDate===oldDate)return;
+    if(parseInt(newDate.substring(0,4))<2000)return;
+    if(disabledHolidays[oldDate]){delete disabledHolidays[oldDate];disabledHolidays[newDate]=true;}
+    var year=oldDate.substring(0,4);
+    holidayOverrides[name+'_'+year]=newDate;
+    renderAll();
+  };
+  window.setFerias = function(idx){
+    var ini=$('ferias'+idx+'Inicio').value,fim=$('ferias'+idx+'Fim').value;
+    if(!ini||!fim)return;
+    if(parseInt(ini.substring(0,4))<2000||parseInt(fim.substring(0,4))<2000)return;
+    if(fim<ini){var t=ini;ini=fim;fim=t;}
+    ferias[idx]={inicio:ini,fim:fim};
+    renderAll();
+  };
+  window.clearFerias = function(idx){ferias[idx]=null;renderAll();};
+  window.addAtestado = function(){
+    var ini=$('atestadoInicio').value,fim=$('atestadoFim').value;
+    if(!ini)return;if(!fim)fim=ini;
+    if(parseInt(ini.substring(0,4))<2000)return;
+    if(fim<ini){var t=ini;ini=fim;fim=t;}
+    atestados.push({inicio:ini,fim:fim});$('atestadoInicio').value='';$('atestadoFim').value='';renderAll();
+  };
+  window.removeAtestado = function(idx){atestados.splice(idx,1);renderAll();};
+  window.toggleAbonoHoras = function(){ $('abonoHorasField').style.display=$('abonoTipo').value==='parcial'?'':'none'; };
+  window.addAbono = function(){
+    var date=$('abonoData').value,tipo=$('abonoTipo').value;
+    if(!date)return;
+    if(parseInt(date.substring(0,4))<2000)return;
+    var entry={date:date,tipo:tipo};
+    if(tipo==='parcial'){var h=parseInt($('abonoHoras').value)||4;entry.minutos=Math.max(1,Math.min(8,h))*60;}
+    abonos.push(entry);$('abonoData').value='';$('abonoTipo').value='integral';$('abonoHorasField').style.display='none';renderAll();
+  };
+  window.removeAbono = function(idx){abonos.splice(idx,1);renderAll();};
+
+  // ===== HISTORY ACTIONS =====
+  window.saveToday = function(){
+    var entrada=$('entrada').value;if(!entrada)return;
+    var todayStr=toStr(new Date()),saida=nowTimeStr(),almoco=parseInt($('almoco').value)||30;
+    var rec={date:todayStr,entrada:entrada,saida:saida,almoco:almoco};
+    var idx=history.findIndex(function(r){return r.date===todayStr;});
+    if(idx>=0)history[idx]=rec;else history.push(rec);
+    renderHistory();save();
+  };
+  window.addHistoryRecord = function(){
+    var date=$('histData').value,ent=$('histEntrada').value,sai=$('histSaida').value,alm=parseInt($('histAlmoco').value)||30;
+    if(!date||!ent||!sai)return;
+    var rec={date:date,entrada:ent,saida:sai,almoco:alm};
+    var idx=history.findIndex(function(r){return r.date===date;});
+    if(idx>=0)history[idx]=rec;else history.push(rec);
+    $('histData').value='';$('histEntrada').value='';$('histSaida').value='';
+    renderHistory();save();
+  };
+  window.removeHistory = function(date){
+    history=history.filter(function(r){return r.date!==date;});
+    renderHistory();save();
+  };
+
+  // ===== EXPORT / IMPORT =====
+  window.exportData = function(){
+    save();
+    var data=localStorage.getItem('calc-pontos');
+    if(!data){alert('Nenhum dado para exportar');return;}
+    var blob=new Blob([data],{type:'application/json'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');a.href=url;
+    a.download='calculadora-pontos-'+toStr(new Date())+'.json';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+  window.importData = function(){ $('importFile').click(); };
+
+
+  // ===== PERSISTENCE =====
+  function save() {
+    try {
+      localStorage.setItem('calc-pontos', JSON.stringify({
+        entrada:$('entrada').value, almoco:$('almoco').value,
+        saidaAlmoco:$('saidaAlmoco').value, voltaAlmoco:$('voltaAlmoco').value,
+        saidaDesejada:$('saidaDesejada').value, saldoIcarus:$('saldoIcarus').value,
+        valorHora:$('valorHora').value,
+        ferias:ferias, atestados:atestados, abonos:abonos,
+        customHolidays:customHolidays, disabledHolidays:disabledHolidays,
+        holidayOverrides:holidayOverrides,
+        history:history, notificationsEnabled:notificationsEnabled,
+        projEntrada:$('projEntrada').value, projSaidaMax:$('projSaidaMax').value, projAlmoco:$('projAlmoco').value
+      }));
+    } catch(e){}
+  }
+  function load() {
+    try {
+      var data=JSON.parse(localStorage.getItem('calc-pontos'));
+      if(!data) return;
+      if(data.entrada) $('entrada').value=data.entrada;
+      if(data.almoco) $('almoco').value=data.almoco;
+      if(data.saidaAlmoco) $('saidaAlmoco').value=data.saidaAlmoco;
+      if(data.voltaAlmoco) $('voltaAlmoco').value=data.voltaAlmoco;
+      if(data.saidaDesejada) $('saidaDesejada').value=data.saidaDesejada;
+      if(data.saldoIcarus) $('saldoIcarus').value=data.saldoIcarus;
+      if(data.valorHora) $('valorHora').value=data.valorHora;
+      if(data.ferias){
+        var f=data.ferias;
+        if(Array.isArray(f)&&f.length>0&&f[0]&&f[0].inicio&&typeof f[0]==='object'){
+          ferias=[f[0]||null,f[1]||null,f[2]||null];
+        } else { ferias=f; }
+      }
+      if(data.atestados) atestados=data.atestados;
+      if(data.abonos) abonos=data.abonos;
+      if(data.customHolidays) customHolidays=data.customHolidays;
+      if(data.disabledHolidays) disabledHolidays=data.disabledHolidays;
+      if(data.holidayOverrides) holidayOverrides=data.holidayOverrides;
+      if(data.history) history=data.history;
+      if(data.projEntrada) $('projEntrada').value=data.projEntrada;
+      if(data.projSaidaMax) $('projSaidaMax').value=data.projSaidaMax;
+      if(data.projAlmoco) $('projAlmoco').value=data.projAlmoco;
+      if(data.notificationsEnabled) {
+        notificationsEnabled=true;
+        $('btnNotif').textContent='Desativar';
+        $('btnNotif').classList.add('active');
+      }
+      if(data.saidaAlmoco&&data.voltaAlmoco) updateLunchFromInterval();
+      var alm=parseInt($('almoco').value)||30;
+      document.querySelectorAll('.preset-btn').forEach(function(b){b.classList.toggle('active',parseInt(b.getAttribute('data-mins'))===alm);});
+    } catch(e){}
+  }
+
+  // ===== IMPORT FILE HANDLER =====
+  $('importFile').addEventListener('change', function(e){
+    var file=e.target.files[0]; if(!file) return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      try {
+        var data=JSON.parse(ev.target.result);
+        localStorage.setItem('calc-pontos',JSON.stringify(data));
+        location.reload();
+      } catch(err){ alert('Arquivo inválido'); }
+    };
+    reader.readAsText(file);
+    e.target.value='';
+  });
+
+  // ===== INIT =====
+  load(); renderAll(); updateClock(); updateTimer();
+  setInterval(function(){ updateClock(); updateTimer(); render(); }, 1000);
+  ['entrada','almoco','saidaDesejada','saldoIcarus','valorHora'].forEach(function(id){
+    $(id).addEventListener('input', render);
+  });
+  ['entrada','almoco','saldoIcarus'].forEach(function(id){
+    $(id).addEventListener('change', renderProjection);
+  });
+  ['saidaAlmoco','voltaAlmoco'].forEach(function(id){
+    $(id).addEventListener('input', updateLunchFromInterval);
+  });
+})();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}
+</script>
