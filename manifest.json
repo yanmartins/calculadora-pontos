@@ -1,0 +1,24 @@
+{
+  "name": "Calculadora de Pontos",
+  "short_name": "Pontos",
+  "description": "Calculadora de horas, previsão de saída, banco de horas e hora extra CLT",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0a0c14",
+  "background_color": "#0a0c14",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

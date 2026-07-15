@@ -251,6 +251,10 @@
   .strip[data-color="amber"] .strip-accent { background: var(--accent); }
   .strip[data-color="orange"] .strip-accent { background: var(--orange); }
   .strip[data-color="red"] .strip-accent { background: var(--red); }
+  .strip[data-color="purple"] .strip-accent { background: var(--purple); }
+  .strip-remove { background: none; border: none; color: var(--text-3); font-size: 1.2rem; line-height: 1; cursor: pointer; padding: 0 4px; margin-left: 4px; opacity: .45; transition: opacity .15s, color .15s; flex-shrink: 0; }
+  .strip-remove:hover { opacity: 1; color: var(--red); }
+  .nolunch-chip { display: inline-block; font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .58rem; font-weight: 700; color: var(--orange); background: color-mix(in srgb, var(--orange) 14%, transparent); padding: 1px 6px; border-radius: 4px; letter-spacing: .03em; text-transform: uppercase; vertical-align: middle; margin-left: 5px; }
   .strip.passed .strip-time { color: var(--green); opacity: .75; }
   .strip.passed .strip-label { color: var(--text-3); }
   .strip.passed .strip-badge { color: var(--green); background: var(--green-soft); }
@@ -258,29 +262,60 @@
   .strip.next .strip-label { color: var(--text); }
   .strip.next .strip-badge { color: var(--accent); background: var(--accent-soft); }
   .strip.future .strip-accent { background: var(--text-3) !important; }
-  .strip-progress { grid-column: 2; height: 2px; background: var(--border); overflow: hidden; }
-  .strip-fill { height: 100%; background: var(--accent); transition: width 1s linear; }
+  .strip-progress { grid-column: 2; height: 3px; background: var(--border); overflow: hidden; }
+  .strip-fill { height: 100%; background: var(--text-3); transition: width 1s linear, background .3s; }
+  .strip.passed .strip-fill { background: var(--green); }
+  .strip.next .strip-fill { background: var(--accent); box-shadow: 0 0 8px var(--accent-soft); }
+  .strip.future .strip-fill { background: var(--text-3); }
   .strip.bank { border-top: 1px dashed var(--border); }
   .strip.bank .strip-accent { background: var(--accent); }
 
-  /* ===== GAUGE ===== */
-  .gauge-container { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 20px 16px 12px; }
-  .gauge-svg { width: 140px; height: 140px; flex-shrink: 0; }
-  .gauge-track { fill: none; stroke: var(--border); stroke-width: 10; }
-  .gauge-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke .3s; }
-  .gauge-center-text { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; fill: var(--text); }
-  .gauge-time { font-size: 20px; font-weight: 700; }
-  .gauge-label { font-size: 10px; fill: var(--text-1); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
-  .gauge-info { display: flex; flex-direction: column; gap: 6px; min-width: 100px; }
-  .gauge-info-item { display: flex; flex-direction: column; gap: 1px; }
-  .gauge-info-label { font-size: .68rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-2); }
-  .gauge-info-value { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: 1.05rem; font-weight: 600; }
+  /* ===== DASHBOARD ===== */
+  .dash { padding: 18px; }
+  .dash-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .dash-tile {
+    position: relative; overflow: hidden; text-align: center;
+    background: var(--raised); border: 1px solid var(--border); border-top-color: var(--border-top);
+    border-radius: 14px; padding: 16px 8px 14px; transition: background .3s, border-color .3s, transform .2s;
+  }
+  .dash-tile:hover { transform: translateY(-2px); }
+  .dash-tile::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 2px; background: var(--tile-c, var(--accent)); opacity: .8; }
+  .dash-tile-ico { position: absolute; top: 9px; right: 9px; width: 14px; height: 14px; color: var(--tile-c, var(--accent)); opacity: .5; }
+  .dash-tile-val { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: 1.6rem; font-weight: 700; line-height: 1; color: var(--text); letter-spacing: .01em; }
+  .dash-tile-lbl { font-size: .6rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--text-2); margin-top: 8px; }
+  .dash-tile.t-work { --tile-c: var(--accent); }
+  .dash-tile.t-exit { --tile-c: var(--blue); }
+  .dash-tile.t-bal  { --tile-c: var(--green); }
+  .dash-tile.t-bank { --tile-c: var(--purple); }
+  .dash-progress { margin-top: 16px; }
+  .dash-prog-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; gap: 8px; }
+  .dash-prog-label { font-size: .68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text-1); }
+  .dash-prog-rem { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .82rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
+  .dash-bar { height: 14px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; position: relative; }
+  .dash-bar-fill { height: 100%; border-radius: 999px; transition: width 1s linear, background .4s; box-shadow: 0 0 12px var(--accent-soft); min-width: 2px; }
+  .dash-prog-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 7px; font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .76rem; color: var(--text-2); }
+  .dash-prog-foot b { color: var(--text-1); font-weight: 600; }
+  .dash-hint { padding: 18px 12px; text-align: center; color: var(--text-2); font-size: .9rem; }
+  .meta-add-wrap { padding: 14px 18px 18px; border-top: 1px solid var(--border); }
+  .meta-add-title { display: flex; align-items: center; gap: 7px; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text-1); margin-bottom: 10px; }
+  .meta-add-title svg { width: 14px; height: 14px; color: var(--purple); flex-shrink: 0; }
+  .meta-add { display: flex; gap: 8px; align-items: center; }
+  .meta-add input { background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 10px; font-size: 1rem; min-height: 44px; outline: none; font-family: inherit; transition: border-color .2s, box-shadow .2s; min-width: 0; }
+  .meta-add input#metaNome { flex: 1; }
+  .meta-add input#metaDur { flex: 0 0 78px; width: 78px; text-align: center; font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; }
+  .meta-add input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .meta-add-hint { font-size: .72rem; color: var(--text-2); margin-top: 8px; line-height: 1.4; }
+  .meta-add-hint b { color: var(--text-1); font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; }
+  .dash-sep { border: none; border-top: 1px solid var(--border); margin: 16px 0 0; }
   @media (max-width: 360px) {
-    .gauge-container { gap: 12px; padding: 14px 10px 8px; }
-    .gauge-svg { width: 110px; height: 110px; }
-    .gauge-time { font-size: 15px; }
-    .gauge-label { font-size: 8px; }
-    .gauge-info-value { font-size: .82rem; }
+    .dash { padding: 12px; }
+    .dash-tile-val { font-size: 1.25rem; }
+    .dash-tile-lbl { font-size: .52rem; }
+    .dash-tiles { gap: 6px; }
+  }
+  @media (min-width: 680px) {
+    .dash-tile-val { font-size: 1.9rem; }
+    .dash-tile-lbl { font-size: .66rem; }
   }
 
   /* ===== REVERSE ===== */
@@ -295,6 +330,12 @@
   .bank-label { font-size: .88rem; color: var(--text-1); }
   .bank-value { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .95rem; font-weight: 500; color: var(--text); }
   .bank-sep { border: none; border-top: 1px dashed var(--border); margin: 4px 0; }
+  .bank-hero { text-align: center; padding: 4px 0 14px; border-bottom: 1px solid var(--border); }
+  .bank-hero-val { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: 2.4rem; font-weight: 700; line-height: 1.1; }
+  .bank-hero-src { font-size: .74rem; color: var(--text-2); margin-top: 6px; line-height: 1.5; }
+  .bank-hero-src b { color: var(--text-1); font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-weight: 600; }
+  .bank-stale { display: inline-block; margin-top: 8px; font-size: .7rem; font-weight: 600; color: var(--orange); background: color-mix(in srgb, var(--orange) 12%, transparent); padding: 3px 10px; border-radius: 6px; }
+  .bank-sec-title { font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin: 14px 0 4px; }
 
   /* ===== OVERTIME ===== */
   .overtime-results { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
@@ -413,7 +454,11 @@
   .proj-list { display: flex; flex-direction: column; gap: 6px; max-height: 420px; overflow-y: auto; padding-right: 2px; }
   .proj-day { background: var(--raised); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
   .proj-today { border-color: var(--accent); border-width: 2px; }
-  .proj-day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .proj-day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; flex-wrap: wrap; }
+  .proj-day-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .proj-acum { display: inline-flex; flex-direction: column; align-items: flex-start; line-height: 1.05; padding-left: 10px; border-left: 1px solid var(--border); }
+  .proj-acum b { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .9rem; font-weight: 700; }
+  .proj-acum small { font-size: .55rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .03em; }
   .proj-date { font-size: .95rem; color: var(--text); font-weight: 700; }
   .proj-date small { font-weight: 500; color: var(--text-2); text-transform: uppercase; font-size: .75rem; }
   .proj-saida-wrap { display: flex; align-items: center; gap: 4px; }
@@ -427,6 +472,9 @@
   .proj-saida-input.locked { color: var(--orange); }
   .proj-reset { background: none; border: none; color: var(--text-3); cursor: pointer; font-size: 1rem; padding: 0 2px; line-height: 1; }
   .proj-reset:hover { color: var(--red); }
+  .proj-weekend { border-left: 3px solid var(--purple); background: color-mix(in srgb, var(--purple) 6%, transparent); }
+  .proj-weekend .proj-date small { color: var(--purple); }
+  .proj-fds-badge { font-family: 'SF Mono','Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace; font-size: .58rem; font-weight: 700; color: var(--purple); background: var(--purple-soft); padding: 2px 6px; border-radius: 4px; letter-spacing: .05em; vertical-align: middle; }
   .proj-locked { border-left: 3px solid var(--orange); }
   .proj-falta { opacity: .55; border-left: 3px solid var(--red); }
   .proj-falta .proj-day-detail { display: none; }
@@ -535,8 +583,6 @@
     .reverse-time { font-size: 1.15rem; }
     .bank-label { font-size: .92rem; }
     .bank-value { font-size: 1rem; }
-    .gauge-info-value { font-size: 1.1rem; }
-    .gauge-info-label { font-size: .72rem; }
     .history-date { font-size: .85rem; }
     .history-times { font-size: .92rem; }
     .history-worked { font-size: .92rem; }
@@ -583,7 +629,7 @@
   <div class="card-grid">
 
   <!-- REGISTRO -->
-  <section class="card page-active" id="secRegistro" data-page="ponto">
+  <section class="card page-active" id="secRegistro" data-page="hoje">
     <div class="card-head">
       <span class="card-head-left">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -627,52 +673,81 @@
           </div>
         </div>
       </div>
-      <div class="stats" id="statsRow" style="display:none">
-        <div class="stat">
-          <div class="stat-label">Trabalhado</div>
-          <div class="stat-value" id="trabalhado">--:--</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Saldo OKR</div>
-          <div class="stat-value" id="saldoOkrVal">--:--</div>
-        </div>
+      <div class="field" style="margin-top:12px">
+        <label for="saldoIcarus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Saldo Icarus de ontem</label>
+        <input type="text" id="saldoIcarus" placeholder="-12:10" inputmode="text">
       </div>
     </div>
   </section>
 
   <!-- BANCO DE HORAS -->
-  <section class="card page-active" id="secBanco" data-page="ponto">
+  <section class="card" id="secBanco" data-page="banco">
     <div class="card-head">
       <span class="card-head-left">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         Banco de Horas
       </span>
+      <span class="card-head-period" id="bankPeriodLabel"></span>
     </div>
     <div class="card-body">
-      <div class="field">
-        <label for="saldoIcarus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Saldo Icarus de ontem</label>
-        <input type="text" id="saldoIcarus" placeholder="-12:10" inputmode="text">
-      </div>
       <div id="bankResults"></div>
     </div>
   </section>
 
-  <!-- PREVISAO DE SAIDA -->
-  <section class="card card-full page-active" id="secPrevisao" data-page="ponto">
+  <!-- PAINEL HOJE -->
+  <section class="card card-full page-active" id="secPrevisao" data-page="hoje">
     <div class="card-head">
       <span class="card-head-left">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Previs&atilde;o de Sa&iacute;da
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+        Hoje
       </span>
+      <span class="card-head-period" id="todayLabel"></span>
     </div>
-    <div id="gauge"></div>
+    <div class="dash">
+      <div class="dash-tiles">
+        <div class="dash-tile t-work">
+          <svg class="dash-tile-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <div class="dash-tile-val" id="trabalhado">--:--</div>
+          <div class="dash-tile-lbl">Trabalhado</div>
+        </div>
+        <div class="dash-tile t-exit">
+          <svg class="dash-tile-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <div class="dash-tile-val" id="dashSaida">--:--</div>
+          <div class="dash-tile-lbl">Sa&iacute;da OKR</div>
+        </div>
+        <div class="dash-tile t-bal">
+          <svg class="dash-tile-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <div class="dash-tile-val" id="saldoOkrVal">--:--</div>
+          <div class="dash-tile-lbl">Saldo Hoje</div>
+        </div>
+        <div class="dash-tile t-bank">
+          <svg class="dash-tile-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <div class="dash-tile-val" id="dashBanco">--:--</div>
+          <div class="dash-tile-lbl">Banco</div>
+        </div>
+      </div>
+      <div class="dash-progress" id="dashProgress"></div>
+    </div>
+    <hr class="dash-sep">
     <div id="board">
       <div class="board-empty">Insira o hor&aacute;rio de entrada</div>
+    </div>
+    <div class="meta-add-wrap">
+      <div class="meta-add-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nova meta de sa&iacute;da
+      </div>
+      <div class="meta-add">
+        <input type="text" id="metaNome" placeholder="Nome (opcional)" maxlength="22">
+        <input type="text" id="metaDur" placeholder="6:00" inputmode="text" onkeydown="if(event.key==='Enter')addMeta()">
+        <button class="btn-add" onclick="addMeta()">Adicionar</button>
+      </div>
+      <div class="meta-add-hint">Informe as horas trabalhadas (ex.: <b>6:00</b> ou <b>6.5</b>) para ver a que horas voc&ecirc; atinge essa meta. Jornadas de at&eacute; <b>6h</b> n&atilde;o somam o almo&ccedil;o.</div>
     </div>
   </section>
 
   <!-- SAIDA DESEJADA -->
-  <section class="card page-active" id="secSaidaDesejada" data-page="ponto">
+  <section class="card page-active" id="secSaidaDesejada" data-page="hoje">
     <div class="card-head">
       <span class="card-head-left">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -689,7 +764,7 @@
   </section>
 
   <!-- PROJECAO -->
-  <section class="card page-active" id="secProjecao" data-page="ponto">
+  <section class="card" id="secProjecao" data-page="banco">
     <div class="card-head">
       <span class="card-head-left">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
@@ -869,9 +944,13 @@
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav" id="bottomNav">
-  <button class="nav-item active" data-page="ponto" onclick="switchPage('ponto')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-    <span>Ponto</span>
+  <button class="nav-item active" data-page="hoje" onclick="switchPage('hoje')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+    <span>Hoje</span>
+  </button>
+  <button class="nav-item" data-page="banco" onclick="switchPage('banco')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    <span>Banco</span>
   </button>
   <button class="nav-item" data-page="calendario" onclick="switchPage('calendario')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -904,7 +983,18 @@
     { id: 'extra',    label: 'Hora Extra',     desc: '8h59',  mins: 539, color: 'amber' },
     { id: 'limite',   label: 'Limite CLT',     desc: '10h48', mins: 648, color: 'red' }
   ];
-  var ABONO = 48, PLR_LIMIT = -528, CLT_BASE = 528, TOLERANCIA = 10;
+  var ABONO = 48, PLR_LIMIT = -528, CLT_BASE = 528, TOLERANCIA = 10, LUNCH_MIN_WORK = 360; // até 6h de trabalho não exige intervalo
+
+  // metas fixas + personalizadas, ordenadas por minutos trabalhados
+  function fmtHoras(m) { var h=Math.floor(m/60),mm=m%60; return h+'h'+String(mm).padStart(2,'0'); }
+  function getTargets() {
+    var all = TARGETS.slice();
+    customTargets.forEach(function (t) {
+      all.push({ id:t.id, label:t.label, desc:fmtHoras(t.mins), mins:t.mins, color:'purple', custom:true });
+    });
+    all.sort(function (a,b) { return a.mins-b.mins; });
+    return all;
+  }
 
   // ===== DATE HELPERS =====
   function toStr(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
@@ -954,6 +1044,8 @@
   var period = getCurrentPeriod();
   var ferias = [null,null,null], atestados = [], abonos = [], holidays = [], allYearHolidays = [], disabledHolidays = {}, customHolidays = [], holidayOverrides = {};
   var history = [];
+  var customTargets = []; // metas personalizadas: {id, label, mins}
+  var saldoIcarusDate = null; // dia em que o saldo Icarus foi informado
   var projOverrides = {};
   var notificationsEnabled = false, notifiedToday = {}, notifDate = toStr(new Date());
 
@@ -1029,6 +1121,11 @@
   function nowMins() { var d=new Date(); return d.getHours()*60+d.getMinutes(); }
   function nowSecs() { var d=new Date(); return d.getHours()*3600+d.getMinutes()*60+d.getSeconds(); }
   function parseTime(v) { if(!v) return null; var p=v.split(':').map(Number); return p[0]*60+p[1]; }
+  function parseDur(s) { // "6:30" -> 390, "6" ou "6.5" -> horas decimais
+    if(!s) return null; s=s.trim().replace(',','.');
+    if(s.indexOf(':')>=0){ var p=s.split(':'); return (parseInt(p[0])||0)*60+(parseInt(p[1])||0); }
+    var n=parseFloat(s); if(isNaN(n)) return null; return Math.round(n*60);
+  }
   function fmtTime(m) { if(m==null||isNaN(m)) return '--:--'; var mm=((m%1440)+1440)%1440; return String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0'); }
   function fmtDur(m) { var a=Math.abs(Math.round(m)); return Math.floor(a/60)+':'+String(a%60).padStart(2,'0'); }
   function fmtSaldo(m) { return (m<0?'-':'+')+fmtDur(m); }
@@ -1060,8 +1157,9 @@
   // ===== CALCULATIONS =====
   function calcExits(st) {
     if (st.entrada == null) return [];
-    return TARGETS.map(function (t) {
-      return { id:t.id, label:t.label, desc:t.desc, color:t.color, exit:st.entrada+t.mins+st.almoco };
+    return getTargets().map(function (t) {
+      var noLunch = t.mins <= LUNCH_MIN_WORK;
+      return { id:t.id, label:t.label, desc:t.desc, color:t.color, mins:t.mins, exit:st.entrada+t.mins+(noLunch?0:st.almoco), custom:t.custom, noLunch:noLunch };
     });
   }
   function calcBank(st) {
@@ -1069,15 +1167,9 @@
     var dr = st.diasRest; if (dr <= 0) return null;
     var abono = st.diasTrab * ABONO, saldoPos = st.saldoIcarus + abono + (st.abonoMinutos||0);
     var porDia = saldoPos / dr, margemPlr = saldoPos - PLR_LIMIT, plrPorDia = margemPlr / dr;
-    var saidaBonus = null, expectAmanha = null, porDiaAmanha = null;
-    if (st.entrada != null) {
-      saidaBonus = st.entrada + 480 + st.almoco - saldoPos / dr;
-      var now = nowMins(), worked = Math.max(0, now - st.entrada - st.almoco);
-      var saldoOkrHoje = worked - 480;
-      expectAmanha = saldoPos + saldoOkrHoje;
-      if (dr > 1) porDiaAmanha = expectAmanha / (dr - 1);
-    }
-    return {diasRest:dr,abono:abono,saldoPos:saldoPos,porDia:porDia,margemPlr:margemPlr,plrPorDia:plrPorDia,saidaBonus:saidaBonus,expectAmanha:expectAmanha,porDiaAmanha:porDiaAmanha};
+    var saidaBonus = null;
+    if (st.entrada != null) saidaBonus = st.entrada + 480 + st.almoco - porDia;
+    return {diasRest:dr,abono:abono,saldoPos:saldoPos,porDia:porDia,margemPlr:margemPlr,plrPorDia:plrPorDia,saidaBonus:saidaBonus};
   }
 
   // ===== NOTIFICATIONS =====
@@ -1140,12 +1232,33 @@
     render();
   };
 
+  // ===== METAS PERSONALIZADAS =====
+  var metaSeq = 0;
+  window.addMeta = function () {
+    var nome=$('metaNome').value.trim();
+    var mins=parseDur($('metaDur').value);
+    if(mins==null||mins<=0){ $('metaDur').focus(); return; }
+    if(mins>1440) mins=1440;
+    var id='m'+(Date.now())+'_'+(metaSeq++);
+    customTargets.push({ id:id, label:nome||fmtHoras(mins), mins:mins });
+    $('metaNome').value=''; $('metaDur').value='';
+    save(); render();
+  };
+  window.removeMeta = function (id) {
+    customTargets=customTargets.filter(function(t){return t.id!==id;});
+    save(); render();
+  };
+
   // ===== SVG ICONS =====
   var svgFerias = '<svg class="range-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>';
   var svgAtest = '<svg class="range-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
 
   // ===== RENDERERS =====
-  function renderPeriodLabel() { $('periodLabel').textContent = fmtDateBr(toStr(period.inicio))+' — '+fmtDateBr(toStr(period.fim)); }
+  function renderPeriodLabel() {
+    var lbl = fmtDateBr(toStr(period.inicio))+' — '+fmtDateBr(toStr(period.fim));
+    $('periodLabel').textContent = lbl;
+    $('bankPeriodLabel').textContent = lbl;
+  }
 
   function renderCalSummary(st) {
     var ausencias = st.diasFerias + st.diasAtest + st.diasAbono;
@@ -1155,7 +1268,9 @@
       {v:st.diasRest,l:'Restantes',c:st.diasRest<=3?'warn':''},
       {v:ausencias,l:'Ausências',c:ausencias>0?'negative':''}
     ];
-    if(st.abonoMinutos>0) items.push({v:fmtDur(st.abonoMinutos),l:'Crédito Abono',c:'positive'});
+    var diasDeTrabalho = st.diasTrab + st.diasRest; // dias úteis em que se bate ponto (exclui ausências)
+    var abonoTotal = diasDeTrabalho * ABONO + (st.abonoMinutos||0);
+    items.push({v:fmtDur(abonoTotal),l:'Abono Período',c:'positive'});
     $('calSummary').innerHTML = items.map(function(i){
       return '<div class="cal-stat"><div class="cal-stat-val '+i.c+'">'+i.v+'</div><div class="cal-stat-lbl">'+i.l+'</div></div>';
     }).join('');
@@ -1202,36 +1317,6 @@
     }).join('');
   }
 
-  function renderGauge(st) {
-    var g=$('gauge');
-    if(st.entrada==null){g.innerHTML='';return;}
-    var now=nowMins(),worked=Math.max(0,now-st.entrada-st.almoco);
-    var target=518,targetLabel='Completo';
-    TARGETS.forEach(function(t){if(worked>=t.mins){target=t.mins;targetLabel=t.label;}});
-    var nextTarget=null;
-    for(var i=0;i<TARGETS.length;i++){if(TARGETS[i].mins>worked){nextTarget=TARGETS[i];break;}}
-    if(!nextTarget)nextTarget=TARGETS[TARGETS.length-1];
-    var remaining=Math.max(0,nextTarget.mins-worked);
-    var pct=Math.min(100,(worked/nextTarget.mins)*100);
-    var r=60,circ=2*Math.PI*r,offset=circ-(pct/100)*circ;
-    var col=pct>=100?'var(--green)':pct>=80?'var(--accent)':pct>=60?'var(--orange)':'var(--text-3)';
-    if(worked>=648)col='var(--red)';
-    var remText=remaining<=0?'LIVRE':fmtDur(remaining);
-    var workedText=fmtDur(worked);
-    g.innerHTML='<div class="gauge-container">'+
-      '<svg class="gauge-svg" viewBox="0 0 140 140">'+
-      '<circle class="gauge-track" cx="70" cy="70" r="'+r+'" transform="rotate(-90 70 70)"/>'+
-      '<circle class="gauge-fill" cx="70" cy="70" r="'+r+'" transform="rotate(-90 70 70)" stroke="'+col+'" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'"/>'+
-      '<text class="gauge-center-text gauge-time" x="70" y="66" text-anchor="middle" dominant-baseline="middle">'+remText+'</text>'+
-      '<text class="gauge-center-text gauge-label" x="70" y="84" text-anchor="middle">p/ '+nextTarget.label+'</text>'+
-      '</svg>'+
-      '<div class="gauge-info">'+
-      '<div class="gauge-info-item"><span class="gauge-info-label">Trabalhado</span><span class="gauge-info-value accent-c">'+workedText+'</span></div>'+
-      '<div class="gauge-info-item"><span class="gauge-info-label">Próximo alvo</span><span class="gauge-info-value">'+nextTarget.label+' · '+nextTarget.desc+'</span></div>'+
-      '<div class="gauge-info-item"><span class="gauge-info-label">Progresso</span><span class="gauge-info-value">'+Math.min(100,Math.round(pct))+'%</span></div>'+
-      '</div></div>';
-  }
-
   function renderBoard(st) {
     var board=$('board'), exits=calcExits(st);
     if(!exits.length){board.innerHTML='<div class="board-empty">Insira o horário de entrada</div>';return;}
@@ -1239,9 +1324,12 @@
     exits.forEach(function(e){
       var rem=e.exit-now,status='future';
       if(rem<=0)status='passed'; else if(!foundNext){status='next';foundNext=true;}
-      var badge=status==='passed'?'LIVRE':fmtRem(rem),prog='';
-      if(status==='next'){var pct=Math.min(100,Math.max(0,((now-st.entrada)/(e.exit-st.entrada))*100));prog='<div class="strip-progress"><div class="strip-fill" style="width:'+pct.toFixed(1)+'%"></div></div>';}
-      html+='<div class="strip '+status+'" data-color="'+e.color+'"><div class="strip-accent"></div><div class="strip-main"><span class="strip-time">'+fmtTime(e.exit)+'</span><div class="strip-info"><div class="strip-label">'+e.label+'</div><div class="strip-desc">'+e.desc+'</div></div><span class="strip-badge">'+badge+'</span></div>'+prog+'</div>';
+      var badge=status==='passed'?'LIVRE':fmtRem(rem);
+      var pct=Math.min(100,Math.max(0,((now-st.entrada)/(e.exit-st.entrada))*100));
+      var prog='<div class="strip-progress"><div class="strip-fill" style="width:'+pct.toFixed(1)+'%"></div></div>';
+      var rm=e.custom?'<button class="strip-remove" onclick="removeMeta(\''+e.id+'\')" title="Remover meta">&times;</button>':'';
+      var nl=e.noLunch?' <span class="nolunch-chip">sem almo&ccedil;o</span>':'';
+      html+='<div class="strip '+status+'" data-color="'+e.color+'"><div class="strip-accent"></div><div class="strip-main"><span class="strip-time">'+fmtTime(e.exit)+'</span><div class="strip-info"><div class="strip-label">'+e.label+'</div><div class="strip-desc">'+e.desc+nl+'</div></div><span class="strip-badge">'+badge+'</span>'+rm+'</div>'+prog+'</div>';
     });
     board.innerHTML=html;
   }
@@ -1258,28 +1346,45 @@
 
   function renderBank(st) {
     var c=$('bankResults'),bank=calcBank(st);
-    if(!bank){c.innerHTML='';return;}
-    var items=[
-      {l:'Abono acumulado',v:fmtDur(bank.abono),c:'positive'},
-      {l:'Saldo pós abono',v:fmtSaldo(bank.saldoPos),c:bank.saldoPos<0?'negative':'positive'},
-      {l:'Dias restantes',v:bank.diasRest,c:''},
-      {l:'Hrs/dia para zerar',v:fmtSaldo(bank.porDia),c:bank.porDia<0?'negative':'positive'}
-    ];
-    if(bank.saidaBonus!=null&&st.entrada!=null)
-      items.push({l:'Saída bônus abono',v:fmtTime(Math.round(bank.saidaBonus)),c:'accent-c'});
-    if(bank.expectAmanha!=null){
-      items.push({l:'sep'});
-      items.push({l:'Expectativa amanhã',v:fmtSaldo(bank.expectAmanha),c:bank.expectAmanha<0?'negative':'positive'});
-      if(bank.porDiaAmanha!=null)
-        items.push({l:'Hrs/dia amanhã',v:fmtSaldo(bank.porDiaAmanha),c:bank.porDiaAmanha<0?'negative':'positive'});
+    if(!bank){
+      c.innerHTML='<div class="empty-hint">'+(st.saldoIcarus==null
+        ?'Informe o Saldo Icarus na aba Hoje para ver o banco.'
+        :'Nenhum dia útil restante no período.')+'</div>';
+      return;
     }
-    items.push({l:'sep'});
-    items.push({l:'Margem PLR',v:fmtSaldo(bank.margemPlr),c:bank.margemPlr>0?'positive':'negative'});
-    items.push({l:'Tolerância/dia',v:fmtDur(bank.plrPorDia),c:bank.plrPorDia>0?'positive':'warn'});
-    c.innerHTML='<div class="bank-results">'+items.map(function(i){
-      if(i.l==='sep') return '<hr class="bank-sep">';
-      return '<div class="bank-item"><span class="bank-label">'+i.l+'</span><span class="bank-value '+i.c+'">'+i.v+'</span></div>';
-    }).join('')+'</div>';
+    function row(l,v,cls){ return '<div class="bank-item"><span class="bank-label">'+l+'</span><span class="bank-value '+(cls||'')+'">'+v+'</span></div>'; }
+    var todayStr=toStr(new Date());
+
+    // Hero: saldo atual + de onde ele vem
+    var html='<div class="bank-hero">'+
+      '<div class="bank-hero-val '+(bank.saldoPos>=0?'positive':'negative')+'">'+fmtSaldo(bank.saldoPos)+'</div>'+
+      '<div class="bank-hero-src">Icarus <b>'+fmtSaldo(st.saldoIcarus)+'</b>'+
+        (saldoIcarusDate?' ('+fmtDateBr(saldoIcarusDate)+')':'')+
+        ' + abono <b>'+fmtDur(ABONO)+'</b> × <b>'+st.diasTrab+'</b> dias trabalhados'+
+        (st.abonoMinutos?' + <b>'+fmtDur(st.abonoMinutos)+'</b> de abonos parciais':'')+'</div>';
+    if(saldoIcarusDate&&saldoIcarusDate<todayStr)
+      html+='<div class="bank-stale">Saldo informado em '+fmtDateBr(saldoIcarusDate)+' — atualize na aba Hoje</div>';
+    html+='</div>';
+
+    // Para zerar até o fim do período
+    var metaDia=Math.max(0,480-bank.porDia); // 8h líquidas/dia ± ajuste do saldo
+    html+='<div class="bank-sec-title">Para zerar até '+fmtDateBr(toStr(period.fim))+'</div>';
+    html+=row('Dias úteis restantes',bank.diasRest,'');
+    html+=row('Trabalhe por dia',fmtDur(metaDia),bank.porDia<0?'warn':'positive');
+    // saída de hoje vem do mesmo motor da Projeção (respeita travas, faltas e saída máxima)
+    var proj=calcProjection(bank),saidaHoje=null,hojeNaProj=false;
+    if(proj) proj.dayConfigs.forEach(function(dc){ if(dc.date===proj.todayStr){hojeNaProj=true;saidaHoje=dc.saida;} });
+    if(!hojeNaProj&&bank.saidaBonus!=null) saidaHoje=Math.round(bank.saidaBonus);
+    if(saidaHoje!=null)
+      html+=row('Saindo hoje às',fmtTime(saidaHoje),'accent-c');
+
+    // PLR
+    html+='<div class="bank-sec-title">PLR</div>';
+    html+=row('Limite do período',fmtSaldo(PLR_LIMIT),'');
+    html+=row('Margem até o limite',fmtSaldo(bank.margemPlr),bank.margemPlr>0?'positive':'negative');
+    html+=row('Tolerância por dia',fmtSaldo(bank.plrPorDia),bank.plrPorDia>0?'positive':'negative');
+
+    c.innerHTML=html;
   }
 
   function renderOvertime(st) {
@@ -1308,14 +1413,51 @@
     c.innerHTML=html;
   }
 
-  function renderStats(st) {
-    var row=$('statsRow');
-    if(st.entrada==null){row.style.display='none';return;}
-    row.style.display='';
+  function renderDash(st) {
+    var trabEl=$('trabalhado'), saldoEl=$('saldoOkrVal'), saidaEl=$('dashSaida'), bancoEl=$('dashBanco'), prog=$('dashProgress');
+
+    // Banco (independe da entrada; depende do saldo Icarus)
+    var bank=calcBank(st);
+    if(bank){
+      bancoEl.textContent=fmtSaldo(bank.saldoPos);
+      bancoEl.className='dash-tile-val '+(bank.saldoPos>=0?'positive':'negative');
+    } else {
+      bancoEl.textContent='--:--'; bancoEl.className='dash-tile-val';
+    }
+
+    if(st.entrada==null){
+      trabEl.textContent='--:--';
+      saidaEl.textContent='--:--';
+      saldoEl.textContent='--:--'; saldoEl.className='dash-tile-val';
+      prog.innerHTML='<div class="dash-hint">Insira o hor&aacute;rio de entrada para ver sua previs&atilde;o</div>';
+      return;
+    }
     var now=nowMins(),elapsed=Math.max(0,now-st.entrada),worked=Math.max(0,elapsed-st.almoco),saldo=worked-480;
-    $('trabalhado').textContent=fmtDur(worked);
-    $('saldoOkrVal').textContent=fmtSaldo(saldo);
-    $('saldoOkrVal').className='stat-value '+(saldo>=0?'positive':'negative');
+    trabEl.textContent=fmtDur(worked);
+    saidaEl.textContent=fmtTime(st.entrada+480+st.almoco);
+    saldoEl.textContent=fmtSaldo(saldo);
+    saldoEl.className='dash-tile-val '+(saldo>=0?'positive':'negative');
+
+    // progresso até o próximo alvo
+    var tg=getTargets(), nextTarget=null;
+    for(var i=0;i<tg.length;i++){ if(tg[i].mins>worked){ nextTarget=tg[i]; break; } }
+    if(!nextTarget) nextTarget=tg[tg.length-1];
+    var pct=Math.min(100,(worked/nextTarget.mins)*100);
+    var remaining=Math.max(0,nextTarget.mins-worked);
+    var reached=worked>=nextTarget.mins;
+    var fill;
+    if(worked>=648) fill='var(--red)';
+    else if(reached) fill='var(--green)';
+    else if(pct>=80) fill='linear-gradient(90deg,var(--accent),var(--green))';
+    else fill='linear-gradient(90deg,var(--accent),var(--blue))';
+    var saidaAlvo=fmtTime(st.entrada+nextTarget.mins+(nextTarget.mins<=LUNCH_MIN_WORK?0:st.almoco));
+    prog.innerHTML=
+      '<div class="dash-prog-head">'+
+        '<span class="dash-prog-label">Progresso &middot; '+nextTarget.label+'</span>'+
+        '<span class="dash-prog-rem">'+(reached?'alvo atingido &#10003;':'faltam '+fmtRem(remaining))+'</span>'+
+      '</div>'+
+      '<div class="dash-bar"><div class="dash-bar-fill" style="width:'+pct.toFixed(1)+'%;background:'+fill+'"></div></div>'+
+      '<div class="dash-prog-foot"><span>'+(Math.round(pct*10)/10)+'%</span><span>Sa&iacute;da '+nextTarget.label+' &agrave;s <b>'+saidaAlvo+'</b></span></div>';
   }
 
   function renderHistory() {
@@ -1367,8 +1509,14 @@
     var d=new Date(period.inicio);
     while(d<=period.fim){
       var ds=toStr(d);
-      if(ds>=todayStr&&!isWeekend(d)&&!hd[ds]&&!abonoInt[ds]&&!isInRanges(ds,ferias)&&!isInRanges(ds,atestados))
-        days.push(ds);
+      if(ds>=todayStr){
+        if(isWeekend(d)){
+          // fim de semana: opcional (hora extra), não conta na meta diária
+          days.push({date:ds,weekend:true});
+        } else if(!hd[ds]&&!abonoInt[ds]&&!isInRanges(ds,ferias)&&!isInRanges(ds,atestados)){
+          days.push({date:ds,weekend:false});
+        }
+      }
       d=addDays(d,1);
     }
     return days;
@@ -1388,29 +1536,30 @@
     }
     return allocated;
   }
-  var projRendering=false;
-  window.renderProjection=function(){
-    projRendering=true;
-    var c=$('projResult'),st=getState(),bank=calcBank(st);
-    if(!bank){c.innerHTML='<div class="empty-hint">Preencha o saldo do Ícarus</div>';projRendering=false;return;}
+  function calcProjection(bank){
     var days=getRemainingWorkDays();
-    if(!days.length){c.innerHTML='<div class="empty-hint">Nenhum dia restante no período</div>';projRendering=false;return;}
+    if(!days.length) return null;
     var saldoPos=bank.saldoPos;
     var entradaDef=parseTime($('projEntrada').value)||480;
     var saidaMaxMins=parseTime($('projSaidaMax').value)||1080;
     var almocoDef=parseInt($('projAlmoco').value)||60;
     var todayStr=toStr(new Date()),entradaHoje=parseTime($('entrada').value);
-    var weekDays=['dom','seg','ter','qua','qui','sex','sáb'];
-    var dayConfigs=days.map(function(ds){
+    var almocoHoje=parseInt($('almoco').value);
+    var dayConfigs=days.map(function(rd){
+      var ds=rd.date, weekend=rd.weekend, hoje=ds===todayStr;
       var ov=projOverrides[ds]||{};
       var falta=!!ov.falta;
-      var entrada=(ds===todayStr&&entradaHoje!=null&&ov.entrada==null)?entradaHoje:(ov.entrada!=null?ov.entrada:entradaDef);
-      var almoco=ov.almoco!=null?ov.almoco:almocoDef;
+      // hoje herda entrada e almoço reais da aba Hoje (a menos que haja override na projeção)
+      var entrada=(hoje&&entradaHoje!=null&&ov.entrada==null)?entradaHoje:(ov.entrada!=null?ov.entrada:entradaDef);
+      var almoco=ov.almoco!=null?ov.almoco:((hoje&&!isNaN(almocoHoje))?almocoHoje:almocoDef);
       var maxWork=falta?0:Math.max(0,saidaMaxMins-entrada-almoco);
       var saidaLock=ov.saida!=null?ov.saida:null;
-      return {date:ds,entrada:entrada,almoco:almoco,maxWork:maxWork,saidaLock:saidaLock,falta:falta};
+      var expected=weekend?0:480; // meta líquida: 8h/dia (jornada 8h48 − 48min de abono); FDS não tem meta
+      return {date:ds,weekend:weekend,entrada:entrada,almoco:almoco,maxWork:maxWork,saidaLock:saidaLock,falta:falta,expected:expected};
     });
-    var totalWorkNeeded=432*days.length-saldoPos;
+    var totalExpected=0;
+    dayConfigs.forEach(function(dc){totalExpected+=dc.expected;});
+    var totalWorkNeeded=totalExpected-saldoPos;
     var lockedWork=0,freeConfigs=[],freeIndices=[];
     var allocated=dayConfigs.map(function(){return 0;});
     dayConfigs.forEach(function(dc,i){
@@ -1419,6 +1568,8 @@
       } else if(dc.saidaLock!=null){
         var w=Math.max(0,dc.saidaLock-dc.entrada-dc.almoco);
         allocated[i]=w;lockedWork+=w;
+      } else if(dc.weekend){
+        allocated[i]=0; // fim de semana desligado por padrão; só conta se você definir uma saída
       } else {
         freeConfigs.push(dc);freeIndices.push(i);
       }
@@ -1426,36 +1577,60 @@
     var freeWork=totalWorkNeeded-lockedWork;
     var freeAlloc=distributeWork(freeConfigs,freeWork);
     freeIndices.forEach(function(idx,j){allocated[idx]=freeAlloc[j];});
+    // saída planejada de cada dia (null = folga/falta)
+    dayConfigs.forEach(function(dc,i){
+      var work=Math.max(0,allocated[i]);
+      if(dc.falta||(dc.weekend&&dc.saidaLock==null)) dc.saida=null;
+      else dc.saida=dc.saidaLock!=null?dc.saidaLock:Math.round(dc.entrada+work+dc.almoco);
+    });
+    var deficit=Math.round(freeWork-freeAlloc.reduce(function(a,b){return a+b;},0));
+    return {dayConfigs:dayConfigs,allocated:allocated,saldoPos:saldoPos,deficit:deficit,todayStr:todayStr};
+  }
+  var projRendering=false;
+  window.renderProjection=function(){
+    projRendering=true;
+    var c=$('projResult'),st=getState(),bank=calcBank(st);
+    if(!bank){c.innerHTML='<div class="empty-hint">Preencha o saldo do Ícarus</div>';projRendering=false;return;}
+    var proj=calcProjection(bank);
+    if(!proj){c.innerHTML='<div class="empty-hint">Nenhum dia restante no período</div>';projRendering=false;return;}
+    var dayConfigs=proj.dayConfigs,allocated=proj.allocated,saldoPos=proj.saldoPos,todayStr=proj.todayStr;
+    var weekDays=['dom','seg','ter','qua','qui','sex','sáb'];
     var html='<div class="proj-list">',totalAlloc=0;
+    var runningSaldo=saldoPos; // mesma régua do card Banco: saldo pós abono, meta líquida de 8h/dia
     dayConfigs.forEach(function(dc,i){
       var work=Math.max(0,allocated[i]);totalAlloc+=work;
-      var saida=Math.round(dc.entrada+work+dc.almoco);
+      runningSaldo+=work-dc.expected;
+      var saida=dc.saida!=null?dc.saida:Math.round(dc.entrada+work+dc.almoco);
       var isLocked=dc.saidaLock!=null;
-      if(isLocked)saida=dc.saidaLock;
       var dayName=weekDays[fromStr(dc.date).getDay()];
       var isToday=dc.date===todayStr;
-      var cls='proj-day'+(isToday?' proj-today':'')+(dc.falta?' proj-falta':(isLocked?' proj-locked':''));
+      var weekendOff=dc.weekend&&!isLocked;
+      var cls='proj-day'+(isToday?' proj-today':'')+(dc.weekend?' proj-weekend':'')+(dc.falta?' proj-falta':(isLocked?' proj-locked':''));
       html+='<div class="'+cls+'"><div class="proj-day-header">';
-      html+='<span class="proj-date">'+fmtDateBr(dc.date)+' <small>'+dayName+'</small></span>';
+      html+='<div class="proj-day-left"><span class="proj-date">'+fmtDateBr(dc.date)+' <small>'+dayName+'</small>'+(dc.weekend?' <span class="proj-fds-badge">FDS</span>':'')+'</span>'+
+        '<span class="proj-acum"><b class="'+(runningSaldo<0?'negative':'positive')+'">'+fmtSaldo(Math.round(runningSaldo))+'</b><small>saldo acum.</small></span></div>';
       html+='<div class="proj-saida-wrap">';
       if(dc.falta){
         html+='<span class="proj-falta-badge">Falta</span>';
+      } else if(weekendOff){
+        html+='<input type="time" class="proj-saida-input" value="" onblur="setProjDay(\''+dc.date+'\',\'saida\',this.value)" title="Defina uma saída para usar este dia como hora extra">';
       } else {
         html+='<input type="time" class="proj-saida-input'+(isLocked?' locked':'')+'" value="'+fmtTime(saida)+'" onblur="setProjDay(\''+dc.date+'\',\'saida\',this.value)">';
         if(isLocked)html+='<button class="proj-reset" onclick="resetProjSaida(\''+dc.date+'\')" title="Resetar">&times;</button>';
       }
-      html+='<button class="proj-falta-btn'+(dc.falta?' active':'')+'" onclick="toggleProjFalta(\''+dc.date+'\')">'+(dc.falta?'Desmarcar':'Falta')+'</button>';
+      if(!dc.weekend)
+        html+='<button class="proj-falta-btn'+(dc.falta?' active':'')+'" onclick="toggleProjFalta(\''+dc.date+'\')">'+(dc.falta?'Desmarcar':'Falta')+'</button>';
       html+='</div>';
       html+='</div><div class="proj-day-detail">';
       html+='<div class="proj-field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Ent</label><input type="time" value="'+fmtTime(dc.entrada)+'" onblur="setProjDay(\''+dc.date+'\',\'entrada\',this.value)"></div>';
       html+='<div class="proj-field"><label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Alm</label><input type="number" value="'+dc.almoco+'" min="0" max="180" onblur="setProjDay(\''+dc.date+'\',\'almoco\',this.value)"></div>';
-      html+='<span class="proj-work">'+fmtDur(work)+'</span>';
+      html+='<span class="proj-work">'+(weekendOff?'folga':(work>0&&dc.weekend?'+'+fmtDur(work)+' HE':fmtDur(work)))+'</span>';
       html+='</div></div>';
     });
     html+='</div>';
     var saldoFinal=Math.round(saldoPos);
-    dayConfigs.forEach(function(_,i){saldoFinal+=Math.round(allocated[i]-432);});
-    var deficit=Math.round(freeWork-freeAlloc.reduce(function(a,b){return a+b;},0));
+    dayConfigs.forEach(function(dc,i){saldoFinal+=Math.round(allocated[i]-dc.expected);});
+    var deficit=proj.deficit;
     html+='<div class="proj-summary">';
     if(deficit>1)html+='<div class="proj-warn">Não é possível zerar com a saída máxima atual. Déficit: '+fmtDur(deficit)+'</div>';
     html+='<div class="proj-final"><span>Saldo projetado</span><span class="'+(Math.abs(saldoFinal)<2?'positive':saldoFinal>=0?'positive':'negative')+'">'+fmtSaldo(saldoFinal)+'</span></div>';
@@ -1486,8 +1661,8 @@
   // ===== MAIN RENDER =====
   function render() {
     var st=getState();
-    renderCalSummary(st);renderGauge(st);renderBoard(st);renderReverse(st);
-    renderBank(st);renderOvertime(st);renderStats(st);renderHistory();
+    renderCalSummary(st);renderDash(st);renderBoard(st);renderReverse(st);
+    renderBank(st);renderOvertime(st);renderHistory();
     updateDaybar(st);checkNotifications(st);save();
   }
   function renderFeriasSlots() {
@@ -1618,11 +1793,13 @@
         entrada:$('entrada').value, almoco:$('almoco').value,
         saidaAlmoco:$('saidaAlmoco').value, voltaAlmoco:$('voltaAlmoco').value,
         saidaDesejada:$('saidaDesejada').value, saldoIcarus:$('saldoIcarus').value,
+        saldoIcarusDate:saldoIcarusDate,
         valorHora:$('valorHora').value,
         ferias:ferias, atestados:atestados, abonos:abonos,
         customHolidays:customHolidays, disabledHolidays:disabledHolidays,
         holidayOverrides:holidayOverrides,
         history:history, notificationsEnabled:notificationsEnabled,
+        customTargets:customTargets,
         projEntrada:$('projEntrada').value, projSaidaMax:$('projSaidaMax').value, projAlmoco:$('projAlmoco').value
       }));
     } catch(e){}
@@ -1637,6 +1814,7 @@
       if(data.voltaAlmoco) $('voltaAlmoco').value=data.voltaAlmoco;
       if(data.saidaDesejada) $('saidaDesejada').value=data.saidaDesejada;
       if(data.saldoIcarus) $('saldoIcarus').value=data.saldoIcarus;
+      if(data.saldoIcarusDate) saldoIcarusDate=data.saldoIcarusDate;
       if(data.valorHora) $('valorHora').value=data.valorHora;
       if(data.ferias){
         var f=data.ferias;
@@ -1650,6 +1828,7 @@
       if(data.disabledHolidays) disabledHolidays=data.disabledHolidays;
       if(data.holidayOverrides) holidayOverrides=data.holidayOverrides;
       if(data.history) history=data.history;
+      if(data.customTargets) customTargets=data.customTargets;
       if(data.projEntrada) $('projEntrada').value=data.projEntrada;
       if(data.projSaidaMax) $('projSaidaMax').value=data.projSaidaMax;
       if(data.projAlmoco) $('projAlmoco').value=data.projAlmoco;
@@ -1679,9 +1858,18 @@
     e.target.value='';
   });
 
+  // ===== TODAY LABEL =====
+  function updateTodayLabel() {
+    var el=$('todayLabel'); if(!el) return;
+    var dias=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    var d=new Date();
+    el.textContent=dias[d.getDay()]+' · '+fmtDateBr(toStr(d));
+  }
+
   // ===== INIT =====
-  load(); renderAll(); updateClock(); updateTimer();
+  load(); renderAll(); updateClock(); updateTimer(); updateTodayLabel();
   setInterval(function(){ updateClock(); updateTimer(); render(); }, 1000);
+  $('saldoIcarus').addEventListener('input', function(){ saldoIcarusDate=toStr(new Date()); });
   ['entrada','almoco','saidaDesejada','saldoIcarus','valorHora'].forEach(function(id){
     $(id).addEventListener('input', render);
   });
