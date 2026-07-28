@@ -1,8 +1,10 @@
-var CACHE_NAME = 'calc-pontos-v10';
+var CACHE_NAME = 'calc-pontos-v14';
 var ASSETS = [
   './',
   './index.html',
   './icon.svg',
+  './icon-192.png',
+  './icon-512.png',
   './manifest.json'
 ];
 
@@ -28,6 +30,8 @@ self.addEventListener('activate', function (e) {
 });
 
 self.addEventListener('fetch', function (e) {
+  // só cacheia GET do próprio app; chamadas à API do Ícarus vão direto à rede
+  if (e.request.method !== 'GET' || new URL(e.request.url).origin !== self.location.origin) return;
   e.respondWith(
     fetch(e.request).then(function (resp) {
       var clone = resp.clone();

@@ -1,47 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#12142a"/>
-      <stop offset="100%" stop-color="#0a0c14"/>
-    </linearGradient>
-    <linearGradient id="teal" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#5eead4"/>
-      <stop offset="100%" stop-color="#2dd4bf"/>
-    </linearGradient>
-    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#2dd4bf" stop-opacity=".3"/>
-      <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0"/>
-    </linearGradient>
-    <filter id="shadow">
-      <feDropShadow dx="0" dy="2" stdDeviation="8" flood-color="#2dd4bf" flood-opacity=".25"/>
-    </filter>
-  </defs>
-  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
-  <circle cx="256" cy="248" r="160" fill="none" stroke="url(#glow)" stroke-width="32"/>
-  <circle cx="256" cy="248" r="148" fill="none" stroke="#2a2d48" stroke-width="3"/>
-  <circle cx="256" cy="248" r="148" fill="none" stroke="url(#teal)" stroke-width="3" stroke-opacity=".3"/>
-  <!-- hour markers -->
-  <g stroke="url(#teal)" stroke-width="3.5" stroke-linecap="round">
-    <line x1="256" y1="108" x2="256" y2="124"/>
-    <line x1="326" y1="118" x2="319" y2="132"/>
-    <line x1="386" y1="178" x2="372" y2="185"/>
-    <line x1="396" y1="248" x2="380" y2="248"/>
-    <line x1="386" y1="318" x2="372" y2="311"/>
-    <line x1="326" y1="378" x2="319" y2="364"/>
-    <line x1="256" y1="388" x2="256" y2="372"/>
-    <line x1="186" y1="378" x2="193" y2="364"/>
-    <line x1="126" y1="318" x2="140" y2="311"/>
-    <line x1="116" y1="248" x2="132" y2="248"/>
-    <line x1="126" y1="178" x2="140" y2="185"/>
-    <line x1="186" y1="118" x2="193" y2="132"/>
+  <!-- Ícone Material You: despertador monocromático sobre o teal do seed.
+       Fundo full-bleed (mask-friendly); glifo dentro da zona segura de 80%. -->
+  <rect width="512" height="512" fill="#2dd4bf"/>
+  <g transform="translate(256 256) scale(.78) translate(-256 -256)" stroke="#00382f" stroke-width="38" stroke-linecap="round" fill="none">
+    <!-- sinos -->
+    <path d="M118 128l54-46"/>
+    <path d="M394 128l-54-46"/>
+    <!-- corpo -->
+    <circle cx="256" cy="288" r="150"/>
+    <!-- ponteiros: entrada às 8h -->
+    <path d="M256 206v82h-58"/>
+    <!-- pés -->
+    <path d="M142 452l-24 24"/>
+    <path d="M370 452l24 24"/>
   </g>
-  <!-- hour hand (pointing to ~10) -->
-  <line x1="256" y1="248" x2="196" y2="178" stroke="url(#teal)" stroke-width="7" stroke-linecap="round" filter="url(#shadow)"/>
-  <!-- minute hand (pointing to ~2) -->
-  <line x1="256" y1="248" x2="316" y2="168" stroke="url(#teal)" stroke-width="4.5" stroke-linecap="round" filter="url(#shadow)"/>
-  <!-- center dot -->
-  <circle cx="256" cy="248" r="8" fill="url(#teal)"/>
-  <circle cx="256" cy="248" r="4" fill="#0a0c14"/>
-  <!-- "PONTOS" text -->
-  <text x="256" y="440" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif" font-size="36" font-weight="700" letter-spacing="8" fill="url(#teal)" opacity=".8">PONTOS</text>
 </svg>
