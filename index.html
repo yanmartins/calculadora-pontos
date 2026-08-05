@@ -140,11 +140,6 @@
   button { font-family: inherit; }
   button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  /* ===== DAYBAR (progresso do dia no topo) ===== */
-  .daybar { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: var(--raised); z-index: 60; opacity: 0; transition: opacity .4s; }
-  .daybar.visible { opacity: 1; }
-  .daybar-fill { height: 100%; width: 0%; border-radius: 0 999px 999px 0; background: linear-gradient(90deg, var(--accent) 0%, var(--blue) 35%, var(--orange) 70%, var(--red) 100%); transition: width 1s linear; }
-
   /* ===== LAYOUT ===== */
   .app { position: relative; z-index: 1; max-width: 1600px; margin: 0 auto; padding: 20px 16px 110px; }
   .card-grid { display: flex; flex-wrap: wrap; gap: 16px; align-items: stretch; } /* cards lado a lado com a mesma altura */
@@ -152,17 +147,6 @@
 
   /* ===== HEADER (top area: marca + relógio display) ===== */
   .header { position: relative; text-align: center; padding: 14px 0 26px; }
-  /* glow granulado atrás do relógio (grainy gradient sutil) */
-  .header::before {
-    content: ''; position: absolute; inset: -24px -48px; z-index: -1; pointer-events: none;
-    background: radial-gradient(ellipse 62% 85% at 50% 32%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 72%);
-  }
-  .header::after {
-    content: ''; position: absolute; inset: -24px -48px; z-index: -1; pointer-events: none;
-    background-image: var(--grain); opacity: .06;
-    -webkit-mask-image: radial-gradient(ellipse 62% 85% at 50% 32%, #000, transparent 72%);
-    mask-image: radial-gradient(ellipse 62% 85% at 50% 32%, #000, transparent 72%);
-  }
   .brand { display: inline-flex; align-items: center; gap: 7px; font-size: .68rem; font-weight: 700; letter-spacing: .14em; color: var(--on-accent-c); background: var(--accent-soft); padding: 6px 16px; border-radius: var(--r-full); margin-bottom: 10px; }
   .brand svg { width: 14px; height: 14px; flex-shrink: 0; }
   .clock { font-family: var(--mono); font-size: 3.4rem; font-weight: 700; letter-spacing: -.02em; color: var(--text); line-height: 1.1; }
@@ -184,14 +168,14 @@
   }
   .card:hover { box-shadow: var(--shadow-hover); }
   .card-head { display: flex; align-items: center; gap: 12px; padding: 18px 20px 6px; }
-  .card-ico { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 14px; background: var(--accent-soft); color: var(--on-accent-c); flex-shrink: 0; }
+  .card-ico { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--r-sm); background: transparent; border: 2px solid var(--accent-soft); color: var(--accent); flex-shrink: 0; transition: background .3s var(--ease), border-color .3s var(--ease); }
   .card-ico svg { width: 20px; height: 20px; }
   /* cor tonal por card: âncora visual por seção (estilo Google One) */
-  #secPanorama .card-ico, #secProjecao .card-ico, #secEspelhoMetricas .card-ico, #secIcarus .card-ico { background: var(--blue-soft); color: var(--on-blue-c); }
-  #secMetas .card-ico, #secCardAbonos .card-ico, #secConfig .card-ico { background: var(--purple-soft); color: var(--on-purple-c); }
-  #secBanco .card-ico, #secCardFerias .card-ico { background: var(--green-soft); color: var(--on-green-c); }
-  #secCardFeriados .card-ico, #secSaidaDesejada .card-ico { background: var(--orange-soft); color: var(--on-orange-c); }
-  #secCardAtestados .card-ico { background: var(--red-soft); color: var(--on-red-c); }
+  #secPanorama .card-ico, #secProjecao .card-ico, #secEspelhoMetricas .card-ico, #secIcarus .card-ico, #secCardFerias .card-ico { border-color: var(--blue-soft); color: var(--blue); }
+  #secMetas .card-ico, #secCardAbonos .card-ico, #secConfig .card-ico { border-color: var(--purple-soft); color: var(--purple); }
+  #secBanco .card-ico { border-color: var(--green-soft); color: var(--green); }
+  #secCardFeriados .card-ico { border-color: var(--orange-soft); color: var(--orange); }
+  #secCardAtestados .card-ico { border-color: var(--red-soft); color: var(--red); }
   .card-titles { flex: 1; min-width: 0; }
   .card-titles h2 { font-size: 1.02rem; font-weight: 700; letter-spacing: -.01em; color: var(--text); line-height: 1.25; }
   .card-sub { font-size: .74rem; color: var(--text-2); line-height: 1.3; }
@@ -199,7 +183,7 @@
   .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
 
   /* ===== CARDS COLAPSÁVEIS (Calendário) ===== */
-  .card[data-page="calendario"], .card[data-page="banco"], .card[data-page="espelho"], .card[data-page="mais"] { flex-basis: 100%; } /* colapsados empilham em coluna única */
+  .card[data-page="hoje"], .card[data-page="calendario"], .card[data-page="banco"], .card[data-page="espelho"], .card[data-page="conta"], .card[data-page="config"] { flex-basis: 100%; } /* colapsados empilham em coluna única */
   .card.collapsible { display: grid; grid-template-rows: auto 0fr; transition: grid-template-rows .4s var(--ease), background .3s, box-shadow .3s; }
   .card.collapsible.open { grid-template-rows: auto 1fr; }
   .card.collapsible .card-head { cursor: pointer; user-select: none; }
@@ -210,14 +194,17 @@
   .card.collapsible.open .card-caret { transform: rotate(180deg); }
   /* card aberto = ícone preenchido (mesmo vocabulário da nav: filled = ativo) */
   .card.collapsible.open .card-ico .ms { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  /* container do ícone também "acende" ao abrir: soft -> cor sólida, com pop */
+  .card.collapsible.open .card-ico { background: var(--accent-soft); animation: ico-pop .4s var(--spring); }
+  #secPanorama.open .card-ico, #secProjecao.open .card-ico, #secEspelhoMetricas.open .card-ico, #secCardFerias.open .card-ico { background: var(--blue-soft); }
+  #secMetas.open .card-ico, #secCardAbonos.open .card-ico { background: var(--purple-soft); }
+  #secBanco.open .card-ico { background: var(--green-soft); }
+  #secCardFeriados.open .card-ico { background: var(--orange-soft); }
+  #secCardAtestados.open .card-ico { background: var(--red-soft); }
+  @keyframes ico-pop { 0% { transform: scale(.8); } 55% { transform: scale(1.12); } 100% { transform: none; } }
 
   /* ===== CHIPS ===== */
   .chip { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: .72rem; font-weight: 600; color: var(--on-blue-c); background: var(--blue-soft); padding: 5px 12px; border-radius: var(--r-full); white-space: nowrap; }
-  .day-badge { display: inline-flex; align-items: center; gap: 6px; font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 6px 14px; border-radius: var(--r-full); }
-  .day-badge.util { color: var(--on-green-c); background: var(--green-soft); }
-  .day-badge.fds { color: var(--on-purple-c); background: var(--purple-soft); }
-  .day-badge.feriado { color: var(--on-orange-c); background: var(--orange-soft); }
-  .day-badge-row { display: flex; justify-content: center; margin-bottom: 14px; }
   .nolunch-chip { display: inline-block; font-family: var(--mono); font-size: .58rem; font-weight: 700; color: var(--on-orange-c); background: var(--orange-soft); padding: 2px 8px; border-radius: var(--r-full); letter-spacing: .03em; text-transform: uppercase; vertical-align: middle; margin-left: 5px; }
   .bank-stale { display: inline-block; margin-top: 10px; font-size: .7rem; font-weight: 600; color: var(--on-orange-c); background: var(--orange-soft); padding: 4px 12px; border-radius: var(--r-full); }
 
@@ -282,16 +269,7 @@
   .saldo-row .btn-add .ms { font-size: 20px; }
 
   /* ===== PANORAMA: progresso + tiles + saída ===== */
-  .dash-progress { margin: 4px 0 16px; }
-  .dash-prog-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; gap: 8px; }
-  .dash-prog-label { font-size: .78rem; font-weight: 700; color: var(--text-1); }
-  .dash-prog-rem { font-family: var(--mono); font-size: .82rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
-  /* linear progress M3: 8dp (expressive thick), trilho primaryContainer, gap 4dp, stop indicator 4dp primary */
-  .dash-bar { height: 8px; background: var(--accent-soft); border: none; border-radius: var(--r-full); overflow: hidden; position: relative; }
-  .dash-bar::after { content: ''; position: absolute; right: 4px; top: 50%; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); transform: translateY(-50%); }
-  .dash-bar.complete::after { display: none; } /* stop indicator some quando o progresso o alcança */
-  .dash-bar-fill { height: 100%; border-radius: var(--r-full); border-right: 4px solid var(--surface); background-clip: padding-box; transition: width 1s linear, background .4s; min-width: 8px; }
-  .dash-hint, .board-empty, .empty-hint { padding: 16px 12px; text-align: center; color: var(--text-2); font-size: .88rem; }
+  .board-empty, .empty-hint { padding: 16px 12px; text-align: center; color: var(--text-2); font-size: .88rem; }
   .empty-hint { padding: 8px 0; font-style: italic; text-align: left; }
   /* tile "panorama": valor grande e bold, label embaixo, ícone no canto —
      padrão replicado nos slots de batida e no saldo. auto-fit quebra p/ 2x2 sem espremer. */
@@ -363,6 +341,12 @@
 
   /* ===== TILES DE ESTATÍSTICA (Resumo do período) ===== */
   .cal-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  /* contagem regressiva: rótulo em cima + detalhe, 2 colunas que preenchem a largura */
+  .cd-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  @media (max-width: 520px) { .cd-grid { grid-template-columns: 1fr; } }
+  /* tiles .cal-stat idênticos aos outros boxes; a cor vai só no fundo do box */
+  .cal-stat.cd-holiday { background: var(--orange-soft); }
+  .cal-stat.cd-ferias { background: var(--blue-soft); }
   .cal-summary .cal-stat:nth-child(5) { grid-column: 1 / -1; }
   .cal-stat { text-align: center; padding: 14px 6px 12px; background: var(--raised); border: none; border-radius: var(--r-lg); transition: background .3s; }
   .cal-stat-val { font-family: var(--mono); font-size: 1.5rem; font-weight: 800; }
@@ -392,10 +376,6 @@
   .range-item-icon { width: 16px; height: 16px; color: var(--purple); flex-shrink: 0; }
   .range-item-text { flex: 1; }
   .range-item-days { font-family: var(--mono); font-size: .78rem; color: var(--blue); font-weight: 500; }
-  .reverse-results { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
-  .reverse-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: var(--r-md); background: var(--raised); }
-  .reverse-label { font-size: .88rem; color: var(--text-1); }
-  .reverse-time { font-family: var(--mono); font-size: 1.1rem; font-weight: 700; color: var(--blue); }
   .config-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 10px; }
   .config-row:last-child { border-bottom: none; }
   .config-label { font-size: .88rem; color: var(--text-1); }
@@ -429,7 +409,7 @@
   .bank-sec-title { font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin: 16px 0 4px; }
 
   /* ===== PROJEÇÃO ===== */
-  .proj-config { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .proj-config { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
   .proj-reset { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; min-height: 40px; background: none; border: none; color: var(--text-3); cursor: pointer; font-size: 1rem; padding: 0; line-height: 1; }
   .proj-reset:hover { color: var(--red); }
   /* projeção em tabela (mesma família do Espelho) */
@@ -457,7 +437,64 @@
   .proj-warn { font-size: .88rem; color: var(--on-red-c); margin-bottom: 8px; padding: 10px 14px; background: var(--red-soft); border-radius: var(--r-sm); font-weight: 600; }
   @media (max-width: 480px) { .proj-config { grid-template-columns: 1fr 1fr; } }
 
+  /* ===== DIALOG + SCRIM (login obrigatório) ===== */
+  .scrim { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px;
+    background: color-mix(in srgb, #000 45%, transparent); animation: scrim-in .2s var(--ease); }
+  .scrim[hidden] { display: none; }
+  @keyframes scrim-in { from { opacity: 0; } }
+  .dialog { width: 100%; max-width: 360px; background: var(--surface); border-radius: var(--r-xl); padding: 24px;
+    box-shadow: var(--shadow-hover); text-align: center; animation: dialog-in .35s var(--spring); }
+  @keyframes dialog-in { from { opacity: 0; transform: scale(.85) translateY(12px); } }
+  .dialog-ico { font-size: 28px; color: var(--on-accent-c); background: var(--accent-soft); width: 56px; height: 56px;
+    display: inline-flex; align-items: center; justify-content: center; border-radius: var(--r-full); margin-bottom: 12px;
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .dialog-title { font-size: 1.3rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .dialog-sub { font-size: .85rem; color: var(--text-2); margin-bottom: 16px; }
+  .dialog-fields { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+  .dialog-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+  .btn-text { padding: 12px 18px; border: none; border-radius: var(--r-full); background: transparent; color: var(--accent);
+    font-family: inherit; font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .2s; }
+  .btn-text:hover { background: var(--accent-soft); }
+  .btn-dlg { width: auto; margin: 0; padding: 12px 22px; }
+  .btn-dlg:disabled { opacity: .5; cursor: default; }
+  .dialog-note { font-size: .72rem; color: var(--text-3); margin-top: 14px; line-height: 1.4; }
+  #dlgLoginStatus { min-height: 0; margin-top: 10px; }
+  #dlgLoginStatus:empty { display: none; }
+
+
+  /* ===== TELA DE CONTA (dedicada, fora da nav) ===== */
+  .page-conta, .page-back-bar { background: transparent !important; box-shadow: none !important; padding: 0; }
+  .conta-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; color: var(--accent);
+    font-family: inherit; font-size: .92rem; font-weight: 700; cursor: pointer; padding: 6px 10px 6px 4px; border-radius: var(--r-full); transition: background .2s; }
+  .conta-back:hover { background: var(--accent-soft); }
+  .conta-back .ms { font-size: 20px; }
+
+  /* ===== CONTA (ícone no header) ===== */
+  /* abinha flutuante de vidro que acompanha a rolagem (fixed, sem jank) */
+  .header-actions { position: fixed; top: calc(8px + env(safe-area-inset-top, 0px)); right: 10px; z-index: 55; display: flex; gap: 2px; padding: 4px;
+    border-radius: var(--r-full); background: color-mix(in srgb, var(--surface) 72%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5); box-shadow: var(--shadow); }
+  @media (prefers-reduced-transparency: reduce) { .header-actions { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; } }
+  [data-theme="contrast"] .header-actions { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; border: 2px solid var(--border); }
+  .acct-btn { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border: none; border-radius: var(--r-full); background: transparent; color: var(--text-2); cursor: pointer; transition: background .2s, color .2s, transform .35s var(--spring); }
+  .acct-btn .ms { font-size: 22px; transition: font-variation-settings .3s var(--ease); }
+  .acct-btn:hover { background: var(--accent-soft); color: var(--on-accent-c); }
+  .acct-btn:active { transform: scale(.9); }
+  /* mesma animação de "pop" do ícone ativo da barra inferior */
+  .acct-btn.pop .ms { animation: nav-pop .4s var(--spring); }
+  .acct-btn.logged { background: var(--accent-soft); color: var(--on-accent-c); }
+  .acct-btn.logged .ms { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+
   /* ===== ESPELHO (batidas do período) ===== */
+  .esp-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+  .esp-nav-label { display: flex; flex-direction: column; gap: 2px; text-align: center; flex: 1; }
+  .esp-nav-name { font-size: .98rem; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; color: var(--accent); }
+  .esp-nav-dates { font-family: var(--mono); font-size: .8rem; font-weight: 700; color: var(--text-2); }
+  .esp-nav-btn { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: none; border-radius: var(--r-full); background: var(--accent-soft); color: var(--on-accent-c); cursor: pointer; transition: background .2s, opacity .2s; flex-shrink: 0; }
+  .esp-nav-btn .ms { font-size: 22px; }
+  .esp-nav-btn:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+  .esp-nav-btn:disabled { opacity: .3; cursor: default; background: var(--raised); }
   .esp-scroll { overflow-x: auto; margin: 0 -4px; padding: 0 4px; }
   .esp-table { width: 100%; border-collapse: collapse; font-size: .95rem; }
   .esp-table th { font-size: .74rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--text-2); text-align: left; padding: 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
@@ -469,6 +506,13 @@
   .esp-td-bat { font-family: var(--mono); color: var(--text-2); font-size: .9rem; }
   .esp-td-num { font-family: var(--mono); font-weight: 600; color: var(--text); text-align: left; white-space: nowrap; }
   .esp-tr-falta td { background: color-mix(in srgb, var(--red) 6%, transparent); }
+  .esp-tr-abono td { background: color-mix(in srgb, var(--green) 6%, transparent); }
+  .esp-tr-descanso td { background: color-mix(in srgb, var(--purple) 5%, transparent); }
+  .esp-tr-descanso .esp-td-dia, .esp-tr-descanso .esp-td-num { opacity: .6; }
+  .esp-tag { display: inline-block; font-size: .68rem; font-weight: 700; padding: 3px 10px; border-radius: var(--r-full); }
+  .esp-tag-falta { color: var(--on-red-c); background: var(--red-soft); text-transform: uppercase; }
+  .esp-tag-abono { color: var(--on-green-c); background: var(--green-soft); }
+  .esp-tag-descanso { color: var(--on-purple-c); background: var(--purple-soft); }
   .esp-falta-txt { color: var(--red); font-weight: 700; text-transform: uppercase; font-size: .72rem; }
   @media (max-width: 420px) {
     .esp-table { font-size: .84rem; }
@@ -625,7 +669,7 @@
     .brand { font-size: .58rem; }
     .timer { font-size: .7rem; }
     .card-head { padding: 14px 14px 2px; gap: 10px; }
-    .card-ico { width: 34px; height: 34px; border-radius: 12px; }
+    .card-ico { width: 34px; height: 34px; border-radius: var(--r-sm); }
     .card-ico svg { width: 17px; height: 17px; }
     .card-titles h2 { font-size: .92rem; }
     .card-body { padding: 10px 14px 14px; }
@@ -676,13 +720,61 @@
     .app { padding: 36px 32px 120px; }
     .card-grid { gap: 18px; }
   }
+  /* ============================================================
+     >>> TESTE: TYPE SCALE M3 EXATA (tabela sp baseline) <<<
+     Para reverter: apagar deste marcador até o marcador de fim.
+     Numerais mantêm peso forte = variantes "emphasized" (spec).
+     ============================================================ */
+  :root {
+    --tt-d-l: 3.5625rem; /* display-large 57sp */
+    --tt-d-s: 2.25rem;   /* display-small 36sp */
+    --tt-h-s: 1.5rem;    /* headline-small 24sp */
+    --tt-t-l: 1.375rem;  /* title-large 22sp */
+    --tt-t-m: 1rem;      /* title-medium 16sp */
+    --tt-t-s: .875rem;   /* title-small 14sp */
+    --tt-b-l: 1rem;      /* body-large 16sp */
+    --tt-b-m: .875rem;   /* body-medium 14sp */
+    --tt-b-s: .75rem;    /* body-small 12sp */
+    --tt-l-l: .875rem;   /* label-large 14sp */
+    --tt-l-m: .75rem;    /* label-medium 12sp */
+    --tt-l-s: .6875rem;  /* label-small 11sp */
+  }
+  .card-titles h2 { font-size: var(--tt-t-m); font-weight: 500; letter-spacing: .009375rem; }
+  .card-sub { font-size: var(--tt-b-m); }
+  .btn-primary, .btn-add, .btn-config, .proj-falta-btn, .theme-btn { font-size: var(--tt-l-l); font-weight: 500; letter-spacing: .00625rem; }
+  .nav-item { font-size: var(--tt-l-m); letter-spacing: .03125rem; }
+  .chip { font-size: var(--tt-l-l); font-weight: 500; }
+  .tl-badge, .nolunch-chip, .bank-stale, .proj-fds-badge, .holiday-period-badge, .abono-period-badge { font-size: var(--tt-l-s); }
+  .field input, .field select, .meta-add input, .proj-table input[type="time"], .proj-table input[type="number"], .holiday-date-edit, .icarus-mini-input { font-size: var(--tt-b-l); letter-spacing: .03125rem; }
+  .field label { font-size: var(--tt-b-s); font-weight: 400; }
+  .holiday-item, .range-item, .abono-item, .reverse-label, .config-label { font-size: var(--tt-b-l); }
+  .tl-name { font-size: var(--tt-t-s); font-weight: 500; }
+  .tl-dur, .reverse-time { font-size: var(--tt-b-m); }
+  .esp-table { font-size: var(--tt-b-m); }
+  .esp-td-bat { font-size: var(--tt-b-m); }
+  .esp-table th { font-size: var(--tt-l-m); }
+  .clock { font-size: var(--tt-d-l); }
+  .bank-hero-val { font-size: var(--tt-d-s); }
+  .dash-tile-val, .punch-slot input, .cal-stat-val { font-size: var(--tt-h-s); }
+  .tl-time { font-size: var(--tt-t-l); }
+  .timer, .brand { font-size: var(--tt-l-m); }
+  .bank-sec-title, .dash-tile-lbl, .punch-lbl, .cal-stat-lbl, .esp-td-dia small { font-size: var(--tt-l-s); letter-spacing: .03125rem; }
+  .meta-add-hint, .icarus-status, .empty-hint, .board-empty { font-size: var(--tt-b-s); }
+  /* >>> FIM DO TESTE DE TYPE SCALE <<< */
+
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; animation-iteration-count: 1 !important; } }
 </style>
 
-<div class="daybar" id="daybar"><div class="daybar-fill" id="daybarFill"></div></div>
-
 <div class="app">
   <header class="header">
+    <div class="header-actions">
+      <button class="acct-btn" id="cfgBtn" aria-label="Prefer&ecirc;ncias" onclick="openConfig()">
+        <span class="ms" aria-hidden="true">settings</span>
+      </button>
+      <button class="acct-btn" id="acctBtn" aria-label="Conta &Iacute;carus" onclick="icarusAccount()">
+        <span class="ms" id="acctIco" aria-hidden="true">login</span>
+      </button>
+    </div>
     <div class="brand">
       <span class="ms" aria-hidden="true">schedule</span>
       CALCULADORA DE PONTOS
@@ -696,8 +788,8 @@
   <!-- ================= HOJE ================= -->
 
   <!-- Card 1: Registro -->
-  <section class="card page-active" id="secRegistro" data-page="hoje">
-    <header class="card-head">
+  <section class="card collapsible open page-active" id="secRegistro" data-page="hoje">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="true" onclick="toggleCard('secRegistro')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secRegistro');}">
       <span class="card-ico">
         <span class="ms" aria-hidden="true">schedule</span>
       </span>
@@ -706,9 +798,9 @@
         <p class="card-sub">Batidas de hoje e saldo do &Iacute;carus</p>
       </div>
       <span class="chip" id="todayLabel"></span>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
     </header>
     <div class="card-body">
-      <div class="day-badge-row"><span class="day-badge util" id="dayBadge">Dia &uacute;til</span></div>
       <div class="punch-row">
         <label class="punch-slot" id="slot-entrada">
           <span class="ms" aria-hidden="true">login</span>
@@ -743,13 +835,13 @@
           Sincronizar
         </button>
       </div>
-      <div class="icarus-status" id="icarusSyncStatus"></div>
+      <div class="icarus-status" id="icarusSyncStatus" role="status"></div>
     </div>
   </section>
 
   <!-- Card 2: Panorama -->
-  <section class="card page-active" id="secPanorama" data-page="hoje">
-    <header class="card-head">
+  <section class="card collapsible open page-active" id="secPanorama" data-page="hoje">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="true" onclick="toggleCard('secPanorama')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secPanorama');}">
       <span class="card-ico">
         <span class="ms" aria-hidden="true">monitoring</span>
       </span>
@@ -757,9 +849,9 @@
         <h2>Panorama</h2>
         <p class="card-sub">Progresso do dia e previs&atilde;o de sa&iacute;da</p>
       </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
     </header>
     <div class="card-body">
-      <div class="dash-progress" id="dashProgress"></div>
       <div class="dash-tiles">
         <div class="dash-tile t-work">
           <span class="ms dash-tile-ico" aria-hidden="true">schedule</span>
@@ -786,8 +878,8 @@
   </section>
 
   <!-- Card 3: Metas de saída -->
-  <section class="card page-active" id="secMetas" data-page="hoje">
-    <header class="card-head">
+  <section class="card collapsible open page-active" id="secMetas" data-page="hoje">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="true" onclick="toggleCard('secMetas')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secMetas');}">
       <span class="card-ico">
         <span class="ms" aria-hidden="true">flag</span>
       </span>
@@ -795,6 +887,7 @@
         <h2>Metas de sa&iacute;da</h2>
         <p class="card-sub">Hor&aacute;rios-alvo a partir da sua entrada</p>
       </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
     </header>
     <div class="card-body">
       <div id="board">
@@ -847,6 +940,7 @@
         <div class="field"><label><span class="ms" aria-hidden="true">login</span>Entrada padr&atilde;o</label><input type="time" id="projEntrada" value="08:00" onblur="renderProjection()"></div>
         <div class="field"><label><span class="ms" aria-hidden="true">logout</span>Sa&iacute;da m&aacute;xima</label><input type="time" id="projSaidaMax" value="18:00" onblur="renderProjection()"></div>
         <div class="field"><label><span class="ms" aria-hidden="true">restaurant</span>Almo&ccedil;o (min)</label><input type="number" id="projAlmoco" value="60" min="0" max="180" onblur="renderProjection()"></div>
+        <div class="field"><label><span class="ms" aria-hidden="true">flag</span>Saldo-alvo</label><input type="text" id="projAlvo" value="0" placeholder="0 = zerar" onblur="renderProjection()"></div>
       </div>
       <div id="projResult"></div>
     </div>
@@ -868,6 +962,20 @@
     </header>
     <div class="card-body">
       <div class="cal-summary" id="calSummary"></div>
+    </div>
+  </section>
+
+  <section class="card collapsible" id="secCountdown" data-page="calendario">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secCountdown')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secCountdown');}">
+      <span class="card-ico"><span class="ms" aria-hidden="true">event_upcoming</span></span>
+      <div class="card-titles">
+        <h2>Contagem regressiva</h2>
+        <p class="card-sub">Pr&oacute;ximo feriado e f&eacute;rias</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div class="cd-grid" id="hojeCountdown"></div>
     </div>
   </section>
 
@@ -968,10 +1076,14 @@
         <h2>M&eacute;tricas do per&iacute;odo</h2>
         <p class="card-sub">M&eacute;dias calculadas das suas batidas reais</p>
       </div>
-      <span class="chip" id="espelhoPeriodLabel"></span>
       <span class="ms card-caret" aria-hidden="true">expand_more</span>
     </header>
     <div class="card-body">
+      <div class="esp-nav">
+        <button class="esp-nav-btn" id="espelhoPrev" aria-label="Per&iacute;odo anterior" onclick="espelhoNav(-1)"><span class="ms" aria-hidden="true">chevron_left</span></button>
+        <span class="esp-nav-label" id="espelhoPeriodLabel"></span>
+        <button class="esp-nav-btn" id="espelhoNext" aria-label="Pr&oacute;ximo per&iacute;odo" onclick="espelhoNav(1)"><span class="ms" aria-hidden="true">chevron_right</span></button>
+      </div>
       <div class="cal-summary" id="espelhoMetrics"></div>
     </div>
   </section>
@@ -988,34 +1100,18 @@
     </header>
     <div class="card-body">
       <div id="espelhoList"></div>
-      <div class="icarus-status" id="espelhoStatus"></div>
+      <div class="icarus-status" id="espelhoStatus" role="status"></div>
     </div>
   </section>
 
-  <section class="card collapsible" id="secSaidaDesejada" data-page="mais">
-    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secSaidaDesejada')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secSaidaDesejada');}">
-      <span class="card-ico">
-        <span class="ms" aria-hidden="true">adjust</span>
-      </span>
-      <div class="card-titles">
-        <h2>Sa&iacute;da desejada</h2>
-        <p class="card-sub">A que horas entrar para sair no hor&aacute;rio que voc&ecirc; quer</p>
-      </div>
-      <span class="ms card-caret" aria-hidden="true">expand_more</span>
-    </header>
-    <div class="card-body">
-      <div class="field">
-        <label for="saidaDesejada"><span class="ms" aria-hidden="true">schedule</span>Quero sair &agrave;s</label>
-        <input type="time" id="saidaDesejada">
-      </div>
-      <div class="reverse-results" id="reverseResults"></div>
-    </div>
-  </section>
 
-  <!-- ================= MAIS ================= -->
+  <!-- ================= CONTA / CONFIG ================= -->
 
-  <section class="card collapsible" id="secIcarus" data-page="mais">
-    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secIcarus')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secIcarus');}">
+  <div class="card page-conta" data-page="conta">
+    <button class="conta-back" onclick="screenBack()"><span class="ms" aria-hidden="true">arrow_back</span> Voltar</button>
+  </div>
+  <section class="card" id="secIcarus" data-page="conta">
+    <header class="card-head">
       <span class="card-ico">
         <span class="ms" aria-hidden="true">cloud</span>
       </span>
@@ -1024,7 +1120,6 @@
         <p class="card-sub">Busca batidas e saldo automaticamente</p>
       </div>
       <span class="chip" id="icarusHeadStatus"></span>
-      <span class="ms card-caret" aria-hidden="true">expand_more</span>
     </header>
     <div class="card-body">
       <div id="icarusLoginForm">
@@ -1055,12 +1150,15 @@
           <button class="btn-config" onclick="icarusSync()">Sincronizar</button>
         </div>
       </div>
-      <div class="icarus-status" id="icarusLoginStatus"></div>
+      <div class="icarus-status" id="icarusLoginStatus" role="status"></div>
     </div>
   </section>
 
-  <section class="card collapsible" id="secConfig" data-page="mais">
-    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secConfig')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secConfig');}">
+  <div class="card page-back-bar" data-page="config">
+    <button class="conta-back" onclick="screenBack()"><span class="ms" aria-hidden="true">arrow_back</span> Voltar</button>
+  </div>
+  <section class="card" id="secConfig" data-page="config">
+    <header class="card-head">
       <span class="card-ico">
         <span class="ms" aria-hidden="true">settings</span>
       </span>
@@ -1068,7 +1166,6 @@
         <h2>Prefer&ecirc;ncias</h2>
         <p class="card-sub">Tema, notifica&ccedil;&otilde;es e backup</p>
       </div>
-      <span class="ms card-caret" aria-hidden="true">expand_more</span>
     </header>
     <div class="card-body">
       <div class="config-row">
@@ -1092,14 +1189,38 @@
       <div class="config-row">
         <span class="config-label">Backup dos dados</span>
         <div class="config-actions">
-          <button class="btn-config" onclick="exportData()">Exportar</button>
-          <button class="btn-config" onclick="importData()">Importar</button>
-          <input type="file" id="importFile" accept=".json" style="display:none">
+          <button class="btn-config" id="btnCopyBackup" onclick="copyBackup()">Copiar</button>
+          <button class="btn-config" onclick="pasteBackup()">Colar</button>
         </div>
       </div>
     </div>
   </section>
 
+  </div>
+</div>
+
+<!-- DIALOG: login obrigatório (aparece quando uma ação exige conexão) -->
+<div class="scrim" id="loginScrim" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="loginDlgTitle">
+    <span class="ms dialog-ico" aria-hidden="true">cloud</span>
+    <h2 class="dialog-title" id="loginDlgTitle">Conectar ao &Iacute;carus</h2>
+    <p class="dialog-sub">Isso precisa da sua conta &Iacute;carus.</p>
+    <div class="dialog-fields">
+      <div class="field">
+        <label for="dlgUser"><span class="ms" aria-hidden="true">person</span>Usu&aacute;rio</label>
+        <input type="text" id="dlgUser" autocomplete="username" autocapitalize="none">
+      </div>
+      <div class="field">
+        <label for="dlgPass"><span class="ms" aria-hidden="true">lock</span>Senha</label>
+        <input type="password" id="dlgPass" autocomplete="current-password" onkeydown="if(event.key==='Enter')icarusDlgLogin()">
+      </div>
+    </div>
+    <div class="icarus-status" id="dlgLoginStatus" role="status"></div>
+    <div class="dialog-actions">
+      <button class="btn-text" onclick="loginClose()">Cancelar</button>
+      <button class="btn-primary btn-dlg" id="dlgLoginBtn" onclick="icarusDlgLogin()">Conectar</button>
+    </div>
+    <p class="dialog-note">A senha n&atilde;o &eacute; armazenada — s&oacute; o token fica neste dispositivo.</p>
   </div>
 </div>
 
@@ -1120,10 +1241,6 @@
   <button class="nav-item" data-page="espelho" onclick="switchPage('espelho')">
     <span class="nav-pill"><span class="ms" aria-hidden="true">text_compare</span></span>
     <span class="nav-lbl">Espelho</span>
-  </button>
-  <button class="nav-item" data-page="mais" onclick="switchPage('mais')">
-    <span class="nav-pill"><span class="ms" aria-hidden="true">more_horiz</span></span>
-    <span class="nav-lbl">Mais</span>
   </button>
 </nav>
 
@@ -1177,6 +1294,11 @@
     var t = new Date(), y = t.getFullYear(), m = t.getMonth(), d = t.getDate();
     if (d >= 26) return { inicio: new Date(y,m,26), fim: new Date(y,m+1,25) };
     return { inicio: new Date(y,m-1,26), fim: new Date(y,m,25) };
+  }
+  // período deslocado n ciclos do atual (n negativo = passado); início dia 26, fim dia 25
+  function periodByOffset(n) {
+    var c = getCurrentPeriod(), i = c.inicio, f = c.fim;
+    return { inicio: new Date(i.getFullYear(), i.getMonth()+n, 26), fim: new Date(f.getFullYear(), f.getMonth()+n, 25) };
   }
 
   // ===== EASTER =====
@@ -1322,7 +1444,6 @@
       saidaAlmocoT: parseTime($('saidaAlmoco').value),
       voltaAlmocoT: parseTime($('voltaAlmoco').value),
       saidaReal: parseTime($('saidaReal').value),
-      saidaDesejada: parseTime($('saidaDesejada').value),
       saldoIcarus: parseSaldo($('saldoIcarus').value),
       diasUteis:cal.diasUteis, diasTrab:cal.diasTrab,
       diasAtest:cal.diasAtest, diasFerias:cal.diasFerias, diasAbono:cal.diasAbono,
@@ -1423,7 +1544,6 @@
     var lbl = fmtDateBr(toStr(period.inicio))+' — '+fmtDateBr(toStr(period.fim));
     $('periodLabel').textContent = lbl;
     $('bankPeriodLabel').textContent = lbl;
-    $('espelhoPeriodLabel').textContent = lbl;
   }
 
   function renderCalSummary(st) {
@@ -1537,15 +1657,6 @@
     setHTML(board,html);
   }
 
-  function renderReverse(st) {
-    var c=$('reverseResults');
-    if(st.saidaDesejada==null){setHTML(c,'');return;}
-    var show=TARGETS.filter(function(t){return t.id==='okr'||t.id==='completo'||t.id==='limite';});
-    setHTML(c,show.map(function(t){
-      var entry=st.saidaDesejada-t.mins-st.almoco;
-      return '<div class="reverse-item"><span class="reverse-label">'+t.label+' · '+t.desc+'</span><span class="reverse-time">'+fmtTime(entry)+'</span></div>';
-    }).join(''));
-  }
 
   function renderBank(st) {
     var c=$('bankResults'),bank=calcBank(st);
@@ -1604,7 +1715,7 @@
   }
 
   function renderDash(st) {
-    var trabEl=$('trabalhado'), restEl=$('dashRestante'), intEl=$('dashIntervalo'), bancoEl=$('dashBanco'), prog=$('dashProgress');
+    var trabEl=$('trabalhado'), restEl=$('dashRestante'), intEl=$('dashIntervalo'), bancoEl=$('dashBanco');
 
     // Banco (independe da entrada; depende do saldo Icarus)
     var bank=calcBank(st);
@@ -1619,7 +1730,6 @@
       trabEl.textContent='--:--';
       restEl.textContent='--:--'; restEl.className='dash-tile-val';
       intEl.textContent='--:--';
-      setHTML(prog,'<div class="dash-hint">Bata a entrada para ver sua previs&atilde;o</div>');
       return;
     }
     // fim do dia: saída batida congela o cálculo; almoço em andamento não conta como trabalho
@@ -1638,24 +1748,6 @@
     restEl.className='dash-tile-val'+(restante<=0?' positive':'');
     intEl.textContent=fmtDur(lunch);
 
-    // progresso até o próximo alvo
-    var tg=getTargets(), nextTarget=null;
-    for(var i=0;i<tg.length;i++){ if(tg[i].mins>worked){ nextTarget=tg[i]; break; } }
-    if(!nextTarget) nextTarget=tg[tg.length-1];
-    var pct=Math.min(100,(worked/nextTarget.mins)*100);
-    var remaining=Math.max(0,nextTarget.mins-worked);
-    var reached=worked>=nextTarget.mins;
-    var fill;
-    if(worked>=648) fill='var(--red)';
-    else if(reached) fill='var(--green)';
-    else if(pct>=80) fill='linear-gradient(90deg,var(--accent),var(--green))';
-    else fill='linear-gradient(90deg,var(--accent),var(--blue))';
-    setHTML(prog,
-      '<div class="dash-prog-head">'+
-        '<span class="dash-prog-label">Progresso &middot; '+nextTarget.label+'</span>'+
-        '<span class="dash-prog-rem">'+(reached?'alvo atingido &#10003;':'faltam '+fmtRem(remaining)+' &middot; '+(Math.round(pct*10)/10)+'%')+'</span>'+
-      '</div>'+
-      '<div class="dash-bar'+(pct>=98?' complete':'')+'"><div class="dash-bar-fill" style="width:'+pct.toFixed(1)+'%;background:'+fill+'"></div></div>');
   }
 
   function updateClock() {
@@ -1671,16 +1763,6 @@
     if(now<entry){$('timer').textContent='';return;}
     var e=now-entry;
     $('timer').textContent='No local há '+Math.floor(e/3600)+':'+String(Math.floor((e%3600)/60)).padStart(2,'0')+':'+String(e%60).padStart(2,'0');
-  }
-  function updateDaybar(st) {
-    var bar=$('daybar'),fill=$('daybarFill');
-    if(st.entrada==null){bar.classList.remove('visible');return;}
-    bar.classList.add('visible');
-    var exits=calcExits(st);if(!exits.length)return;
-    var last=exits[exits.length-1].exit,now=nowMins();
-    if(now<=st.entrada){fill.style.width='0%';return;}
-    if(now>=last){fill.style.width='100%';return;}
-    fill.style.width=Math.min(100,Math.max(0,((now-st.entrada)/(last-st.entrada))*100)).toFixed(1)+'%';
   }
 
   // ===== PROJECAO =====
@@ -1739,7 +1821,8 @@
     });
     var totalExpected=0;
     dayConfigs.forEach(function(dc){totalExpected+=dc.expected;});
-    var totalWorkNeeded=totalExpected-saldoPos;
+    var alvo=parseSaldo($("projAlvo").value)||0;
+    var totalWorkNeeded=totalExpected-saldoPos+alvo;
     var lockedWork=0,freeConfigs=[],freeIndices=[];
     var allocated=dayConfigs.map(function(){return 0;});
     dayConfigs.forEach(function(dc,i){
@@ -1776,7 +1859,7 @@
     var dayConfigs=proj.dayConfigs,allocated=proj.allocated,saldoPos=proj.saldoPos,todayStr=proj.todayStr;
     var weekDays=['dom','seg','ter','qua','qui','sex','sáb'];
     var html='<div class="esp-scroll proj-scroll"><table class="esp-table proj-table"><thead><tr>'+
-      '<th>Dia</th><th>Entrada</th><th>Almo&ccedil;o</th><th>Sa&iacute;da</th><th>Trabalho</th><th>Saldo</th><th></th></tr></thead><tbody>',totalAlloc=0;
+      '<th scope="col">Dia</th><th scope="col">Entrada</th><th scope="col">Almo&ccedil;o</th><th scope="col">Sa&iacute;da</th><th scope="col">Trabalho</th><th scope="col">Saldo</th><th scope="col"></th></tr></thead><tbody>',totalAlloc=0;
     var runningSaldo=saldoPos; // mesma régua do card Banco: saldo pós abono, meta líquida de 8h/dia
     dayConfigs.forEach(function(dc,i){
       var work=Math.max(0,allocated[i]);totalAlloc+=work;
@@ -1810,9 +1893,11 @@
     var saldoFinal=Math.round(saldoPos);
     dayConfigs.forEach(function(dc,i){saldoFinal+=Math.round(allocated[i]-dc.expected);});
     var deficit=proj.deficit;
+    var alvoFinal=parseSaldo($('projAlvo').value)||0;
+    var metaTxt=alvoFinal===0?'zerar':'atingir '+fmtSaldo(alvoFinal);
     html+='<div class="proj-summary">';
-    if(deficit>1)html+='<div class="proj-warn">Não é possível zerar com a saída máxima atual. Déficit: '+fmtDur(deficit)+'</div>';
-    html+='<div class="proj-final"><span>Saldo projetado</span><span class="'+(Math.abs(saldoFinal)<2?'positive':saldoFinal>=0?'positive':'negative')+'">'+fmtSaldo(saldoFinal)+'</span></div>';
+    if(deficit>1)html+='<div class="proj-warn">Não é possível '+metaTxt+' com a saída máxima atual. Déficit: '+fmtDur(deficit)+'</div>';
+    html+='<div class="proj-final"><span>Saldo projetado</span><span class="'+(Math.abs(saldoFinal-alvoFinal)<2?'positive':saldoFinal>=alvoFinal?'positive':'negative')+'">'+fmtSaldo(saldoFinal)+'</span></div>';
     html+='</div>';
     c.innerHTML=html;
     projRendering=false;
@@ -1837,28 +1922,13 @@
     renderProjection();
   };
 
-  // ===== DAY BADGE =====
-  function updateDayBadge() {
-    var el=$('dayBadge'); if(!el) return;
-    var d=new Date(), ds=toStr(d);
-    var hd=getActiveHolidayDates();
-    if(hd[ds]){
-      var name='Feriado';
-      holidays.concat(customHolidays).forEach(function(h){ if(h.date===ds) name=h.name; });
-      el.textContent=name; el.className='day-badge feriado';
-    } else if(isWeekend(d)){
-      el.textContent='Fim de semana'; el.className='day-badge fds';
-    } else {
-      el.textContent='Dia útil'; el.className='day-badge util';
-    }
-  }
 
   // ===== MAIN RENDER =====
   function render() {
     var st=getState();
-    renderCalSummary(st);renderDash(st);renderBoard(st);renderReverse(st);
+    renderCalSummary(st);renderDash(st);renderBoard(st);renderHojeCountdown();
     renderBank(st);updatePunchSlots();
-    updateDaybar(st);checkNotifications(st);save();
+    checkNotifications(st);save();
   }
   function renderFeriasSlots() {
     var html='';
@@ -1879,7 +1949,7 @@
     $('feriasSlots').innerHTML=html;
   }
   function renderAll() {
-    initHolidays();updateDayBadge();renderPeriodLabel();renderHolidays();renderFeriasSlots();
+    initHolidays();renderPeriodLabel();renderHolidays();renderFeriasSlots();
     renderRangeList('atestadoList',atestados,'removeAtestado',svgAtest);
     renderAbonos();render();renderProjection();
   }
@@ -1899,9 +1969,9 @@
       var st = JSON.parse(localStorage.getItem('calc-cards') || '{}');
       Object.keys(st).forEach(function (k) {
         var c = $(k);
-        if (st[k] && c && c.classList.contains('collapsible')) {
-          c.classList.add('open');
-          var h = c.querySelector('.card-head'); if (h) h.setAttribute('aria-expanded', 'true');
+        if (c && c.classList.contains('collapsible')) {
+          c.classList.toggle('open', !!st[k]);
+          var h = c.querySelector('.card-head'); if (h) h.setAttribute('aria-expanded', st[k] ? 'true' : 'false');
         }
       });
     } catch (e) {}
@@ -1970,18 +2040,34 @@
   window.removeAbono = function(idx){abonos.splice(idx,1);renderAll();};
 
   // ===== EXPORT / IMPORT =====
-  window.exportData = function(){
+  window.copyBackup = function(){
     save();
     var data=localStorage.getItem('calc-pontos');
-    if(!data){alert('Nenhum dado para exportar');return;}
-    var blob=new Blob([data],{type:'application/json'});
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');a.href=url;
-    a.download='calculadora-pontos-'+toStr(new Date())+'.json';
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    if(!data){alert('Nenhum dado para copiar');return;}
+    var btn=$('btnCopyBackup'), done=function(ok){
+      btn.textContent=ok?'Copiado ✓':'Falhou';
+      setTimeout(function(){ btn.textContent='Copiar'; },2000);
+    };
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(data).then(function(){done(true);},function(){ window.prompt('Copie o backup abaixo:',data); done(true); });
+    } else { window.prompt('Copie o backup abaixo:',data); done(true); }
   };
-  window.importData = function(){ $('importFile').click(); };
+  function applyBackup(text){
+    if(!text) return;
+    try {
+      var data=JSON.parse(text.trim());
+      if(!data||typeof data!=='object') throw 0;
+      localStorage.setItem('calc-pontos',JSON.stringify(data));
+      location.reload();
+    } catch(err){ alert('Backup inválido — verifique o texto colado.'); }
+  }
+  window.pasteBackup = function(){
+    if(navigator.clipboard&&navigator.clipboard.readText){
+      navigator.clipboard.readText().then(function(t){
+        applyBackup(t||window.prompt('Cole o backup aqui:')||'');
+      },function(){ applyBackup(window.prompt('Cole o backup aqui:')||''); });
+    } else { applyBackup(window.prompt('Cole o backup aqui:')||''); }
+  };
 
 
   // ===== PERSISTENCE =====
@@ -1992,7 +2078,7 @@
         entrada:$('entrada').value,
         saidaAlmoco:$('saidaAlmoco').value, voltaAlmoco:$('voltaAlmoco').value,
         saidaReal:$('saidaReal').value,
-        saidaDesejada:$('saidaDesejada').value, saldoIcarus:$('saldoIcarus').value,
+        saldoIcarus:$('saldoIcarus').value,
         saldoIcarusDate:saldoIcarusDate,
         ferias:ferias, atestados:atestados, abonos:abonos,
         customHolidays:customHolidays, disabledHolidays:disabledHolidays,
@@ -2012,7 +2098,6 @@
       if(data.saidaAlmoco) $('saidaAlmoco').value=data.saidaAlmoco;
       if(data.voltaAlmoco) $('voltaAlmoco').value=data.voltaAlmoco;
       if(data.saidaReal) $('saidaReal').value=data.saidaReal;
-      if(data.saidaDesejada) $('saidaDesejada').value=data.saidaDesejada;
       if(data.saldoIcarus) $('saldoIcarus').value=data.saldoIcarus;
       if(data.saldoIcarusDate) saldoIcarusDate=data.saldoIcarusDate;
       if(data.ferias){
@@ -2039,20 +2124,6 @@
   }
 
   // ===== IMPORT FILE HANDLER =====
-  $('importFile').addEventListener('change', function(e){
-    var file=e.target.files[0]; if(!file) return;
-    var reader=new FileReader();
-    reader.onload=function(ev){
-      try {
-        var data=JSON.parse(ev.target.result);
-        localStorage.setItem('calc-pontos',JSON.stringify(data));
-        location.reload();
-      } catch(err){ alert('Arquivo inválido'); }
-    };
-    reader.readAsText(file);
-    e.target.value='';
-  });
-
   // ===== ICARUS =====
   var ICARUS_BASE = 'https://backendicarus.pontoicarus.com.br';
   var icarusAuth = null; // {token, username, idColaborador} — senha nunca é persistida
@@ -2066,7 +2137,7 @@
     } catch (e) {}
   }
   function icarusStatus(msg, cls) {
-    ['icarusSyncStatus', 'icarusLoginStatus'].forEach(function (id) {
+    ['icarusSyncStatus', 'icarusLoginStatus', 'dlgLoginStatus'].forEach(function (id) {
       var el = $(id); if (!el) return;
       el.textContent = msg || '';
       el.className = 'icarus-status' + (cls ? ' ' + cls : '');
@@ -2082,7 +2153,37 @@
       $('icarusWho').textContent = 'Conectado como ' + icarusAuth.username;
     }
     $('icarusIdColab').value = (icarusAuth && icarusAuth.idColaborador) || '';
+    // ícone de conta no header reflete o estado
+    var ab = $('acctBtn'), ai = $('acctIco');
+    if (ab) { ab.classList.toggle('logged', logged); ab.setAttribute('aria-label', logged ? 'Conta Ícarus (conectado)' : 'Conectar ao Ícarus'); }
+    if (ai) ai.textContent = logged ? 'account_circle' : 'login';
   }
+
+  // ícone do header: logado abre a gestão completa na aba Mais; deslogado abre o popup
+  var screenFrom = 'hoje';
+  function openScreen(page) {
+    var cur = document.querySelector('.nav-item.active');
+    screenFrom = (cur && cur.getAttribute('data-page')) || 'hoje';
+    switchPage(page);
+  }
+  window.icarusAccount = function () { openScreen('conta'); };
+  window.openConfig = function () { openScreen('config'); };
+  window.screenBack = function () { switchPage(screenFrom); };
+
+  // popup de login obrigatório (não tira o usuário da tela atual)
+  window.loginOpen = function () {
+    $('loginScrim').hidden = false;
+    $('dlgUser').value = (icarusAuth && icarusAuth.username) || '';
+    $('dlgPass').value = '';
+    $('dlgLoginStatus').textContent = '';
+    setTimeout(function () { ($('dlgUser').value ? $('dlgPass') : $('dlgUser')).focus(); }, 50);
+  };
+  window.loginClose = function () { $('loginScrim').hidden = true; };
+  window.icarusDlgLogin = function () {
+    icarusLoginCore($('dlgUser').value.trim(), $('dlgPass').value, 'dlgLoginBtn').then(function (ok) {
+      if (ok && icarusAuth.idColaborador) { loginClose(); icarusSync(); }
+    });
+  };
 
   // a resposta do login é um map genérico: procura o JWT e o id do colaborador em qualquer nível
   function icarusFindToken(obj) {
@@ -2122,12 +2223,12 @@
     } catch (e) { return null; }
   }
 
-  window.icarusLogin = function () {
-    var u = $('icarusUser').value.trim(), p = $('icarusPass').value;
-    if (!u || !p) { icarusStatus('Preencha usuário e senha', 'err'); return; }
-    $('btnIcarusLogin').disabled = true;
+  // núcleo de login compartilhado (card da aba Mais + popup) → Promise<bool sucesso>
+  function icarusLoginCore(u, p, btnId) {
+    if (!u || !p) { icarusStatus('Preencha usuário e senha', 'err'); return Promise.resolve(false); }
+    var btn = btnId && $(btnId); if (btn) btn.disabled = true;
     icarusStatus('Conectando…', '');
-    fetch(ICARUS_BASE + '/usuario/logar', {
+    return fetch(ICARUS_BASE + '/usuario/logar', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: u, password: p, web: true })
@@ -2139,17 +2240,22 @@
         if (!res.ok) throw new Error((res.json && (res.json.message || res.json.error)) || 'HTTP ' + res.status);
         var token = icarusFindToken(res.json);
         if (!token) throw new Error('resposta sem token (conta com MFA?)');
-        try { console.log('[icarus] resposta login:', res.json); console.log('[icarus] payload JWT:', icarusJwtPayload(token)); } catch (e2) {}
         var id = icarusFindId(res.json) || icarusFindId(icarusJwtPayload(token));
         icarusAuth = { token: token, username: u, idColaborador: id || (icarusAuth && icarusAuth.idColaborador) || null };
         icarusSaveAuth();
-        $('icarusPass').value = '';
+        $('icarusPass').value = ''; var dp = $('dlgPass'); if (dp) dp.value = '';
         icarusRenderUI();
-        if (icarusAuth.idColaborador) { icarusStatus('Conectado', 'ok'); icarusSync(); }
-        else icarusStatus('Conectado — não achei o ID do colaborador automaticamente, informe-o acima', 'err');
+        if (icarusAuth.idColaborador) icarusStatus('Conectado', 'ok');
+        else icarusStatus('Conectado — informe o ID do colaborador na aba Mais', 'err');
+        return true;
       })
-      .catch(function (e) { icarusStatus('Falha no login: ' + e.message, 'err'); })
-      .finally(function () { $('btnIcarusLogin').disabled = false; });
+      .catch(function (e) { icarusStatus('Falha no login: ' + e.message, 'err'); return false; })
+      .finally(function () { if (btn) btn.disabled = false; });
+  }
+  window.icarusLogin = function () {
+    icarusLoginCore($('icarusUser').value.trim(), $('icarusPass').value, 'btnIcarusLogin').then(function (ok) {
+      if (ok && icarusAuth.idColaborador) icarusSync();
+    });
   };
   window.icarusLogout = function () {
     icarusAuth = null;
@@ -2256,8 +2362,8 @@
 
   window.icarusSync = function () {
     if (icarusSyncing) return;
-    if (!icarusAuth || !icarusAuth.token) { switchPage('mais'); icarusStatus('Conecte sua conta Ícarus para sincronizar', 'err'); return; }
-    if (!icarusAuth.idColaborador) { switchPage('mais'); icarusStatus('Informe o ID do colaborador para sincronizar', 'err'); return; }
+    if (!icarusAuth || !icarusAuth.token) { loginOpen(); return; }
+    if (!icarusAuth.idColaborador) { icarusAccount(); icarusStatus('Informe o ID do colaborador para sincronizar', 'err'); return; }
     icarusSyncing = true;
     $('btnIcarusSync').classList.add('spinning');
     icarusStatus('Sincronizando…', '');
@@ -2290,7 +2396,26 @@
   // ===== ESPELHO: batidas de todo o período via Ícarus =====
   var espelho = null; // {at, ini, days:[{d,dw,t,w,s,falta}]}
   var espelhoSyncing = false;
-  function espelhoLoad() { try { espelho = JSON.parse(localStorage.getItem('icarus-espelho')); if (espelho && espelho.v !== 2) espelho = null; } catch (e) { espelho = null; } }
+  var espelhoOffset = 0; // 0 = período atual; -1 = anterior; ...
+  function espelhoPeriod() { return periodByOffset(espelhoOffset); }
+  var MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  function espelhoRenderNav() {
+    var p = espelhoPeriod();
+    var nome = 'Período de ' + MESES[p.fim.getMonth()]; // nomeado pelo mês em que fecha (ano já vem na data)
+    var datas = fmtDateFull(toStr(p.inicio)) + ' — ' + fmtDateFull(toStr(p.fim)) + (espelhoOffset === 0 ? ' · atual' : '');
+    var el = $('espelhoPeriodLabel');
+    if (el) el.innerHTML = '<span class="esp-nav-name">' + nome + '</span><span class="esp-nav-dates">' + datas + '</span>';
+    var nx = $('espelhoNext'); if (nx) nx.disabled = espelhoOffset >= 0;
+    var pv = $('espelhoPrev'); if (pv) pv.disabled = espelhoOffset <= -24;
+  }
+  window.espelhoNav = function (delta) {
+    var next = espelhoOffset + delta;
+    if (next > 0 || next < -24) return;
+    espelhoOffset = next;
+    espelhoRenderNav();
+    espelhoSync(true); // troca de período sempre busca (cache guarda só o último visto)
+  };
+  function espelhoLoad() { try { espelho = JSON.parse(localStorage.getItem('icarus-espelho')); if (espelho && espelho.v !== 3) espelho = null; } catch (e) { espelho = null; } }
   function espelhoSetStatus(msg, cls) {
     var el = $('espelhoStatus'); if (!el) return;
     el.textContent = msg || '';
@@ -2324,8 +2449,7 @@
     if (!mEl) return;
     function tile(v, l, c) { return '<div class="cal-stat"><div class="cal-stat-val ' + (c || '') + '">' + v + '</div><div class="cal-stat-lbl">' + l + '</div></div>'; }
     var days = (espelho && espelho.days) || [];
-    var vis = days.filter(function (dy) { return dy.t.length || dy.falta; });
-    if (!vis.length) {
+    if (!days.length) {
       setHTML(mEl, '<div class="empty-hint">Sem dados ainda — conecte o &Iacute;carus e toque em Atualizar.</div>');
       setHTML(lEl, '<div class="board-empty">Nenhuma batida carregada</div>');
       return;
@@ -2338,15 +2462,28 @@
       tile(m.trab != null ? fmtDur(m.trab) : '--:--', 'Trabalhado/dia', 'accent-c') +
       tile(m.n, 'Dias com registro no per&iacute;odo', 'positive'));
     var html = '<div class="esp-scroll"><table class="esp-table"><thead><tr>' +
-      '<th>Dia</th><th>Batidas</th><th>Trabalhado</th><th>Devido</th><th>Intervalo</th></tr></thead><tbody>';
-    vis.forEach(function (dy) {
-      var itv = dy.t.length >= 3 ? espelhoInterval(dy.t) : 0;
-      var dev = dy.f || 0;
-      html += '<tr' + (dy.falta && !dy.t.length ? ' class="esp-tr-falta"' : '') + '>' +
+      '<th scope="col">Dia</th><th scope="col">Batidas</th><th scope="col">Trabalhado</th><th scope="col">Devido</th><th scope="col">Intervalo</th></tr></thead><tbody>';
+    days.forEach(function (dy) {
+      var dow = fromStr(dy.d).getDay(), weekend = dow === 0 || dow === 6;
+      var itv = dy.t.length >= 3 ? espelhoInterval(dy.t) : 0, dev = dy.f || 0;
+      var cls = '', bat;
+      if (dy.t.length) {                       // dia com batidas
+        bat = dy.t.join(' ');
+      } else if (dy.falta) {                    // falta injustificada
+        cls = ' class="esp-tr-falta"'; bat = '<span class="esp-tag esp-tag-falta">Falta</span>';
+      } else if (dy.ab || /abon|atest|f[e\u00e9]ri|afast|licen|folga|feriad/i.test(dy.re)) {
+        cls = ' class="esp-tr-abono"'; bat = '<span class="esp-tag esp-tag-abono">' + (dy.re || 'Abonado') + '</span>';
+      } else if (weekend) {                     // s\u00e1bado/domingo sem batida
+        cls = ' class="esp-tr-descanso"'; bat = '<span class="esp-tag esp-tag-descanso">Descanso</span>';
+      } else {                                  // feriado/dia vazio
+        bat = '<span class="esp-tag esp-tag-descanso">' + (dy.re && dy.re !== 'Nenhum ponto' ? dy.re : '\u2014') + '</span>';
+      }
+      var showNums = dy.t.length > 0;
+      html += '<tr' + cls + '>' +
         '<td class="esp-td-dia">' + fmtDateBr(dy.d) + ' <small>' + (dy.dw || '') + '</small></td>' +
-        '<td class="esp-td-bat">' + (dy.t.length ? dy.t.join(' ') : '<span class="esp-falta-txt">Falta</span>') + '</td>' +
-        '<td class="esp-td-num">' + (dy.w ? fmtDur(dy.w) : '\u2014') + '</td>' +
-        '<td class="esp-td-num' + (dev > 0 ? ' negative' : '') + '">' + (dev > 0 ? fmtDur(dev) : '\u2014') + '</td>' +
+        '<td class="esp-td-bat">' + bat + '</td>' +
+        '<td class="esp-td-num">' + (showNums && dy.w ? fmtDur(dy.w) : '\u2014') + '</td>' +
+        '<td class="esp-td-num' + (showNums && dev > 0 ? ' negative' : '') + '">' + (showNums && dev > 0 ? fmtDur(dev) : '\u2014') + '</td>' +
         '<td class="esp-td-num">' + (itv > 0 ? fmtDur(itv) : '\u2014') + '</td></tr>';
     });
     html += '</tbody></table></div>';
@@ -2354,16 +2491,15 @@
   }
   window.espelhoSync = function (force) {
     if (espelhoSyncing) return;
+    espelhoRenderNav();
     renderEspelho();
-    if (!icarusAuth || !icarusAuth.token || !icarusAuth.idColaborador) {
-      espelhoSetStatus('Conecte sua conta \u00cdcarus na aba Mais para carregar o espelho', 'err');
-      return;
-    }
-    var ini = toStr(period.inicio);
+    if (!icarusAuth || !icarusAuth.token) { espelhoSetStatus('Conecte sua conta \u00cdcarus para carregar o espelho', 'err'); loginOpen(); return; }
+    if (!icarusAuth.idColaborador) { espelhoSetStatus('Informe o ID do colaborador na aba Mais', 'err'); icarusAccount(); return; }
+    var per = espelhoPeriod(), ini = toStr(per.inicio);
     if (!force && espelho && espelho.ini === ini && (Date.now() - espelho.at) < 15 * 60 * 1000) return;
     espelhoSyncing = true;
     espelhoSetStatus('Carregando espelho\u2026', '');
-    var hoje = new Date(), fim = period.fim < hoje ? period.fim : hoje;
+    var hoje = new Date(), fim = per.fim < hoje ? per.fim : hoje;
     fetch(ICARUS_BASE + '/ponto/consultarRegistrosPonto', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + icarusAuth.token },
@@ -2389,11 +2525,13 @@
             t: icarusPunchTimes(p),
             w: p.minutosNormaisTotais || 0,
             f: p.minutoFaltante || 0,
-            falta: String(p.falta).toUpperCase() === 'SIM'
+            falta: String(p.falta).toUpperCase() === 'SIM',
+            re: (p.registrosEspelho || '').trim(), // rótulo do próprio Ícarus (ex.: "Abono Aprovado")
+            ab: !!p.temAbonoOuAjusteRegistrado
           });
         });
         days.sort(function (a, b) { return a.d < b.d ? 1 : -1; });
-        espelho = { at: Date.now(), ini: ini, v: 2, days: days };
+        espelho = { at: Date.now(), ini: ini, v: 3, days: days };
         try { localStorage.setItem('icarus-espelho', JSON.stringify(espelho)); } catch (e) {}
         espelhoSetStatus('Atualizado \u00e0s ' + nowTimeStr() + ' \u2014 ' + days.length + ' dia(s)', 'ok');
         renderEspelho();
@@ -2401,6 +2539,39 @@
       .catch(function (e) { espelhoSetStatus('Erro: ' + e.message, 'err'); })
       .finally(function () { espelhoSyncing = false; });
   };
+
+  // ===== CONTAGEM REGRESSIVA (aba Hoje) =====
+  function daysUntil(dateStr) { return Math.round((fromStr(dateStr) - fromStr(toStr(new Date()))) / 86400000); }
+  function nextHolidayInfo() {
+    var today = toStr(new Date()), y = new Date().getFullYear();
+    var list = applyOverrides(getNationalHolidays(y).concat(getNationalHolidays(y + 1)));
+    customHolidays.forEach(function (ch) { list.push(ch); });
+    list = list.filter(function (h) { return h.date >= today && !disabledHolidays[h.date]; });
+    list.sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    return list[0] || null;
+  }
+  function nextFeriasInfo() {
+    var today = toStr(new Date()), now = null, next = null;
+    ferias.forEach(function (f) {
+      if (!f) return;
+      if (today >= f.inicio && today <= f.fim) now = { tipo: 'now', date: f.fim };
+      else if (f.inicio > today && (!next || f.inicio < next.date)) next = { tipo: 'next', date: f.inicio };
+    });
+    return now || next;
+  }
+  function fmtDateFull(s) { var p = s.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+  function faltaNum(n) { return n <= 0 ? 'hoje' : (n === 1 ? 'amanhã' : n + 'd'); }
+  function renderHojeCountdown() {
+    var g = $('hojeCountdown'); if (!g) return;
+    function item(num, label, cls) { return '<div class="cal-stat ' + cls + '"><div class="cal-stat-val">' + num + '</div><div class="cal-stat-lbl">' + label + '</div></div>'; }
+    var h = nextHolidayInfo();
+    var html = item(h ? faltaNum(daysUntil(h.date)) : '—',
+                    h ? 'Feriado · ' + h.name + ' - (' + fmtDateFull(h.date) + ')' : 'Sem feriado à vista', 'cd-holiday');
+    var f = nextFeriasInfo();
+    html += f ? item(faltaNum(daysUntil(f.date)), 'Férias · ' + (f.tipo === 'now' ? 'até ' : '') + '(' + fmtDateFull(f.date) + ')', 'cd-ferias')
+              : item('—', 'Férias · nenhuma marcada', 'cd-ferias');
+    setHTML(g, html);
+  }
 
   // ===== TODAY LABEL =====
   function updateTodayLabel() {
@@ -2410,15 +2581,28 @@
     el.textContent=dias[d.getDay()]+' · '+fmtDateBr(toStr(d));
   }
 
+
+  // pop dos ícones do header ao clicar (mesma animação da barra inferior)
+  document.querySelectorAll('.acct-btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+      setTimeout(function () { b.classList.remove('pop'); }, 400);
+    });
+  });
+
+  // fechar popup de login: clique fora ou ESC
+  $('loginScrim').addEventListener('click', function (e) { if (e.target === this) loginClose(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('loginScrim').hidden) loginClose(); });
+
   // ===== INIT =====
   load(); renderAll(); updateClock(); updateTimer(); updateTodayLabel();
   icarusLoadAuth(); icarusRenderUI();
-  espelhoLoad(); renderEspelho();
+  espelhoLoad(); espelhoRenderNav(); renderEspelho();
   restoreCards();
   if (icarusAuth && icarusAuth.token && icarusAuth.idColaborador) icarusSync();
   setInterval(function(){ updateClock(); updateTimer(); render(); }, 1000);
   $('saldoIcarus').addEventListener('input', function(){ saldoIcarusDate=toStr(new Date()); });
-  ['entrada','saidaAlmoco','voltaAlmoco','saidaReal','saidaDesejada','saldoIcarus'].forEach(function(id){
+  ['entrada','saidaAlmoco','voltaAlmoco','saidaReal','saldoIcarus'].forEach(function(id){
     $(id).addEventListener('input', render);
   });
   ['entrada','saidaAlmoco','voltaAlmoco','saidaReal','saldoIcarus'].forEach(function(id){

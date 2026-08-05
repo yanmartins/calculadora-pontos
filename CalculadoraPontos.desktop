@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Calculadora de Pontos
+Comment=Calculadora de horas, banco de horas e espelho de ponto
+Exec=/home/yan.martins@dynamox.local/Documentos/PLAYGROUND/calculadora_pontos/abrir-app.sh
+Icon=/home/yan.martins@dynamox.local/Documentos/PLAYGROUND/calculadora_pontos/icon-512.png
+Terminal=false
+Categories=Utility;
+StartupWMClass=CalculadoraPontos
