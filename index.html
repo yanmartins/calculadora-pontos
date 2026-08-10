@@ -167,7 +167,7 @@
     position: relative;
   }
   .card:hover { box-shadow: var(--shadow-hover); }
-  .card-head { display: flex; align-items: center; gap: 12px; padding: 18px 20px 6px; }
+  .card-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px 2px; }
   .card-ico { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--r-sm); background: transparent; border: 2px solid var(--accent-soft); color: var(--accent); flex-shrink: 0; transition: background .3s var(--ease), border-color .3s var(--ease); }
   .card-ico svg { width: 20px; height: 20px; }
   /* cor tonal por card: âncora visual por seção (estilo Google One) */
@@ -179,15 +179,15 @@
   .card-titles { flex: 1; min-width: 0; }
   .card-titles h2 { font-size: 1.02rem; font-weight: 700; letter-spacing: -.01em; color: var(--text); line-height: 1.25; }
   .card-sub { font-size: .74rem; color: var(--text-2); line-height: 1.3; }
-  .card-body { padding: 12px 20px 20px; }
-  .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+  .card-body { padding: 8px 18px 14px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
 
   /* ===== CARDS COLAPSÁVEIS (Calendário) ===== */
   .card[data-page="hoje"], .card[data-page="calendario"], .card[data-page="banco"], .card[data-page="espelho"], .card[data-page="conta"], .card[data-page="config"] { flex-basis: 100%; } /* colapsados empilham em coluna única */
   .card.collapsible { display: grid; grid-template-rows: auto 0fr; transition: grid-template-rows .4s var(--ease), background .3s, box-shadow .3s; }
   .card.collapsible.open { grid-template-rows: auto 1fr; }
   .card.collapsible .card-head { cursor: pointer; user-select: none; }
-  .card.collapsible:not(.open) .card-head { padding-bottom: 18px; }
+  .card.collapsible:not(.open) .card-head { padding-bottom: 14px; }
   .card.collapsible .card-body { overflow: hidden; min-height: 0; transition: padding .4s var(--ease); }
   .card.collapsible:not(.open) .card-body { padding-top: 0; padding-bottom: 0; }
   .card-caret { color: var(--text-3); font-size: 22px; margin-left: 2px; transition: transform .35s var(--spring); }
@@ -244,49 +244,37 @@
 
   /* ===== BATIDAS — mesma caixa dos tiles do Panorama (raio, padding, tipografia, ícone no canto) ===== */
   .punch-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 4px; }
-  .punch-slot { position: relative; display: flex; flex-direction: column; align-items: center; overflow: hidden; text-align: center; padding: 16px 8px 14px; border-radius: var(--r-lg); border: none; background: var(--raised); cursor: pointer; transition: background .25s, transform .3s var(--spring); }
+  .punch-slot { position: relative; display: flex; flex-direction: column; align-items: center; overflow: hidden; text-align: center; padding: 10px 6px 8px; border-radius: var(--r-md); border: none; background: var(--raised); cursor: pointer; transition: background .25s, transform .3s var(--spring); }
   .punch-slot:hover { transform: translateY(-2px); }
   .punch-slot:active { transform: scale(.97); }
-  .punch-slot svg { position: absolute; top: 11px; right: 11px; width: 15px; height: 15px; color: var(--text-3); opacity: .75; flex-shrink: 0; transition: color .2s; }
-  .punch-lbl { order: 2; font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); white-space: nowrap; margin-top: 8px; }
+  .punch-slot svg { position: absolute; top: 8px; right: 8px; width: 14px; height: 14px; color: var(--text-3); opacity: .75; flex-shrink: 0; transition: color .2s; }
+  .punch-lbl { order: 2; font-size: .58rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); white-space: nowrap; margin-top: 3px; }
   .punch-slot input {
     order: 1; background: transparent; border: none; color: var(--text-3);
-    font-family: var(--mono); font-size: 1.7rem; font-weight: 800; letter-spacing: -.01em; text-align: center; width: 100%;
-    outline: none; padding: 0; min-height: 34px; transition: color .2s;
+    font-family: var(--mono); font-size: 1.4rem; font-weight: 800; letter-spacing: -.01em; text-align: center; width: 100%;
+    outline: none; padding: 0; min-height: 30px; transition: color .2s;
   }
   .punch-slot input::-webkit-calendar-picker-indicator { display: none; }
   .punch-slot.done svg { color: var(--accent); }
   .punch-slot.done input { color: var(--text); }
   .punch-slot.next { background: var(--accent-soft); }
   .punch-slot.next svg, .punch-slot.next .punch-lbl { color: var(--on-accent-c); }
-  /* saldo do Ícarus com a mesma cara dos slots de batida */
-  .saldo-row { display: flex; gap: 8px; align-items: stretch; }
-  .saldo-slot { flex: 1; border-radius: var(--r-lg); cursor: text; }
-  .saldo-slot svg { color: var(--accent); }
-  .saldo-slot input { color: var(--text); }
-  /* botão XL orgânico (M3 Expressive): mesma altura e raio do slot vizinho */
-  .saldo-row .btn-add { align-self: stretch; flex-direction: column; gap: 5px; border-radius: var(--r-lg); padding: 0 20px; }
-  .saldo-row .btn-add .ms { font-size: 20px; }
+  /* saldo do Ícarus no Panorama: 5º box, largura total, cor própria; valor editável */
+  .dash-tile.t-saldo { cursor: text; }
+  .dash-tile.t-saldo input.dash-tile-val { width: 100%; background: transparent; border: none; outline: none; text-align: center; padding: 0; }
+  .dash-tile.t-saldo input.dash-tile-val::placeholder { color: var(--text-2); opacity: .55; }
 
   /* ===== PANORAMA: progresso + tiles + saída ===== */
   .board-empty, .empty-hint { padding: 16px 12px; text-align: center; color: var(--text-2); font-size: .88rem; }
   .empty-hint { padding: 8px 0; font-style: italic; text-align: left; }
   /* tile "panorama": valor grande e bold, label embaixo, ícone no canto —
      padrão replicado nos slots de batida e no saldo. auto-fit quebra p/ 2x2 sem espremer. */
-  .dash-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
-  .dash-tile { position: relative; overflow: hidden; text-align: center; border: none; border-radius: var(--r-lg); padding: 16px 8px 14px; background: var(--raised); transition: background .3s, transform .3s var(--spring); }
+  .dash-tiles { display: flex; gap: 8px; }
+  .dash-tile { flex: 1 1 0; min-width: 0; position: relative; overflow: hidden; text-align: center; border: none; border-radius: var(--r-md); padding: 12px 6px 10px; background: var(--raised); transition: background .3s, transform .3s var(--spring); }
   .dash-tile:hover { transform: translateY(-2px); }
-  .dash-tile.t-work { background: var(--accent-soft); }
-  .dash-tile.t-work .dash-tile-ico, .dash-tile.t-work .dash-tile-lbl { color: var(--on-accent-c); }
-  .dash-tile.t-rest { background: var(--blue-soft); }
-  .dash-tile.t-rest .dash-tile-ico, .dash-tile.t-rest .dash-tile-lbl { color: var(--on-blue-c); }
-  .dash-tile.t-lunch { background: var(--orange-soft); }
-  .dash-tile.t-lunch .dash-tile-ico, .dash-tile.t-lunch .dash-tile-lbl { color: var(--on-orange-c); }
-  .dash-tile.t-bank { background: var(--purple-soft); }
-  .dash-tile.t-bank .dash-tile-ico, .dash-tile.t-bank .dash-tile-lbl { color: var(--on-purple-c); }
-  .dash-tile-ico { position: absolute; top: 11px; right: 11px; width: 15px; height: 15px; opacity: .75; }
-  .dash-tile-val { font-family: var(--mono); font-size: 1.7rem; font-weight: 800; line-height: 1; color: var(--text); letter-spacing: -.01em; }
-  .dash-tile-lbl { font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-top: 8px; }
+  .dash-tile-ico { position: absolute; top: 9px; right: 9px; width: 14px; height: 14px; color: var(--text-3); opacity: .75; }
+  .dash-tile-val { font-family: var(--mono); font-size: 1.3rem; font-weight: 800; line-height: 1; color: var(--text); letter-spacing: -.01em; }
+  .dash-tile-lbl { font-size: .58rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); margin-top: 4px; }
 
   /* ===== METAS (lista de saídas) ===== */
   /* mesmo vocabulário de bordas dos dias da Projeção: moldura 2px + fio esquerdo 3px colorido */
@@ -300,7 +288,7 @@
   .tl > :first-child::before { display: none; }
   .tl-item.passed::before, .tl-now::before { background: var(--green); }
   /* estação */
-  .tl-item { display: flex; align-items: center; gap: 10px; padding-top: 9px; padding-bottom: 9px; border-radius: var(--r-md); transition: background .3s; }
+  .tl-item { display: flex; align-items: center; gap: 10px; padding-top: 6px; padding-bottom: 6px; border-radius: var(--r-md); transition: background .3s; }
   .tl-dot { position: absolute; z-index: 1; left: 4px; top: 50%; transform: translateY(-50%); width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface); border: 2.5px solid var(--text-3); box-sizing: border-box; }
   .tl-item.next .tl-dot { background: var(--accent); }
   .tl-dot .ms { font-size: 12px; color: var(--ground); }
@@ -309,7 +297,7 @@
   .tl-item[data-color="orange"] .tl-dot { border-color: var(--orange); }
   .tl-item[data-color="red"] .tl-dot { border-color: var(--red); }
   .tl-item[data-color="purple"] .tl-dot { border-color: var(--purple); }
-  .tl-time { font-family: var(--mono); font-size: 1.2rem; font-weight: 800; letter-spacing: -.01em; min-width: 64px; color: var(--text); transition: color .3s; }
+  .tl-time { font-family: var(--mono); font-size: 1.1rem; font-weight: 800; letter-spacing: -.01em; min-width: 58px; color: var(--text); transition: color .3s; }
   .tl-info { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
   .tl-name { font-size: .82rem; font-weight: 700; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tl-dur { font-family: var(--mono); font-size: .7rem; color: var(--text-2); }
@@ -331,12 +319,12 @@
   .tl-now-dot { position: absolute; z-index: 1; left: 9px; top: 50%; transform: translateY(-50%); width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); }
   .tl-now-chip { font-family: var(--mono); font-size: .7rem; font-weight: 700; color: var(--on-accent-c); background: var(--accent-soft); padding: 4px 12px; border-radius: var(--r-full); white-space: nowrap; }
   .tl-now-line { flex: 1; border-top: 2px dashed color-mix(in srgb, var(--accent) 35%, transparent); }
-  .meta-add { display: flex; gap: 8px; align-items: center; margin-top: 14px; }
+  .meta-add { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
   .meta-add input { background: var(--input-bg); border: 1px solid transparent; border-radius: var(--r-sm); color: var(--text); padding: 8px 14px; font-size: 1rem; min-height: 48px; outline: none; transition: border-color .2s, box-shadow .2s; min-width: 0; }
   .meta-add input#metaNome { flex: 1; }
   .meta-add input#metaDur { flex: 0 0 84px; width: 84px; text-align: center; font-family: var(--mono); }
   .meta-add input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-  .meta-add-hint { font-size: .72rem; color: var(--text-2); margin-top: 8px; line-height: 1.4; }
+  .meta-add-hint { font-size: .72rem; color: var(--text-2); margin-top: 6px; line-height: 1.4; }
   .meta-add-hint b { color: var(--text-1); font-family: var(--mono); }
 
   /* ===== TILES DE ESTATÍSTICA (Resumo do período) ===== */
@@ -477,6 +465,9 @@
   @media (prefers-reduced-transparency: reduce) { .header-actions { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; } }
   [data-theme="contrast"] .header-actions { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; border: 2px solid var(--border); }
   .acct-btn { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border: none; border-radius: var(--r-full); background: transparent; color: var(--text-2); cursor: pointer; transition: background .2s, color .2s, transform .35s var(--spring); }
+  .acct-btn { position: relative; }
+  .acct-btn::after { content: attr(data-tip); position: absolute; top: calc(100% + 6px); right: 0; padding: 5px 10px; border-radius: var(--r-sm); background: var(--inverse-surface, var(--text-1)); color: var(--surface); font-size: .68rem; font-weight: 700; white-space: nowrap; box-shadow: var(--shadow); opacity: 0; transform: translateY(-4px); pointer-events: none; transition: opacity .18s var(--ease), transform .18s var(--ease); }
+  .acct-btn:hover::after, .acct-btn:focus-visible::after { opacity: 1; transform: translateY(0); }
   .acct-btn .ms { font-size: 22px; transition: font-variation-settings .3s var(--ease); }
   .acct-btn:hover { background: var(--accent-soft); color: var(--on-accent-c); }
   .acct-btn:active { transform: scale(.9); }
@@ -513,6 +504,7 @@
   .esp-tag-falta { color: var(--on-red-c); background: var(--red-soft); text-transform: uppercase; }
   .esp-tag-abono { color: var(--on-green-c); background: var(--green-soft); }
   .esp-tag-descanso { color: var(--on-purple-c); background: var(--purple-soft); }
+  .esp-has-he { border-bottom: 1px dotted var(--accent); cursor: help; }
   .esp-falta-txt { color: var(--red); font-weight: 700; text-transform: uppercase; font-size: .72rem; }
   @media (max-width: 420px) {
     .esp-table { font-size: .84rem; }
@@ -527,9 +519,6 @@
   .icarus-status.err { color: var(--red); }
   .icarus-mini-input { background: var(--input-bg); border: 1px solid transparent; border-radius: var(--r-sm); color: var(--text); font-family: var(--mono); font-size: .95rem; padding: 6px 10px; width: 110px; min-height: 40px; outline: none; text-align: right; transition: border-color .2s; }
   .icarus-mini-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-  #btnIcarusSync { display: inline-flex; align-items: center; gap: 6px; }
-  #btnIcarusSync svg { width: 14px; height: 14px; flex-shrink: 0; }
-  #btnIcarusSync.spinning svg { animation: icarusSpin 1s linear infinite; }
   @keyframes icarusSpin { to { transform: rotate(360deg); } }
 
   /* ===== TEMA (segmentado, aba Mais) ===== */
@@ -553,11 +542,10 @@
   .field label .ms { font-size: 14px; color: var(--accent); }
   .ms.lbl-ico { font-size: 13px; }
   .punch-slot .ms { position: absolute; top: 11px; right: 11px; font-size: 15px; color: var(--text-3); opacity: .75; }
-  .punch-slot.done .ms, .saldo-slot .ms { color: var(--accent); }
+  .punch-slot.done .ms { color: var(--accent); }
   .punch-slot.next .ms { color: var(--on-accent-c); }
   .ms.dash-tile-ico { font-size: 15px; }
   .btn-add .ms { font-size: 16px; }
-  #btnIcarusSync .ms { font-size: 16px; }
   #btnIcarusSync.spinning .ms { animation: icarusSpin 1s linear infinite; }
   .nav-pill .ms { font-size: 24px; }
   .nav-item.active .nav-pill .ms { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; } /* outlined -> filled */
@@ -612,6 +600,18 @@
     .card:hover::before { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(105deg, transparent 42%, color-mix(in srgb, var(--text) 4%, transparent) 50%, transparent 58%); transform: translateX(130%); animation: sheen .9s var(--ease); }
     @keyframes sheen { from { transform: translateX(-130%); } }
   }
+
+  /* ===== SWEEP de sincronização (faixa de luz percorrendo a página) ===== */
+  .sync-sweep { position: fixed; inset: 0; z-index: 90; pointer-events: none; overflow: hidden; opacity: 0; }
+  .sync-sweep.run { opacity: 1; }
+  .sync-sweep::before {
+    content: ''; position: absolute; top: 0; bottom: 0; left: -60%; width: 60%;
+    background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--accent) 30%, transparent) 45%, color-mix(in srgb, var(--blue) 26%, transparent) 60%, transparent);
+    filter: blur(6px); transform: translateX(0);
+  }
+  .sync-sweep.run::before { animation: sync-sweep-move .8s var(--md-sys-motion-easing-emphasized-decelerate) forwards; }
+  @keyframes sync-sweep-move { from { transform: translateX(0); } to { transform: translateX(280%); } }
+  @media (prefers-reduced-motion: reduce) { .sync-sweep { display: none; } }
 
   /* ===== ESTADOS SEMÂNTICOS ===== */
   .positive { color: var(--green) !important; }
@@ -683,7 +683,7 @@
     .tl-name { font-size: .72rem; }
     .tl-badge { font-size: .56rem; padding: 3px 9px; }
     .dash-tile-val { font-size: 1.25rem; }
-    .dash-tiles { gap: 6px; grid-template-columns: repeat(2, 1fr); }
+    .dash-tiles { gap: 6px; }
     .cal-summary { grid-template-columns: repeat(2, 1fr); }
     .cal-stat-val { font-size: 1.05rem; }
     .cal-stat-lbl { font-size: .52rem; }
@@ -709,10 +709,9 @@
     .clock { font-size: 3.8rem; }
     .timer { font-size: .85rem; }
     .card { border-radius: 30px; }
-    .card-head { padding: 22px 24px 6px; }
-    .card-body { padding: 14px 24px 22px; }
+    .card-head { padding: 16px 22px 4px; }
+    .card-body { padding: 10px 22px 16px; }
     .card-grid { gap: 18px; }
-    .dash-tiles { grid-template-columns: repeat(4, 1fr); }
     .tl-time { font-size: 1.35rem; }
     .bottom-nav { max-width: 460px; left: 50%; transform: translateX(-50%); border-radius: 28px 28px 0 0; }
   }
@@ -768,10 +767,13 @@
 <div class="app">
   <header class="header">
     <div class="header-actions">
-      <button class="acct-btn" id="cfgBtn" aria-label="Prefer&ecirc;ncias" onclick="openConfig()">
+      <button class="acct-btn" id="btnIcarusSync" data-tip="Sincronizar" aria-label="Sincronizar com o &Iacute;carus" onclick="headerSync()">
+        <span class="ms" aria-hidden="true">sync</span>
+      </button>
+      <button class="acct-btn" id="cfgBtn" data-tip="Configura&ccedil;&atilde;o" aria-label="Prefer&ecirc;ncias" onclick="openConfig()">
         <span class="ms" aria-hidden="true">settings</span>
       </button>
-      <button class="acct-btn" id="acctBtn" aria-label="Conta &Iacute;carus" onclick="icarusAccount()">
+      <button class="acct-btn" id="acctBtn" data-tip="Login" aria-label="Conta &Iacute;carus" onclick="icarusAccount()">
         <span class="ms" id="acctIco" aria-hidden="true">login</span>
       </button>
     </div>
@@ -823,19 +825,6 @@
           <input type="time" id="saidaReal">
         </label>
       </div>
-      <hr class="divider">
-      <div class="saldo-row">
-        <label class="punch-slot saldo-slot" title="Saldo do banco no fim de ontem, direto do &Iacute;carus">
-          <span class="ms" aria-hidden="true">monitoring</span>
-          <span class="punch-lbl">Saldo Icarus ontem</span>
-          <input type="text" id="saldoIcarus" placeholder="-12:10" inputmode="text">
-        </label>
-        <button class="btn-add" id="btnIcarusSync" onclick="icarusSync()" title="Buscar batidas de hoje e saldo de ontem no &Iacute;carus">
-          <span class="ms" aria-hidden="true">sync</span>
-          Sincronizar
-        </button>
-      </div>
-      <div class="icarus-status" id="icarusSyncStatus" role="status"></div>
     </div>
   </section>
 
@@ -873,7 +862,13 @@
           <div class="dash-tile-val" id="dashBanco">--:--</div>
           <div class="dash-tile-lbl">Banco</div>
         </div>
+        <label class="dash-tile t-saldo" for="saldoIcarus" title="Saldo do banco no fim de ontem, direto do &Iacute;carus">
+          <span class="ms dash-tile-ico" aria-hidden="true">monitoring</span>
+          <input type="text" id="saldoIcarus" class="dash-tile-val" placeholder="-12:10" inputmode="text">
+          <div class="dash-tile-lbl">Saldo &Iacute;carus ontem</div>
+        </label>
       </div>
+      <div class="icarus-status" id="icarusSyncStatus" role="status"></div>
     </div>
   </section>
 
@@ -1095,7 +1090,6 @@
         <h2>Batidas do per&iacute;odo</h2>
         <p class="card-sub">Espelho dia a dia, direto do &Iacute;carus</p>
       </div>
-      <button class="btn-config" onclick="event.stopPropagation();espelhoSync(true)">Atualizar</button>
       <span class="ms card-caret" aria-hidden="true">expand_more</span>
     </header>
     <div class="card-body">
@@ -1223,6 +1217,9 @@
     <p class="dialog-note">A senha n&atilde;o &eacute; armazenada — s&oacute; o token fica neste dispositivo.</p>
   </div>
 </div>
+
+<!-- SWEEP de confirmação de sincronização -->
+<div class="sync-sweep" id="syncSweep" aria-hidden="true"></div>
 
 <!-- NAVEGAÇÃO -->
 <nav class="bottom-nav" id="bottomNav" aria-label="Navega&ccedil;&atilde;o principal">
@@ -2355,11 +2352,23 @@
       else if (!todayRec) diag = pontos.length + ' dia(s) retornado(s), nenhum é hoje';
       else diag = 'hoje veio sem batidas e sem saldo anterior';
       icarusStatus('Nada aplicado: ' + diag, 'err');
-    } else icarusStatus('Sincronizado às ' + nowTimeStr() + ' — ' + applied.join(' · '), 'ok');
+    } else { icarusStatus('Sincronizado às ' + nowTimeStr() + ' — ' + applied.join(' · '), 'ok'); syncFlash(); }
     render();
     renderProjection();
   }
+  // faixa de luz percorrendo a tela ao concluir uma sincronização
+  function syncFlash() {
+    var el = $('syncSweep'); if (!el) return;
+    el.classList.remove('run'); void el.offsetWidth; el.classList.add('run');
+    setTimeout(function () { el.classList.remove('run'); }, 850);
+  }
 
+  // botão de sync do header: sincroniza o espelho quando essa aba está ativa, senão o dia
+  window.headerSync = function () {
+    var cur = document.querySelector('.nav-item.active');
+    if (cur && cur.getAttribute('data-page') === 'espelho') espelhoSync(true);
+    else icarusSync();
+  };
   window.icarusSync = function () {
     if (icarusSyncing) return;
     if (!icarusAuth || !icarusAuth.token) { loginOpen(); return; }
@@ -2415,7 +2424,7 @@
     espelhoRenderNav();
     espelhoSync(true); // troca de período sempre busca (cache guarda só o último visto)
   };
-  function espelhoLoad() { try { espelho = JSON.parse(localStorage.getItem('icarus-espelho')); if (espelho && espelho.v !== 3) espelho = null; } catch (e) { espelho = null; } }
+  function espelhoLoad() { try { espelho = JSON.parse(localStorage.getItem('icarus-espelho')); if (espelho && espelho.v !== 4) espelho = null; } catch (e) { espelho = null; } }
   function espelhoSetStatus(msg, cls) {
     var el = $('espelhoStatus'); if (!el) return;
     el.textContent = msg || '';
@@ -2437,7 +2446,7 @@
       // saída/trabalhado só de dias fechados (passados, nº par de batidas)
       if (dy.d < todayStr && dy.t.length >= 2 && dy.t.length % 2 === 0) {
         sai.push(mins[mins.length - 1]);
-        if (dy.w) trab.push(dy.w);
+        if (dy.w) trab.push(dy.w + (dy.e || 0)); // trabalhado inclui as horas extras
       }
       if (dy.t.length >= 4) alm.push(espelhoInterval(dy.t));
     });
@@ -2479,10 +2488,14 @@
         bat = '<span class="esp-tag esp-tag-descanso">' + (dy.re && dy.re !== 'Nenhum ponto' ? dy.re : '\u2014') + '</span>';
       }
       var showNums = dy.t.length > 0;
+      var he = dy.e || 0, trabTot = dy.w + he;
+      var trabCell = showNums && dy.w
+        ? '<span class="esp-trab' + (he > 0 ? ' esp-has-he' : '') + '"' + (he > 0 ? ' title="' + fmtDur(dy.w) + ' + ' + fmtDur(he) + ' HE"' : '') + '>' + fmtDur(trabTot) + '</span>'
+        : '\u2014';
       html += '<tr' + cls + '>' +
         '<td class="esp-td-dia">' + fmtDateBr(dy.d) + ' <small>' + (dy.dw || '') + '</small></td>' +
         '<td class="esp-td-bat">' + bat + '</td>' +
-        '<td class="esp-td-num">' + (showNums && dy.w ? fmtDur(dy.w) : '\u2014') + '</td>' +
+        '<td class="esp-td-num">' + trabCell + '</td>' +
         '<td class="esp-td-num' + (showNums && dev > 0 ? ' negative' : '') + '">' + (showNums && dev > 0 ? fmtDur(dev) : '\u2014') + '</td>' +
         '<td class="esp-td-num">' + (itv > 0 ? fmtDur(itv) : '\u2014') + '</td></tr>';
     });
@@ -2498,6 +2511,7 @@
     var per = espelhoPeriod(), ini = toStr(per.inicio);
     if (!force && espelho && espelho.ini === ini && (Date.now() - espelho.at) < 15 * 60 * 1000) return;
     espelhoSyncing = true;
+    $('btnIcarusSync').classList.add('spinning');
     espelhoSetStatus('Carregando espelho\u2026', '');
     var hoje = new Date(), fim = per.fim < hoje ? per.fim : hoje;
     fetch(ICARUS_BASE + '/ponto/consultarRegistrosPonto', {
@@ -2524,6 +2538,7 @@
             dw: p.diaSemanaAbreviado || '',
             t: icarusPunchTimes(p),
             w: p.minutosNormaisTotais || 0,
+            e: p.minutosExtrasTotais || 0,
             f: p.minutoFaltante || 0,
             falta: String(p.falta).toUpperCase() === 'SIM',
             re: (p.registrosEspelho || '').trim(), // rótulo do próprio Ícarus (ex.: "Abono Aprovado")
@@ -2531,13 +2546,13 @@
           });
         });
         days.sort(function (a, b) { return a.d < b.d ? 1 : -1; });
-        espelho = { at: Date.now(), ini: ini, v: 3, days: days };
+        espelho = { at: Date.now(), ini: ini, v: 4, days: days };
         try { localStorage.setItem('icarus-espelho', JSON.stringify(espelho)); } catch (e) {}
-        espelhoSetStatus('Atualizado \u00e0s ' + nowTimeStr() + ' \u2014 ' + days.length + ' dia(s)', 'ok');
+        espelhoSetStatus('Atualizado \u00e0s ' + nowTimeStr() + ' \u2014 ' + days.length + ' dia(s)', 'ok'); syncFlash();
         renderEspelho();
       })
       .catch(function (e) { espelhoSetStatus('Erro: ' + e.message, 'err'); })
-      .finally(function () { espelhoSyncing = false; });
+      .finally(function () { espelhoSyncing = false; $('btnIcarusSync').classList.remove('spinning'); });
   };
 
   // ===== CONTAGEM REGRESSIVA (aba Hoje) =====

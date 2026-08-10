@@ -1,4 +1,4 @@
-var CACHE_NAME = 'calc-pontos-v38';
+var CACHE_NAME = 'calc-pontos-v55';
 var ASSETS = [
   './',
   './index.html',
