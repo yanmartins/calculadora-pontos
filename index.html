@@ -183,7 +183,7 @@
   .divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
 
   /* ===== CARDS COLAPSÁVEIS (Calendário) ===== */
-  .card[data-page="hoje"], .card[data-page="calendario"], .card[data-page="banco"], .card[data-page="espelho"], .card[data-page="conta"], .card[data-page="config"] { flex-basis: 100%; } /* colapsados empilham em coluna única */
+  .card[data-page="hoje"], .card[data-page="calendario"], .card[data-page="banco"], .card[data-page="espelho"], .card[data-page="conta"], .card[data-page="config"], .card[data-page="bater"] { flex-basis: 100%; } /* colapsados empilham em coluna única */
   .card.collapsible { display: grid; grid-template-rows: auto 0fr; transition: grid-template-rows .4s var(--ease), background .3s, box-shadow .3s; }
   .card.collapsible.open { grid-template-rows: auto 1fr; }
   .card.collapsible .card-head { cursor: pointer; user-select: none; }
@@ -452,6 +452,12 @@
 
   /* ===== TELA DE CONTA (dedicada, fora da nav) ===== */
   .page-conta, .page-back-bar { background: transparent !important; box-shadow: none !important; padding: 0; }
+  .page-back-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .bater-ext { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-size: .82rem; font-weight: 700; text-decoration: none; padding: 6px 12px; border-radius: var(--r-full); transition: background .2s; }
+  .bater-ext:hover { background: var(--accent-soft); }
+  .bater-ext .ms { font-size: 18px; }
+  #secBater { padding: 0; overflow: hidden; }
+  .bater-frame { width: 100%; height: 78vh; min-height: 460px; border: none; display: block; background: var(--surface); }
   .conta-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; color: var(--accent);
     font-family: inherit; font-size: .92rem; font-weight: 700; cursor: pointer; padding: 6px 10px 6px 4px; border-radius: var(--r-full); transition: background .2s; }
   .conta-back:hover { background: var(--accent-soft); }
@@ -475,6 +481,9 @@
   .acct-btn.pop .ms { animation: nav-pop .4s var(--spring); }
   .acct-btn.logged { background: var(--accent-soft); color: var(--on-accent-c); }
   .acct-btn.logged .ms { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  /* bater ponto = ação principal, destacada em accent */
+  .acct-btn.acct-punch { background: var(--accent); color: var(--on-accent); }
+  .acct-btn.acct-punch:hover { background: var(--accent); opacity: .9; color: var(--on-accent); }
 
 
   /* ===== ESPELHO (batidas do período) ===== */
@@ -767,6 +776,9 @@
 <div class="app">
   <header class="header">
     <div class="header-actions">
+      <button class="acct-btn acct-punch" data-tip="Bater ponto" aria-label="Bater ponto no site do &Iacute;carus" onclick="baterPontoIcarus()">
+        <span class="ms" aria-hidden="true">punch_clock</span>
+      </button>
       <button class="acct-btn" id="btnIcarusSync" data-tip="Sincronizar" aria-label="Sincronizar com o &Iacute;carus" onclick="headerSync()">
         <span class="ms" aria-hidden="true">sync</span>
       </button>
@@ -1098,6 +1110,16 @@
     </div>
   </section>
 
+
+  <!-- ================= BATER PONTO (iframe do site oficial) ================= -->
+
+  <div class="card page-back-bar" data-page="bater">
+    <button class="conta-back" onclick="screenBack()"><span class="ms" aria-hidden="true">arrow_back</span> Voltar</button>
+    <a class="bater-ext" href="https://web.pontoicarus.com.br/ponto" target="_blank" rel="noopener"><span class="ms" aria-hidden="true">open_in_new</span> Abrir em aba</a>
+  </div>
+  <section class="card" id="secBater" data-page="bater">
+    <iframe class="bater-frame" id="baterFrame" title="Bater ponto — &Iacute;carus" src="about:blank"></iframe>
+  </section>
 
   <!-- ================= CONTA / CONFIG ================= -->
 
@@ -2364,6 +2386,12 @@
   }
 
   // botão de sync do header: sincroniza o espelho quando essa aba está ativa, senão o dia
+  // abre a tela de bater ponto (iframe do site oficial), carregando sob demanda
+  window.baterPontoIcarus = function () {
+    var f = $('baterFrame');
+    if (f && f.src.indexOf('pontoicarus') < 0) f.src = 'https://web.pontoicarus.com.br/ponto';
+    openScreen('bater');
+  };
   window.headerSync = function () {
     var cur = document.querySelector('.nav-item.active');
     if (cur && cur.getAttribute('data-page') === 'espelho') espelhoSync(true);
