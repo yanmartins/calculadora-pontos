@@ -203,6 +203,21 @@
   #secCardAtestados.open .card-ico { background: var(--red-soft); }
   @keyframes ico-pop { 0% { transform: scale(.8); } 55% { transform: scale(1.12); } 100% { transform: none; } }
 
+  /* ===== ARRASTAR CARDS (reordenar; soltar na borda esq/dir = lado a lado) ===== */
+  /* metade do grid: -10px cobre o maior gap usado (18px em >=680px); sozinho na linha, o flex-grow devolve a largura total */
+  .card.w-half { flex-basis: calc(50% - 10px); min-width: min(100%, 300px); }
+  .drag-handle { color: var(--text-3); font-size: 20px; cursor: grab; opacity: 0; margin-left: 2px; border-radius: var(--r-full); padding: 2px; transition: opacity .2s, color .2s; }
+  .drag-handle:active { cursor: grabbing; }
+  .card:hover .drag-handle { opacity: 1; }
+  .drag-handle:hover { color: var(--accent); }
+  @media (hover: none) { .drag-handle { display: none; } } /* sem HTML5 dnd no touch */
+  .card.dragging { opacity: .45; }
+  /* indicador de onde o card vai cair (barra na borda do alvo) */
+  .card.drop-top    { box-shadow: inset 0 4px 0 0 var(--accent), var(--shadow); }
+  .card.drop-bottom { box-shadow: inset 0 -4px 0 0 var(--accent), var(--shadow); }
+  .card.drop-left   { box-shadow: inset 4px 0 0 0 var(--accent), var(--shadow); }
+  .card.drop-right  { box-shadow: inset -4px 0 0 0 var(--accent), var(--shadow); }
+
   /* ===== CHIPS ===== */
   .chip { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: .72rem; font-weight: 600; color: var(--on-blue-c); background: var(--blue-soft); padding: 5px 12px; border-radius: var(--r-full); white-space: nowrap; }
   .nolunch-chip { display: inline-block; font-family: var(--mono); font-size: .58rem; font-weight: 700; color: var(--on-orange-c); background: var(--orange-soft); padding: 2px 8px; border-radius: var(--r-full); letter-spacing: .03em; text-transform: uppercase; vertical-align: middle; margin-left: 5px; }
@@ -269,8 +284,9 @@
   .empty-hint { padding: 8px 0; font-style: italic; text-align: left; }
   /* tile "panorama": valor grande e bold, label embaixo, ícone no canto —
      padrão replicado nos slots de batida e no saldo. auto-fit quebra p/ 2x2 sem espremer. */
-  .dash-tiles { display: flex; gap: 8px; }
-  .dash-tile { flex: 1 1 0; min-width: 0; position: relative; overflow: hidden; text-align: center; border: none; border-radius: var(--r-md); padding: 12px 6px 10px; background: var(--raised); transition: background .3s, transform .3s var(--spring); }
+  .dash-tiles { display: flex; flex-wrap: wrap; gap: 8px; }
+  /* base de 96px: abaixo disso o tile quebra pra linha seguinte em vez de sobrepor o conteúdo */
+  .dash-tile { flex: 1 1 96px; min-width: 96px; position: relative; overflow: hidden; text-align: center; border: none; border-radius: var(--r-md); padding: 12px 6px 10px; background: var(--raised); transition: background .3s, transform .3s var(--spring); }
   .dash-tile:hover { transform: translateY(-2px); }
   .dash-tile-ico { position: absolute; top: 9px; right: 9px; width: 14px; height: 14px; color: var(--text-3); opacity: .75; }
   .dash-tile-val { font-family: var(--mono); font-size: 1.3rem; font-weight: 800; line-height: 1; color: var(--text); letter-spacing: -.01em; }
@@ -1996,6 +2012,113 @@
     } catch (e) {}
   }
 
+  // ===== LAYOUT DOS CARDS (arrastar pela alça; borda esq/dir do alvo = lado a lado) =====
+  var DRAG_PAGES = ['hoje', 'banco', 'calendario', 'espelho'];
+  var dragCard = null, dropTarget = null, dropMode = '';
+
+  function layoutSave() {
+    try {
+      var st = {};
+      DRAG_PAGES.forEach(function (p) {
+        st[p] = [].map.call(document.querySelectorAll('.card-grid > .card[data-page="' + p + '"]'), function (c) {
+          return { id: c.id, w: c.classList.contains('w-half') ? 'half' : 'full' };
+        });
+      });
+      localStorage.setItem('calc-layout', JSON.stringify(st));
+    } catch (e) {}
+  }
+
+  function layoutRestore() {
+    var st; try { st = JSON.parse(localStorage.getItem('calc-layout')); } catch (e) {}
+    if (!st) return;
+    var grid = document.querySelector('.card-grid');
+    DRAG_PAGES.forEach(function (p) {
+      var saved = st[p]; if (!saved || !saved.length) return;
+      var cards = grid.querySelectorAll('.card[data-page="' + p + '"]');
+      if (!cards.length) return;
+      // âncora na posição do primeiro card da página; cards fora do save ficam depois dela
+      var marker = document.createComment('layout');
+      grid.insertBefore(marker, cards[0]);
+      saved.forEach(function (s) {
+        var c = $(s.id);
+        if (!c || c.getAttribute('data-page') !== p) return;
+        c.classList.toggle('w-half', s.w === 'half');
+        grid.insertBefore(c, marker);
+      });
+      grid.removeChild(marker);
+    });
+  }
+
+  function dropClear() {
+    if (dropTarget) dropTarget.classList.remove('drop-top', 'drop-bottom', 'drop-left', 'drop-right');
+    dropTarget = null; dropMode = '';
+  }
+
+  function initCardDrag() {
+    var grid = document.querySelector('.card-grid');
+    var sel = DRAG_PAGES.map(function (p) { return '.card[data-page="' + p + '"]'; }).join(',');
+    [].forEach.call(grid.querySelectorAll(sel), function (card) {
+      var head = card.querySelector('.card-head'); if (!head) return;
+
+      var h = document.createElement('span');
+      h.className = 'ms drag-handle';
+      h.textContent = 'drag_indicator';
+      h.title = 'Arrastar para reorganizar';
+      h.setAttribute('aria-hidden', 'true');
+      h.addEventListener('click', function (e) { e.stopPropagation(); }); // clique na alça não colapsa o card
+      // draggable só enquanto o mouse está na alça: não interfere na seleção/inputs do card
+      h.addEventListener('mousedown', function () { card.draggable = true; });
+      head.appendChild(h);
+
+      card.addEventListener('dragstart', function (e) {
+        dragCard = card;
+        card.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', card.id); } catch (err) {}
+      });
+      card.addEventListener('dragend', function () {
+        card.classList.remove('dragging');
+        card.draggable = false;
+        dropClear();
+        dragCard = null;
+      });
+      card.addEventListener('dragover', function (e) {
+        if (!dragCard || dragCard === card) return;
+        if (card.getAttribute('data-page') !== dragCard.getAttribute('data-page')) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width;
+        var mode = x < .28 ? 'left' : x > .72 ? 'right'
+                 : (e.clientY - r.top) / r.height < .5 ? 'top' : 'bottom';
+        if (card !== dropTarget || mode !== dropMode) {
+          dropClear();
+          dropTarget = card; dropMode = mode;
+          card.classList.add('drop-' + mode);
+        }
+      });
+      card.addEventListener('dragleave', function (e) {
+        if (card === dropTarget && !card.contains(e.relatedTarget)) dropClear();
+      });
+      card.addEventListener('drop', function (e) {
+        if (!dragCard || dragCard === card || !dropMode) return;
+        e.preventDefault();
+        var mode = dropMode; dropClear();
+        if (mode === 'left' || mode === 'right') {
+          // lado a lado: arrastado e alvo viram meia largura
+          dragCard.classList.add('w-half');
+          card.classList.add('w-half');
+          grid.insertBefore(dragCard, mode === 'left' ? card : card.nextSibling);
+        } else {
+          // empilhado: o arrastado volta à largura total
+          dragCard.classList.remove('w-half');
+          grid.insertBefore(dragCard, mode === 'top' ? card : card.nextSibling);
+        }
+        layoutSave();
+      });
+    });
+  }
+
   // ===== PAGE NAVIGATION =====
   window.switchPage = function(page){
     document.querySelectorAll('[data-page]').forEach(function(el){
@@ -2642,6 +2765,7 @@
   icarusLoadAuth(); icarusRenderUI();
   espelhoLoad(); espelhoRenderNav(); renderEspelho();
   restoreCards();
+  layoutRestore(); initCardDrag();
   if (icarusAuth && icarusAuth.token && icarusAuth.idColaborador) icarusSync();
   setInterval(function(){ updateClock(); updateTimer(); render(); }, 1000);
   $('saldoIcarus').addEventListener('input', function(){ saldoIcarusDate=toStr(new Date()); });
