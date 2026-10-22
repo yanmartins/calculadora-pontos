@@ -433,6 +433,8 @@
   .abono-date { font-family: var(--mono); font-size: .85rem; color: var(--text-1); min-width: 44px; font-weight: 600; }
   .abono-tipo { font-size: .85rem; color: var(--purple); font-weight: 500; }
   .abono-dim { opacity: .4; }
+  .src-icarus { font-size: .58rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--on-blue-c); background: var(--blue-soft); padding: 2px 8px; border-radius: var(--r-full); flex-shrink: 0; }
+  .src-motivo { font-size: .72rem; color: var(--text-3); }
   .range-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
   .range-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--r-md); background: var(--raised); font-size: .88rem; color: var(--text-1); transition: background .3s; }
   .range-item-icon { width: 16px; height: 16px; color: var(--purple); flex-shrink: 0; }
@@ -1192,6 +1194,10 @@
           <span class="ms" aria-hidden="true">add</span>
         </button>
       </div>
+      <div class="aniver-foot">
+        <div class="icarus-status abono-sync-status" role="status"></div>
+        <button class="punch-act" onclick="abonoSync(true)"><span class="ms" aria-hidden="true">sync</span>Buscar no &Iacute;carus</button>
+      </div>
     </div>
   </section>
 
@@ -1230,6 +1236,10 @@
         <button class="btn-add" aria-label="Adicionar atestado" onclick="addAtestado()">
           <span class="ms" aria-hidden="true">add</span>
         </button>
+      </div>
+      <div class="aniver-foot">
+        <div class="icarus-status abono-sync-status" role="status"></div>
+        <button class="punch-act" onclick="abonoSync(true)"><span class="ms" aria-hidden="true">sync</span>Buscar no &Iacute;carus</button>
       </div>
     </div>
   </section>
@@ -1884,7 +1894,8 @@
       var inPeriod=a.date>=ini&&a.date<=fim;
       var dim=inPeriod?'':' abono-dim';
       var badge=inPeriod?'<span class="abono-period-badge">período</span>':'';
-      var tipoLabel=a.tipo==='integral'?'Dia inteiro':fmtDur(a.minutos)+' de abono';
+      var tipoLabel=(a.tipo==='integral'?'Dia inteiro':fmtDur(a.minutos)+' de abono')+(a.motivo?' <span class="src-motivo">'+a.motivo+'</span>':'');
+      if(a.src==='icarus') badge+='<span class="src-icarus">Ícarus</span>';
       var realIdx=abonos.indexOf(a);
       return '<div class="abono-item'+dim+'"><span class="abono-date">'+fmtDateBr(a.date)+'</span><span class="abono-tipo">'+tipoLabel+'</span>'+badge+'<button class="btn-remove" aria-label="Remover" onclick="removeAbono('+realIdx+')">×</button></div>';
     }).join('');
@@ -1895,7 +1906,8 @@
     if (!ranges.length) { c.innerHTML = '<div class="empty-hint">Nenhum registro</div>'; return; }
     c.innerHTML = ranges.map(function(r, idx){
       var days = Math.round((fromStr(r.fim)-fromStr(r.inicio))/86400000)+1;
-      return '<div class="range-item">'+icon+'<span class="range-item-text">'+fmtDateBr(r.inicio)+' — '+fmtDateBr(r.fim)+'</span><span class="range-item-days">'+days+'d</span><button class="btn-remove" aria-label="Remover" onclick="'+removeFunc+'('+idx+')">×</button></div>';
+      var src=r.src==='icarus'?'<span class="src-icarus" title="'+(r.motivo||'')+'">Ícarus</span>':'';
+      return '<div class="range-item">'+icon+'<span class="range-item-text">'+fmtDateBr(r.inicio)+' — '+fmtDateBr(r.fim)+(r.motivo?' <span class="src-motivo">'+r.motivo+'</span>':'')+'</span>'+src+'<span class="range-item-days">'+days+'d</span><button class="btn-remove" aria-label="Remover" onclick="'+removeFunc+'('+idx+')">×</button></div>';
     }).join('');
   }
 
@@ -2386,6 +2398,7 @@
     });
     window.scrollTo({top:0,behavior:'smooth'});
     if(page==='espelho')espelhoSync(false);
+    if(page==='calendario')abonoAutoSync();
   };
 
   // ===== GLOBAL ACTIONS =====
@@ -2435,6 +2448,86 @@
     abonos.push(entry);$('abonoData').value='';$('abonoTipo').value='integral';$('abonoHorasField').style.display='none';renderAll();
   };
   window.removeAbono = function(idx){abonos.splice(idx,1);renderAll();};
+
+  // ===== ABONOS/ATESTADOS DO ÍCARUS (só GET) =====
+  // 1 GET por dia útil do período (buscarAjustesPorData) + 1 GET por abono aprovado (/abonoPonto/{id}) para ler o motivo.
+  // "Atestado Médico" vai para Atestados; os demais motivos viram Abonos (dia todo ou horas).
+  var ABONO_MESES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var abonoSyncing = false;
+  function abonoStatus(msg, cls) {
+    [].forEach.call(document.querySelectorAll('.abono-sync-status'), function (el) { el.textContent = msg || ''; el.className = 'icarus-status abono-sync-status' + (cls ? ' ' + cls : ''); });
+  }
+  function icarusGet(path) {
+    return fetch(ICARUS_BASE + path, { headers: { 'Authorization': 'Bearer ' + icarusAuth.token } }).then(function (r) {
+      if (r.status === 401 || r.status === 403) throw new Error('sessão expirada — conecte novamente na aba Mais');
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
+  }
+  // a API só aceita a data no formato java.util.Date legado: "Oct 21 2026"
+  function icarusDateParam(d) { return encodeURIComponent(ABONO_MESES[d.getMonth()] + ' ' + d.getDate() + ' ' + d.getFullYear()); }
+  function hhmmToMin(t) { var m = /(\d{1,2}):(\d{2})/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : 0; }
+  window.abonoSync = function (manual) {
+    if (abonoSyncing) return;
+    if (!icarusAuth || !icarusAuth.token || !icarusAuth.idColaborador) {
+      if (manual) { abonoStatus('Conecte sua conta Ícarus na aba Mais', 'err'); loginOpen(); }
+      return;
+    }
+    var ini = toStr(period.inicio), fim = toStr(period.fim), dias = [];
+    for (var d = new Date(period.inicio); d <= period.fim; d = addDays(d, 1)) if (!isWeekend(d)) dias.push(new Date(d));
+    abonoSyncing = true;
+    abonoStatus('Buscando no Ícarus… 0/' + dias.length, '');
+    var id = Number(icarusAuth.idColaborador), achados = [], feitos = 0, i = 0;
+    function worker() {
+      if (i >= dias.length) return Promise.resolve();
+      var dia = dias[i++], ds = toStr(dia);
+      return icarusGet('/solicitacao/buscarAjustesPorData/' + id + '/' + icarusDateParam(dia)).then(function (list) {
+        var abs = (list || []).filter(function (x) { return x.tipoAjuste === 'ABONO' && String(x.status).toUpperCase() === 'APROVADO' && x.idAjusteAbono; });
+        return Promise.all(abs.map(function (x) {
+          return icarusGet('/abonoPonto/' + x.idAjusteAbono).then(function (a) {
+            var mot = (a.motivoAbono && a.motivoAbono.descricao) || 'Abono';
+            var tp = String(a.tipoPeriodoAbono || '').toUpperCase();
+            var min = hhmmToMin(a.tempoAbonoFormatado) || (a.horaInicio && a.horaFim ? hhmmToMin(a.horaFim) - hhmmToMin(a.horaInicio) : 0);
+            achados.push({ date: ds, id: x.idAjusteAbono, motivo: mot, integral: tp.indexOf('DIA') === 0 || !min, minutos: min });
+          });
+        }));
+      }).then(function () { feitos++; abonoStatus('Buscando no Ícarus… ' + feitos + '/' + dias.length, ''); return worker(); });
+    }
+    Promise.all([worker(), worker(), worker(), worker()]).then(function () {
+      // troca só o que veio do Ícarus neste período; lançamentos manuais ficam
+      atestados = atestados.filter(function (r) { return !(r && r.src === 'icarus' && r.inicio >= ini && r.fim <= fim); });
+      abonos = abonos.filter(function (a) { return !(a.src === 'icarus' && a.date >= ini && a.date <= fim); });
+      achados.sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+      var nAt = 0, nAb = 0, last = null;
+      achados.forEach(function (a) {
+        if (/atestado/i.test(a.motivo) && a.integral) {
+          if (isInRanges(a.date, atestados)) return; // já coberto por um atestado manual
+          // emenda com o anterior quando só há fim de semana entre eles
+          var gap = last && a.motivo === last.motivo ? addDays(fromStr(last.fim), 1) : null;
+          while (gap && isWeekend(gap) && toStr(gap) < a.date) gap = addDays(gap, 1);
+          if (gap && toStr(gap) === a.date) { last.fim = a.date; return; }
+          last = { inicio: a.date, fim: a.date, src: 'icarus', motivo: a.motivo };
+          atestados.push(last); nAt++;
+        } else {
+          if (abonos.some(function (b) { return b.date === a.date; })) return; // manual no mesmo dia prevalece
+          var e = { date: a.date, tipo: a.integral ? 'integral' : 'parcial', src: 'icarus', motivo: a.motivo };
+          if (!a.integral) e.minutos = a.minutos;
+          abonos.push(e); nAb++;
+        }
+      });
+      atestados.sort(function (a, b) { return a.inicio < b.inicio ? -1 : 1; });
+      try { localStorage.setItem('icarus-abonos-sync', JSON.stringify({ ini: ini, at: Date.now() })); } catch (e) {}
+      renderAll();
+      abonoStatus('Atualizado às ' + nowTimeStr() + ' — ' + nAt + ' atestado(s), ' + nAb + ' abono(s) no período', 'ok');
+    }).catch(function (e) { abonoStatus('Erro: ' + e.message, 'err'); })
+      .finally(function () { abonoSyncing = false; });
+  };
+  // automático ao abrir o Calendário: no máximo 1x a cada 12h por período
+  function abonoAutoSync() {
+    var st = null; try { st = JSON.parse(localStorage.getItem('icarus-abonos-sync')); } catch (e) {}
+    if (st && st.ini === toStr(period.inicio) && Date.now() - st.at < 12 * 3600 * 1000) return;
+    abonoSync(false);
+  }
 
   // ===== EXPORT / IMPORT =====
   // grupos do arquivo: chaves inteiras do localStorage (keys) ou campos dentro de calc-pontos (pontos)
