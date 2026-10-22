@@ -304,6 +304,7 @@
   .btn-add svg { width: 15px; height: 15px; flex-shrink: 0; }
   .btn-config { padding: 10px 18px; border: none; border-radius: var(--r-full); background: var(--accent-soft); color: var(--on-accent-c); font-size: .82rem; font-weight: 700; cursor: pointer; transition: background .2s, transform .3s var(--spring); white-space: nowrap; }
     .btn-config:active { transform: scale(.96); }
+  .config-hint { display: block; font-size: .7rem; font-weight: 500; color: var(--text-3); margin-top: 2px; }
   .btn-config.active { background: var(--green-soft); color: var(--on-green-c); }
   .btn-remove { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; background: none; border: none; color: var(--red); font-size: .9rem; cursor: pointer; padding: 0 6px; border-radius: var(--r-full); line-height: 1; opacity: .6; transition: opacity .15s, background .15s; }
   .btn-remove:hover { opacity: 1; background: var(--red-soft); }
@@ -517,6 +518,23 @@
     font-family: inherit; font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .2s; }
   .btn-text:hover { background: var(--accent-soft); }
   .btn-dlg { width: auto; margin: 0; padding: 12px 22px; }
+  .btn-dlg:disabled { opacity: .4; cursor: default; }
+  /* arrastar arquivo para importar */
+  .drop-overlay { position: fixed; inset: 0; z-index: 110; display: flex; align-items: center; justify-content: center; padding: 24px; pointer-events: none;
+    background: color-mix(in srgb, var(--accent) 14%, color-mix(in srgb, #000 40%, transparent)); animation: scrim-in .15s var(--ease); }
+  .drop-overlay[hidden] { display: none; }
+  .drop-box { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 36px 44px; border: 2px dashed var(--accent); border-radius: var(--r-xl);
+    background: var(--surface); color: var(--text); font-weight: 700; font-size: 1rem; box-shadow: var(--shadow-hover); }
+  .drop-box .ms { font-size: 40px; color: var(--accent); }
+  /* checklist de exportar/importar */
+  .xfer-list { display: flex; flex-direction: column; gap: 4px; text-align: left; max-height: 50vh; overflow-y: auto; }
+  .xfer-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r-md); background: var(--raised); cursor: pointer; transition: background .15s; }
+  .xfer-item:hover { background: var(--input-bg); }
+  .xfer-item input { accent-color: var(--accent); width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; }
+  .xfer-item > .ms { font-size: 20px; color: var(--text-2); }
+  .xfer-txt { flex: 1; display: flex; flex-direction: column; font-size: .9rem; font-weight: 600; color: var(--text); }
+  .xfer-txt small { font-size: .7rem; font-weight: 500; color: var(--text-3); }
+  .xfer-tag { font-size: .58rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--on-orange-c); background: var(--orange-soft); padding: 2px 8px; border-radius: var(--r-full); flex-shrink: 0; }
   .btn-dlg:disabled { opacity: .5; cursor: default; }
   .dialog-note { font-size: .72rem; color: var(--text-3); margin-top: 14px; line-height: 1.4; }
   #dlgLoginStatus { min-height: 0; margin-top: 10px; }
@@ -1326,7 +1344,7 @@
       </span>
       <div class="card-titles">
         <h2>Prefer&ecirc;ncias</h2>
-        <p class="card-sub">Tema, notifica&ccedil;&otilde;es e backup</p>
+        <p class="card-sub">Tema, notifica&ccedil;&otilde;es, exportar e importar</p>
       </div>
     </header>
     <div class="card-body">
@@ -1363,10 +1381,11 @@
         <button class="btn-config" id="btnNotif" onclick="toggleNotifications()">Ativar</button>
       </div>
       <div class="config-row">
-        <span class="config-label">Backup dos dados</span>
+        <span class="config-label">Exportar e importar<br><small class="config-hint">Arquivo .json &mdash; voc&ecirc; escolhe o que entra</small></span>
         <div class="config-actions">
-          <button class="btn-config" id="btnCopyBackup" onclick="copyBackup()">Copiar</button>
-          <button class="btn-config" onclick="pasteBackup()">Colar</button>
+          <button class="btn-config" onclick="xferOpen('export')">Exportar</button>
+          <button class="btn-config" onclick="document.getElementById('cfgFile').click()">Importar</button>
+          <input type="file" id="cfgFile" accept=".json,application/json,text/plain" hidden onchange="importConfig(this)">
         </div>
       </div>
     </div>
@@ -1376,6 +1395,23 @@
 </div>
 
 <!-- DIALOG: login obrigatório (aparece quando uma ação exige conexão) -->
+<div class="drop-overlay" id="dropOverlay" hidden>
+  <div class="drop-box"><span class="ms" aria-hidden="true">download</span>Solte o arquivo para importar</div>
+</div>
+
+<div class="scrim" id="xferScrim" hidden onclick="if(event.target===this)xferClose()">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="xferTitle">
+    <span class="ms dialog-ico" aria-hidden="true" id="xferIco">upload</span>
+    <h2 class="dialog-title" id="xferTitle"></h2>
+    <p class="dialog-sub" id="xferSub"></p>
+    <div class="xfer-list" id="xferList"></div>
+    <div class="dialog-actions">
+      <button class="btn-text" onclick="xferClose()">Cancelar</button>
+      <button class="btn-primary btn-dlg" id="xferGo" onclick="xferGo()"></button>
+    </div>
+  </div>
+</div>
+
 <div class="scrim" id="loginScrim" hidden>
   <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="loginDlgTitle">
     <span class="ms dialog-ico" aria-hidden="true">cloud</span>
@@ -2401,34 +2437,105 @@
   window.removeAbono = function(idx){abonos.splice(idx,1);renderAll();};
 
   // ===== EXPORT / IMPORT =====
-  window.copyBackup = function(){
-    save();
-    var data=localStorage.getItem('calc-pontos');
-    if(!data){alert('Nenhum dado para copiar');return;}
-    var btn=$('btnCopyBackup'), done=function(ok){
-      btn.textContent=ok?'Copiado ✓':'Falhou';
-      setTimeout(function(){ btn.textContent='Copiar'; },2000);
-    };
-    if(navigator.clipboard&&navigator.clipboard.writeText){
-      navigator.clipboard.writeText(data).then(function(){done(true);},function(){ window.prompt('Copie o backup abaixo:',data); done(true); });
-    } else { window.prompt('Copie o backup abaixo:',data); done(true); }
-  };
-  function applyBackup(text){
-    if(!text) return;
-    try {
-      var data=JSON.parse(text.trim());
-      if(!data||typeof data!=='object') throw 0;
-      localStorage.setItem('calc-pontos',JSON.stringify(data));
-      location.reload();
-    } catch(err){ alert('Backup inválido — verifique o texto colado.'); }
+  // grupos do arquivo: chaves inteiras do localStorage (keys) ou campos dentro de calc-pontos (pontos)
+  var XFER_GROUPS = [
+    { id: 'aparencia', ico: 'palette', lbl: 'Tema e cor', keys: ['calc-theme', 'calc-accent'] },
+    { id: 'layout', ico: 'dashboard', lbl: 'Layout dos cards', sub: 'ordem, largura e cards abertos', keys: ['calc-layout', 'calc-cards'] },
+    { id: 'aniver', ico: 'cake', lbl: 'Aniversariantes', keys: ['icarus-aniver'] },
+    { id: 'feriados', ico: 'trip', lbl: 'Feriados', sub: 'adicionados, desmarcados e datas alteradas', pontos: ['customHolidays', 'disabledHolidays', 'holidayOverrides'] },
+    { id: 'projecao', ico: 'schedule', lbl: 'Projeção', sub: 'entrada, saída máxima e almoço', pontos: ['projEntrada', 'projSaidaMax', 'projAlmoco'] },
+    { id: 'metas', ico: 'flag', lbl: 'Metas', pontos: ['customTargets'], pessoal: true },
+    { id: 'ausencias', ico: 'beach_access', lbl: 'Férias, atestados e abonos', pontos: ['ferias', 'atestados', 'abonos'], pessoal: true },
+    { id: 'batidas', ico: 'fingerprint', lbl: 'Batidas do dia e saldo', pontos: ['punches', 'punchesDate', 'saldoIcarus', 'saldoIcarusDate'], pessoal: true }
+  ];
+  var xferMode = '', xferData = null;
+  function xferPontos() { try { return JSON.parse(localStorage.getItem('calc-pontos')) || {}; } catch (e) { return {}; } }
+  function xferHas(g, src) {
+    return (g.keys || []).some(function (k) { return src.keys[k] != null; }) || (g.pontos || []).some(function (k) { return src.pontos[k] !== undefined; });
   }
-  window.pasteBackup = function(){
-    if(navigator.clipboard&&navigator.clipboard.readText){
-      navigator.clipboard.readText().then(function(t){
-        applyBackup(t||window.prompt('Cole o backup aqui:')||'');
-      },function(){ applyBackup(window.prompt('Cole o backup aqui:')||''); });
-    } else { applyBackup(window.prompt('Cole o backup aqui:')||''); }
+  function xferRender() {
+    var avail = XFER_GROUPS.filter(function (g) { return xferHas(g, xferData); });
+    setHTML($('xferList'), avail.length ? avail.map(function (g) {
+      // exportar: pessoais vêm desmarcados (pensado para compartilhar); importar: tudo que veio no arquivo marcado
+      var on = xferMode === 'import' || !g.pessoal;
+      return '<label class="xfer-item"><input type="checkbox" value="' + g.id + '"' + (on ? ' checked' : '') + ' onchange="xferCount()">' +
+        '<span class="ms" aria-hidden="true">' + g.ico + '</span><span class="xfer-txt">' + g.lbl + (g.sub ? '<small>' + g.sub + '</small>' : '') + '</span>' +
+        (g.pessoal ? '<span class="xfer-tag">pessoal</span>' : '') + '</label>';
+    }).join('') : '<div class="empty-hint">Nada para ' + (xferMode === 'import' ? 'importar neste arquivo' : 'exportar ainda') + '</div>');
+    xferCount();
+  }
+  window.xferCount = function () {
+    var n = document.querySelectorAll('#xferList input:checked').length;
+    $('xferGo').disabled = !n;
+    $('xferGo').textContent = (xferMode === 'import' ? 'Importar' : 'Exportar') + (n ? ' (' + n + ')' : '');
   };
+  window.xferOpen = function (mode, data) {
+    xferMode = mode;
+    if (mode === 'export') {
+      save();
+      var keys = {};
+      XFER_GROUPS.forEach(function (g) { (g.keys || []).forEach(function (k) { var v = localStorage.getItem(k); if (v !== null) keys[k] = v; }); });
+      data = { keys: keys, pontos: xferPontos() };
+    }
+    xferData = data;
+    $('xferIco').textContent = mode === 'import' ? 'download' : 'upload';
+    $('xferTitle').textContent = mode === 'import' ? 'Importar' : 'Exportar';
+    $('xferSub').textContent = mode === 'import' ? 'Escolha o que trazer deste arquivo. O resto continua como está.' : 'Escolha o que vai no arquivo. O login do Ícarus nunca é exportado.';
+    xferRender();
+    $('xferScrim').hidden = false;
+  };
+  window.xferClose = function () { $('xferScrim').hidden = true; xferData = null; };
+  window.xferGo = function () {
+    var ids = [].map.call(document.querySelectorAll('#xferList input:checked'), function (c) { return c.value; });
+    var groups = XFER_GROUPS.filter(function (g) { return ids.indexOf(g.id) >= 0; });
+    if (!groups.length) return;
+    if (xferMode === 'export') {
+      var out = { app: 'calc-pontos-config', v: 2, exportado: new Date().toISOString(), grupos: ids, keys: {}, pontos: {} };
+      groups.forEach(function (g) {
+        (g.keys || []).forEach(function (k) { if (xferData.keys[k] != null) out.keys[k] = xferData.keys[k]; });
+        (g.pontos || []).forEach(function (k) { if (xferData.pontos[k] !== undefined) out.pontos[k] = xferData.pontos[k]; });
+      });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' }));
+      a.download = 'calculadora-pontos-' + toStr(new Date()) + '.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+      xferClose();
+      return;
+    }
+    var d = xferPontos();
+    groups.forEach(function (g) {
+      (g.keys || []).forEach(function (k) { if (typeof xferData.keys[k] === 'string') localStorage.setItem(k, xferData.keys[k]); });
+      (g.pontos || []).forEach(function (k) { if (xferData.pontos[k] !== undefined) d[k] = xferData.pontos[k]; });
+    });
+    localStorage.setItem('calc-pontos', JSON.stringify(d));
+    location.reload();
+  };
+  // aceita o arquivo novo e também o texto do backup antigo (JSON cru de calc-pontos)
+  window.importConfig = function (inp) {
+    var f = inp.files && inp.files[0]; inp.value = ''; if (f) importFile(f);
+  };
+  function importFile(f) {
+    f.text().then(function (text) {
+      var cfg = JSON.parse(text.trim());
+      if (!cfg || typeof cfg !== 'object') throw 0;
+      var data = cfg.app === 'calc-pontos-config' ? { keys: cfg.keys || {}, pontos: cfg.pontos || {} } : { keys: {}, pontos: cfg };
+      xferOpen('import', data);
+    }).catch(function () { alert('Arquivo inválido.'); });
+  }
+  // arrastar o arquivo para qualquer lugar da página; só reage a arquivos (não ao arrastar de cards)
+  (function () {
+    var depth = 0, ov = $('dropOverlay');
+    function isFile(e) { return e.dataTransfer && [].indexOf.call(e.dataTransfer.types || [], 'Files') >= 0; }
+    document.addEventListener('dragenter', function (e) { if (!isFile(e)) return; e.preventDefault(); depth++; ov.hidden = false; });
+    document.addEventListener('dragover', function (e) { if (!isFile(e)) return; e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
+    document.addEventListener('dragleave', function (e) { if (!isFile(e)) return; if (--depth <= 0) { depth = 0; ov.hidden = true; } });
+    document.addEventListener('drop', function (e) {
+      if (!isFile(e)) return;
+      e.preventDefault(); depth = 0; ov.hidden = true;
+      var f = e.dataTransfer.files[0]; if (f) importFile(f);
+    });
+  })();
 
 
   // ===== PERSISTENCE =====

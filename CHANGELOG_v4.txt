@@ -31,5 +31,12 @@ Se alguém da sua lista faz aniversário nos próximos 30 dias, aparece uma bolh
 • Feriado chegando (até 30 dias) mantém a bolha colorida, mesmo fora do período
 • Para alterar a data de um feriado, toque na data
 
+*📦 Exportar e importar configurações (aba Mais → Configurações)*
+• Exporte um arquivo .json escolhendo o que vai nele: tema e cor, layout dos cards, aniversariantes, feriados, projeção, metas, férias/atestados/abonos e batidas/saldo
+• Os itens pessoais vêm desmarcados, então dá para mandar para um amigo sem expor seus dados
+• Para importar, toque em Importar ou arraste o arquivo para dentro da página. Você escolhe o que trazer e o resto fica como está
+• O login do Ícarus nunca é exportado
+• Substitui o antigo Backup (Copiar/Colar). Backups antigos salvos em arquivo continuam sendo aceitos
+
 *ℹ️ Como atualizar*
 Substitua os arquivos da pasta pelos do .zip. Se o app estiver instalado (PWA), feche e abra de novo para carregar a versão nova.
