@@ -2451,7 +2451,8 @@
 
   // ===== ABONOS/ATESTADOS DO ÍCARUS (só GET) =====
   // 1 GET por dia útil do período (buscarAjustesPorData) + 1 GET por abono aprovado (/abonoPonto/{id}) para ler o motivo.
-  // "Atestado Médico" vai para Atestados; os demais motivos viram Abonos (dia todo ou horas).
+  // Só abonos de dia inteiro: "Atestado Médico" vai para Atestados, os demais motivos viram Abonos.
+  // Abonos de horas ficam de fora porque já estão no saldo do Ícarus.
   var ABONO_MESES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var abonoSyncing = false;
   function abonoStatus(msg, cls) {
@@ -2500,7 +2501,9 @@
       achados.sort(function (a, b) { return a.date < b.date ? -1 : 1; });
       var nAt = 0, nAb = 0, last = null;
       achados.forEach(function (a) {
-        if (/atestado/i.test(a.motivo) && a.integral) {
+        // abono de horas já entra no saldo do Ícarus; importar contaria em dobro
+        if (!a.integral) return;
+        if (/atestado/i.test(a.motivo)) {
           if (isInRanges(a.date, atestados)) return; // já coberto por um atestado manual
           // emenda com o anterior quando só há fim de semana entre eles
           var gap = last && a.motivo === last.motivo ? addDays(fromStr(last.fim), 1) : null;
@@ -2510,9 +2513,7 @@
           atestados.push(last); nAt++;
         } else {
           if (abonos.some(function (b) { return b.date === a.date; })) return; // manual no mesmo dia prevalece
-          var e = { date: a.date, tipo: a.integral ? 'integral' : 'parcial', src: 'icarus', motivo: a.motivo };
-          if (!a.integral) e.minutos = a.minutos;
-          abonos.push(e); nAb++;
+          abonos.push({ date: a.date, tipo: 'integral', src: 'icarus', motivo: a.motivo }); nAb++;
         }
       });
       atestados.sort(function (a, b) { return a.inicio < b.inicio ? -1 : 1; });
