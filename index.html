@@ -64,6 +64,7 @@
     --on-sec-c: #cde8e2;
     --blue: #8dcdff;  --blue-soft: #004b70;  --on-blue-c: #cae6ff;
     --purple: #c0c1ff; --purple-soft: #393b98; --on-purple-c: #e1e0ff;
+    --pink: #ffb1c2; --pink-soft: #8f003f; --on-pink-c: #ffd9df;
     --green: #3de09e; --green-soft: #005235; --on-green-c: #62fdb9;
     --orange: #ffba40; --orange-soft: #604100; --on-orange-c: #ffddae;
     --red: #ffb4ab;   --red-soft: #93000a;   --on-red-c: #ffdad6;
@@ -88,6 +89,7 @@
     --on-sec-c: #334b47;
     --blue: #006493;  --blue-soft: #cae6ff;  --on-blue-c: #001e30;
     --purple: #5154b2; --purple-soft: #e1e0ff; --on-purple-c: #06006c;
+    --pink: #bb0055; --pink-soft: #ffd9df; --on-pink-c: #3f0018;
     --green: #006c48; --green-soft: #62fdb9; --on-green-c: #002113;
     --orange: #7f5600; --orange-soft: #ffddae; --on-orange-c: #281800;
     --red: #ba1a1a;   --red-soft: #ffdad6;   --on-red-c: #93000a;
@@ -113,6 +115,7 @@
     --on-sec-c: #000e0b;
     --blue: #8dcdff;  --blue-soft: #004b70;  --on-blue-c: #cae6ff;
     --purple: #c0c1ff; --purple-soft: #393b98; --on-purple-c: #e1e0ff;
+    --pink: #ffb1c2; --pink-soft: #8f003f; --on-pink-c: #ffd9df;
     --green: #3de09e; --green-soft: #005235; --on-green-c: #62fdb9;
     --orange: #ffba40; --orange-soft: #604100; --on-orange-c: #ffddae;
     --red: #ffece9;   --red-soft: #ffaea4;   --on-red-c: #220001;
@@ -222,6 +225,7 @@
   #secBanco .card-ico { border-color: var(--green-soft); color: var(--green); }
   #secCardFeriados .card-ico { border-color: var(--orange-soft); color: var(--orange); }
   #secCardAtestados .card-ico { border-color: var(--red-soft); color: var(--red); }
+  #secCardAniver .card-ico { border-color: var(--pink-soft); color: var(--pink); }
   .card-titles { flex: 1; min-width: 0; }
   .card-titles h2 { font-size: 1.02rem; font-weight: 700; letter-spacing: -.01em; color: var(--text); line-height: 1.25; }
   .card-sub { font-size: .74rem; color: var(--text-2); line-height: 1.3; }
@@ -247,6 +251,7 @@
   #secBanco.open .card-ico { background: var(--green-soft); }
   #secCardFeriados.open .card-ico { background: var(--orange-soft); }
   #secCardAtestados.open .card-ico { background: var(--red-soft); }
+  #secCardAniver.open .card-ico { background: var(--pink-soft); }
   @keyframes ico-pop { 0% { transform: scale(.8); } 55% { transform: scale(1.12); } 100% { transform: none; } }
 
   /* ===== ARRASTAR CARDS (reordenar; soltar na borda esq/dir = lado a lado) ===== */
@@ -416,7 +421,9 @@
   .holiday-date-edit::-webkit-calendar-picker-indicator { filter: var(--picker-filter); cursor: pointer; }
   .holiday-name { flex: 1; }
   .holiday-custom { color: var(--purple); }
-  .holiday-dim { opacity: .4; }
+  .holiday-dim > :not(.hol-soon) { opacity: .4; } /* apaga a linha, mas mantém a bolha de "chegando" visível */
+  .hol-sep { display: flex; align-items: center; gap: 10px; margin: 8px 4px 4px; font-size: .66rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--text-3); }
+  .hol-sep::before, .hol-sep::after { content: ''; flex: 1; border-top: 1px solid var(--border); }
   .holiday-list::-webkit-scrollbar { width: 4px; }
   .holiday-list::-webkit-scrollbar-track { background: transparent; }
   .holiday-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -548,6 +555,7 @@
   .hdr-cd-chip:active { transform: scale(.92); }
   .hdr-cd-chip.cd-holiday { background: var(--orange-soft); color: var(--on-orange-c); }
   .hdr-cd-chip.cd-ferias { background: var(--blue-soft); color: var(--on-blue-c); }
+  .hdr-cd-chip.cd-aniver { background: var(--pink-soft); color: var(--on-pink-c); }
   .hdr-cd-chip::after { content: attr(data-tip); position: absolute; top: calc(100% + 10px); right: 0; padding: 5px 10px; border-radius: var(--r-sm); background: var(--inverse-surface, var(--text-1)); color: var(--surface); font-family: var(--font, inherit); font-size: .68rem; font-weight: 700; white-space: nowrap; box-shadow: var(--shadow); opacity: 0; transform: translateY(-4px); pointer-events: none; transition: opacity .18s var(--ease), transform .18s var(--ease); }
   .hdr-cd-chip:hover::after, .hdr-cd-chip:focus-visible::after { opacity: 1; transform: translateY(0); }
   .acct-btn::after { content: attr(data-tip); position: absolute; top: calc(100% + 6px); right: 0; padding: 5px 10px; border-radius: var(--r-sm); background: var(--inverse-surface, var(--text-1)); color: var(--surface); font-size: .68rem; font-weight: 700; white-space: nowrap; box-shadow: var(--shadow); opacity: 0; transform: translateY(-4px); pointer-events: none; transition: opacity .18s var(--ease), transform .18s var(--ease); }
@@ -593,6 +601,21 @@
   .esp-tag-abono { color: var(--on-green-c); background: var(--green-soft); }
   .esp-tag-descanso { color: var(--on-purple-c); background: var(--purple-soft); }
   .esp-has-he { border-bottom: 1px dotted var(--accent); cursor: help; }
+  /* aniversariantes */
+  .aniver-item { cursor: default; }
+  .aniver-date { font-family: var(--mono); font-weight: 700; color: var(--text-1); min-width: 48px; }
+  .aniver-badge { font-family: var(--mono); font-size: .62rem; font-weight: 700; color: var(--text-2); background: var(--input-bg); padding: 3px 10px; border-radius: var(--r-full); margin-left: auto; flex-shrink: 0; white-space: nowrap; }
+  .aniver-badge.soon { color: var(--on-pink-c); background: var(--pink-soft); }
+  .aniver-badge.today { color: var(--pink-soft); background: var(--pink); }
+  .aniver-badge.hol-soon { color: var(--on-orange-c); background: var(--orange-soft); }
+  .aniver-badge.hol-today { color: var(--orange-soft); background: var(--orange); }
+  .hol-date { position: relative; cursor: pointer; border-bottom: 1px dotted var(--text-3); }
+  .hol-date input { position: absolute; inset: 0; opacity: 0; width: 100%; cursor: pointer; }
+  .aniver-pick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .aniver-pick:empty { display: none; }
+  .aniver-pick-btn { border: 1px solid var(--border); background: var(--raised); color: var(--text); font: inherit; font-size: .8rem; padding: 6px 12px; border-radius: var(--r-full); cursor: pointer; }
+  .aniver-pick-btn:hover { background: var(--accent-soft); color: var(--on-accent-c); border-color: transparent; }
+  .aniver-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   /* inconsistências do período */
   .esp-issues { margin-top: 14px; }
   .esp-issues-head { display: flex; align-items: center; gap: 8px; font-size: .74rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--text-2); margin-bottom: 8px; }
@@ -1099,6 +1122,33 @@
         <button class="btn-add" aria-label="Adicionar feriado" onclick="addCustomHoliday()">
           <span class="ms" aria-hidden="true">add</span>
         </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card collapsible" id="secCardAniver" data-page="calendario">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secCardAniver')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secCardAniver');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">cake</span>
+      </span>
+      <div class="card-titles">
+        <h2>Aniversariantes</h2>
+        <p class="card-sub">Datas buscadas no &Iacute;carus pelos nomes que voc&ecirc; adicionar</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div class="holiday-list" id="aniverList"></div>
+      <div class="add-row">
+        <div class="field"><label><span class="ms" aria-hidden="true">person_search</span>Nome</label><input type="text" id="aniverNome" placeholder="Nome da pessoa" onkeydown="if(event.key==='Enter')addAniver()"></div>
+        <button class="btn-add" aria-label="Buscar e adicionar" onclick="addAniver()">
+          <span class="ms" aria-hidden="true">add</span>
+        </button>
+      </div>
+      <div class="aniver-pick" id="aniverPick"></div>
+      <div class="aniver-foot">
+        <div class="icarus-status" id="aniverStatus" role="status"></div>
+        <button class="punch-act" id="aniverRefresh" onclick="refreshAniver()" hidden><span class="ms" aria-hidden="true">sync</span>Atualizar datas</button>
       </div>
     </div>
   </section>
@@ -1764,19 +1814,27 @@
     }).join(''));
   }
 
+  // mesmo visual da lista de aniversariantes: próximos primeiro com contagem, os que já passaram no fim
   function renderHolidays() {
     var ini=toStr(period.inicio),fim=toStr(period.fim);
-    $('holidayList').innerHTML = allYearHolidays.map(function(h){
-      var inPeriod=h.date>=ini&&h.date<=fim;
+    var rows=allYearHolidays.map(function(h){ return {h:h,n:daysUntil(h.date)}; });
+    rows.sort(function(a,b){ var pa=a.n<0,pb=b.n<0; return pa!==pb?(pa?1:-1):(pa?b.n-a.n:a.n-b.n); });
+    var sep=false;
+    $('holidayList').innerHTML = rows.map(function(r){
+      var h=r.h,n=r.n,inPeriod=h.date>=ini&&h.date<=fim; // só os do período ficam destacados
       var checked=!disabledHolidays[h.date]?'checked':'';
       var isCustom=customHolidays.some(function(c){return c.date===h.date;});
       var cls=isCustom?' holiday-custom':'';
       var rm=isCustom?'<button class="btn-remove" aria-label="Remover" onclick="removeCustomHoliday(\''+h.date+'\')">×</button>':'';
       var nameEsc=h.name.replace(/'/g,"\\'");
-      var badge=inPeriod?'<span class="holiday-period-badge">período</span>':'';
-      var dim=inPeriod?'':' holiday-dim';
-      return '<div class="holiday-item'+dim+'"><input type="checkbox" aria-label="Considerar feriado" '+checked+' onchange="toggleHoliday(\''+h.date+'\',this.checked)">'+
-        '<input type="date" class="holiday-date-edit" value="'+h.date+'" onchange="updateHolidayDate(\''+nameEsc+'\',\''+h.date+'\',this.value)">'+
+      var badge=n<0?'<span class="aniver-badge">passou</span>'
+        :'<span class="aniver-badge'+(n===0&&inPeriod?' hol-today':inPeriod||n<=30?' hol-soon':'')+'">'+(n===0?'hoje':n===1?'amanhã':'em '+n+'d')+'</span>';
+      // data em texto; o input de data invisível por cima mantém a edição
+      // divisória antes do primeiro feriado que já passou
+      var div=(n<0&&!sep)?(sep=true,'<div class="hol-sep">J\u00e1 passaram</div>'):'';
+      return div+'<div class="holiday-item aniver-item'+(inPeriod?'':' holiday-dim')+'"><input type="checkbox" aria-label="Considerar feriado" '+checked+' onchange="toggleHoliday(\''+h.date+'\',this.checked)">'+
+        '<label class="aniver-date hol-date" title="Alterar data">'+fmtDateBr(h.date)+
+        '<input type="date" aria-label="Alterar data de '+h.name+'" value="'+h.date+'" onclick="try{this.showPicker()}catch(e){}" onchange="updateHolidayDate(\''+nameEsc+'\',\''+h.date+'\',this.value)"></label>'+
         '<span class="holiday-name'+cls+'">'+h.name+'</span>'+badge+rm+'</div>';
     }).join('');
   }
@@ -2769,6 +2827,111 @@
     function avg(a) { return a.length ? Math.round(a.reduce(function (x, y) { return x + y; }, 0) / a.length) : null; }
     return { n: n, ent: avg(ent), sai: avg(sai), alm: avg(alm), trab: avg(trab) };
   }
+  // ===== ANIVERSARIANTES: nomes digitados -> data de nascimento via Ícarus (cache local) =====
+  var aniver = []; // [{q, nome, md:'MM-DD'}] — só dia/mês, o ano não é guardado
+  function aniverLoad() { try { aniver = JSON.parse(localStorage.getItem('icarus-aniver')) || []; } catch (e) { aniver = []; } }
+  function aniverSave() { try { localStorage.setItem('icarus-aniver', JSON.stringify(aniver)); } catch (e) {} }
+  function aniverStatus(msg, cls) { var el = $('aniverStatus'); if (el) { el.textContent = msg || ''; el.className = 'icarus-status' + (cls ? ' ' + cls : ''); } }
+  function escH(t) { return String(t).replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';'; }); }
+  function normNome(t) { return String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); }
+  function aniverMD(p) {
+    var d = String(p.dataNascimento || ''), f = String(p.dataNascimentoFormatado || '');
+    if (/^\d{4}-\d{2}-\d{2}/.test(d)) return d.slice(5, 10);
+    if (/^\d{2}\/\d{2}\/\d{4}/.test(f)) return f.slice(3, 5) + '-' + f.slice(0, 2);
+    return null;
+  }
+  function aniverDaysUntil(md) {
+    var t = new Date(); t.setHours(0, 0, 0, 0);
+    var mo = +md.slice(0, 2) - 1, dd = +md.slice(3, 5);
+    var n = new Date(t.getFullYear(), mo, dd);
+    if (n < t) n = new Date(t.getFullYear() + 1, mo, dd);
+    return Math.round((n - t) / 864e5);
+  }
+  // pesquisa pelo filtro de nome; o filtro do lado do cliente garante o casamento mesmo se a API devolver a mais
+  function aniverSearch(q) {
+    if (!icarusAuth || !icarusAuth.token) return Promise.reject(new Error('conecte sua conta \u00cdcarus na aba Mais'));
+    return fetch(ICARUS_BASE + '/pessoa/pesquisa/0', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + icarusAuth.token },
+      body: JSON.stringify({ nome: q })
+    }).then(function (r) {
+      if (r.status === 401 || r.status === 403) throw new Error('sess\u00e3o expirada \u2014 conecte novamente na aba Mais');
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (data) {
+      var list = (data && (data.content || data)) || [], nq = normNome(q).split(/\s+/);
+      if (!Array.isArray(list)) list = [];
+      return {
+        total: (data && data.totalElements) || list.length,
+        people: list.filter(function (p) {
+          var nn = normNome(p.nome);
+          return p.nome && aniverMD(p) && nq.every(function (w) { return nn.indexOf(w) >= 0; });
+        }).map(function (p) { return { nome: p.nome.trim(), md: aniverMD(p) }; })
+      };
+    });
+  }
+  function aniverPush(q, p) {
+    if (aniver.some(function (a) { return a.nome === p.nome; })) { aniverStatus(p.nome + ' j\u00e1 est\u00e1 na lista', ''); return; }
+    aniver.push({ q: q, nome: p.nome, md: p.md });
+    aniverSave(); renderAniver();
+    aniverStatus(p.nome + ' adicionado(a)', 'ok');
+  }
+  var aniverPending = null;
+  window.addAniver = function () {
+    var inp = $('aniverNome'), q = inp.value.trim();
+    if (q.length < 3) { aniverStatus('Digite ao menos 3 letras do nome', 'err'); return; }
+    setHTML($('aniverPick'), ''); aniverPending = null;
+    aniverStatus('Buscando ' + q + '\u2026', '');
+    aniverSearch(q).then(function (res) {
+      if (!res.people.length) { aniverStatus('Ningu\u00e9m encontrado com "' + q + '"', 'err'); return; }
+      inp.value = '';
+      if (res.people.length === 1) { aniverPush(q, res.people[0]); return; }
+      aniverPending = { q: q, people: res.people };
+      setHTML($('aniverPick'), res.people.map(function (p, i) {
+        return '<button class="aniver-pick-btn" onclick="pickAniver(' + i + ')">' + escH(p.nome) + '</button>';
+      }).join(''));
+      aniverStatus(res.people.length + ' pessoas encontradas \u2014 escolha uma' + (res.total > 10 ? ' (ou refine o nome)' : ''), '');
+    }).catch(function (e) { aniverStatus('Erro: ' + e.message, 'err'); });
+  };
+  window.pickAniver = function (i) {
+    if (!aniverPending || !aniverPending.people[i]) return;
+    aniverPush(aniverPending.q, aniverPending.people[i]);
+    aniverPending = null; setHTML($('aniverPick'), '');
+  };
+  window.removeAniver = function (i) { aniver.splice(i, 1); aniverSave(); renderAniver(); };
+  // só roda quando o usuário pede: refaz a busca de cada nome e atualiza a data
+  window.refreshAniver = function () {
+    if (!aniver.length) return;
+    var btn = $('aniverRefresh'); btn.disabled = true;
+    aniverStatus('Atualizando ' + aniver.length + ' nome(s)\u2026', '');
+    var falhas = 0;
+    Promise.all(aniver.map(function (a) {
+      return aniverSearch(a.nome).then(function (res) {
+        var hit = res.people.filter(function (p) { return p.nome === a.nome; })[0];
+        if (hit) a.md = hit.md; else falhas++;
+      }, function (e) { falhas++; throw e; });
+    })).then(function () {
+      aniverSave(); renderAniver();
+      aniverStatus('Atualizado \u00e0s ' + nowTimeStr() + (falhas ? ' \u2014 ' + falhas + ' n\u00e3o encontrado(s)' : ''), falhas ? 'err' : 'ok');
+    }).catch(function (e) { aniverStatus('Erro: ' + e.message, 'err'); })
+      .finally(function () { btn.disabled = false; });
+  };
+  function renderAniver() {
+    renderHojeCountdown(); // bolha do header acompanha a lista
+    var el = $('aniverList'); if (!el) return;
+    $('aniverRefresh').hidden = !aniver.length;
+    if (!aniver.length) { setHTML(el, '<div class="empty-hint">Nenhum nome adicionado</div>'); return; }
+    var rows = aniver.map(function (a, i) { return { a: a, i: i, n: aniverDaysUntil(a.md) }; });
+    rows.sort(function (x, y) { return x.n - y.n; });
+    setHTML(el, rows.map(function (r) {
+      var badge = r.n === 0 ? '<span class="aniver-badge today">hoje \ud83c\udf82</span>'
+        : '<span class="aniver-badge' + (r.n <= 30 ? ' soon' : '') + '">' + (r.n === 1 ? 'amanh\u00e3' : 'em ' + r.n + 'd') + '</span>';
+      return '<div class="holiday-item aniver-item"><span class="aniver-date">' + r.a.md.slice(3, 5) + '/' + r.a.md.slice(0, 2) + '</span>' +
+        '<span class="holiday-name">' + escH(r.a.nome) + '</span>' + badge +
+        '<button class="btn-remove" aria-label="Remover ' + escH(r.a.nome) + '" onclick="removeAniver(' + r.i + ')">\u00d7</button></div>';
+    }).join(''));
+  }
+
   // inconsistências: almoço curto, batidas ímpares, jornada sem intervalo/excessiva, interjornada curta, falta
   var ESP_MAX_DIA = 480 + ABONO + 120; // jornada 8h48 + 2h extras (CLT art. 59) = 10h48
   function espelhoIssues(days) {
@@ -2955,6 +3118,14 @@
     var hh = '';
     if (h) hh += chip(daysUntil(h.date), 'celebration', 'Feriado · ' + h.name + ' (' + fmtDateFull(h.date) + ')', 'cd-holiday');
     if (f) hh += chip(daysUntil(f.date), 'beach_access', (f.tipo === 'now' ? 'Férias até ' : 'Férias em ') + fmtDateFull(f.date), 'cd-ferias');
+    // aniversariante mais próximo (até 30 dias); empatados no mesmo dia entram juntos na dica
+    var an = (aniver || []).map(function (a) { return { a: a, n: aniverDaysUntil(a.md) }; }).filter(function (x) { return x.n <= 30; });
+    if (an.length) {
+      var min = Math.min.apply(null, an.map(function (x) { return x.n; }));
+      var quem = an.filter(function (x) { return x.n === min; }).map(function (x) { return x.a.nome.split(/\s+/)[0]; });
+      var dm = an.filter(function (x) { return x.n === min; })[0].a.md;
+      hh += chip(min, 'cake', 'Aniversário · ' + quem.join(', ') + ' (' + dm.slice(3, 5) + '/' + dm.slice(0, 2) + ')', 'cd-aniver');
+    }
     setHTML(hc, hh);
   }
 
@@ -2983,6 +3154,7 @@
   renderPunchSlots([]); load(); renderAll(); updateClock(); updateTimer(); updateTodayLabel();
   icarusLoadAuth(); icarusRenderUI();
   espelhoLoad(); espelhoRenderNav(); renderEspelho();
+  aniverLoad(); renderAniver();
   restoreCards();
   layoutRestore(); initCardDrag();
   if (icarusAuth && icarusAuth.token && icarusAuth.idColaborador) icarusSync();

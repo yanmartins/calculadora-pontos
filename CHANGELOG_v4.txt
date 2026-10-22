@@ -1,0 +1,35 @@
+🟢 Calculadora de Pontos — v4 (22/10/2026)
+
+*🔍 Espelho: inconsistências do período*
+Nas Métricas do período agora aparece uma lista de inconsistências, dia a dia:
+• 🔴 Batidas ímpares (esqueceu de bater uma marcação)
+• 🔴 Falta injustificada
+• 🟠 Almoço com menos de 30 min
+• 🟠 Jornada acima de 6h sem intervalo
+• 🟠 Jornada acima de 10h48 (8h48 + 2h extras, CLT art. 59)
+• 🟠 Interjornada menor que 11h entre um dia e outro (CLT art. 66)
+Os dias com problema ganham um ⚠️ na tabela do espelho (passe o mouse para ver o motivo). Se estiver tudo certo, aparece "Nenhuma inconsistência no período".
+
+*📅 Espelho: voltar ao período atual*
+Navegou para meses anteriores? Um botão ao lado da seta direita leva direto de volta ao período atual.
+
+*🎂 Novo card: Aniversariantes (aba Calendário)*
+• Digite o nome de quem você quer acompanhar, e a data de aniversário é buscada no Ícarus
+• Se houver mais de uma pessoa com o nome, você escolhe qual
+• Lista ordenada pelo próximo aniversário, com contagem (hoje, amanhã, em Nd)
+• A busca só acontece ao adicionar um nome ou ao tocar em "Atualizar datas"
+• Só o dia e o mês ficam salvos, o ano de nascimento não
+• Precisa estar conectado à conta Ícarus (aba Mais)
+
+*🎈 Aniversário chegando no topo*
+Se alguém da sua lista faz aniversário nos próximos 30 dias, aparece uma bolha rosa 🎂 no topo com a contagem, ao lado das de feriado e férias.
+
+*🗓️ Feriados do ano repaginados*
+• Mesmo visual dos aniversariantes: data, nome e contagem (hoje, amanhã, em Nd)
+• Próximos feriados primeiro; os que já passaram ficam abaixo de uma linha "Já passaram"
+• Destaque só para os feriados do período atual
+• Feriado chegando (até 30 dias) mantém a bolha colorida, mesmo fora do período
+• Para alterar a data de um feriado, toque na data
+
+*ℹ️ Como atualizar*
+Substitua os arquivos da pasta pelos do .zip. Se o app estiver instalado (PWA), feche e abra de novo para carregar a versão nova.
