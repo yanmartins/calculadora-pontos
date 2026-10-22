@@ -629,7 +629,8 @@
   .aniver-badge.today { color: var(--pink-soft); background: var(--pink); }
   .aniver-badge.hol-soon { color: var(--on-orange-c); background: var(--orange-soft); }
   .aniver-badge.hol-today { color: var(--orange-soft); background: var(--orange); }
-  .hol-date { position: relative; cursor: pointer; border-bottom: 1px dotted var(--text-3); }
+  .aniver-date small { font-size: .64rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; }
+  .hol-date { white-space: nowrap; position: relative; cursor: pointer; border-bottom: 1px dotted var(--text-3); }
   .hol-date input { position: absolute; inset: 0; opacity: 0; width: 100%; cursor: pointer; }
   .aniver-pick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .aniver-pick:empty { display: none; }
@@ -1879,7 +1880,7 @@
       // divisória antes do primeiro feriado que já passou
       var div=(n<0&&!sep)?(sep=true,'<div class="hol-sep">J\u00e1 passaram</div>'):'';
       return div+'<div class="holiday-item aniver-item'+(inPeriod?'':' holiday-dim')+'"><input type="checkbox" aria-label="Considerar feriado" '+checked+' onchange="toggleHoliday(\''+h.date+'\',this.checked)">'+
-        '<label class="aniver-date hol-date" title="Alterar data">'+fmtDateBr(h.date)+
+        '<label class="aniver-date hol-date" title="Alterar data">'+fmtDateBr(h.date)+' <small>'+['dom','seg','ter','qua','qui','sex','sáb'][fromStr(h.date).getDay()]+'</small>'+
         '<input type="date" aria-label="Alterar data de '+h.name+'" value="'+h.date+'" onclick="try{this.showPicker()}catch(e){}" onchange="updateHolidayDate(\''+nameEsc+'\',\''+h.date+'\',this.value)"></label>'+
         '<span class="holiday-name'+cls+'">'+h.name+'</span>'+badge+rm+'</div>';
     }).join('');
