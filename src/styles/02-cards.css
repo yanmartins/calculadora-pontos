@@ -1,0 +1,67 @@
+  /* ============================================================
+     CARD — anatomia única em todas as telas:
+     [ícone tonal] [título + subtítulo] ............ [chip]
+     ============================================================ */
+  .card {
+    background: var(--surface);
+    border: none;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: background .3s, box-shadow .3s;
+    position: relative;
+  }
+  .card:hover { box-shadow: var(--shadow-hover); }
+  .card-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px 2px; }
+  .card-ico { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--r-sm); background: transparent; border: 2px solid var(--accent-soft); color: var(--accent); flex-shrink: 0; transition: background .3s var(--ease), border-color .3s var(--ease); }
+  .card-ico svg { width: 20px; height: 20px; }
+  /* cor tonal por card: âncora visual por seção (estilo Google One) */
+  #secPanorama .card-ico, #secProjecao .card-ico, #secEspelhoMetricas .card-ico, #secIcarus .card-ico, #secCardFerias .card-ico { border-color: var(--blue-soft); color: var(--blue); }
+  #secMetas .card-ico, #secCardAbonos .card-ico, #secConfig .card-ico { border-color: var(--purple-soft); color: var(--purple); }
+  #secBanco .card-ico { border-color: var(--green-soft); color: var(--green); }
+  #secCardFeriados .card-ico { border-color: var(--orange-soft); color: var(--orange); }
+  #secCardAtestados .card-ico { border-color: var(--red-soft); color: var(--red); }
+  #secCardAniver .card-ico { border-color: var(--pink-soft); color: var(--pink); }
+  .card-titles { flex: 1; min-width: 0; }
+  .card-titles h2 { font-size: 1.02rem; font-weight: 700; letter-spacing: -.01em; color: var(--text); line-height: 1.25; }
+  .card-sub { font-size: .74rem; color: var(--text-2); line-height: 1.3; }
+  .card-body { padding: 8px 18px 14px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+  /* ===== CARDS COLAPSÁVEIS (Calendário) ===== */
+  .card[data-page="hoje"], .card[data-page="calendario"], .card[data-page="banco"], .card[data-page="espelho"], .card[data-page="conta"], .card[data-page="config"], .card[data-page="bater"] { flex-basis: 100%; } /* colapsados empilham em coluna única */
+  .card.collapsible { display: grid; grid-template-rows: auto 0fr; transition: grid-template-rows .4s var(--ease), background .3s, box-shadow .3s; }
+  .card.collapsible.open { grid-template-rows: auto 1fr; }
+  .card.collapsible .card-head { cursor: pointer; user-select: none; }
+  .card.collapsible:not(.open) .card-head { padding-bottom: 14px; }
+  .card.collapsible .card-body { overflow: hidden; min-height: 0; transition: padding .4s var(--ease); }
+  .card.collapsible:not(.open) .card-body { padding-top: 0; padding-bottom: 0; }
+  .card-caret { color: var(--text-3); font-size: 22px; margin-left: 2px; transition: transform .35s var(--spring); }
+  .card.collapsible.open .card-caret { transform: rotate(180deg); }
+  /* card aberto = ícone preenchido (mesmo vocabulário da nav: filled = ativo) */
+  .card.collapsible.open .card-ico .ms { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  /* container do ícone também "acende" ao abrir: soft -> cor sólida, com pop */
+  .card.collapsible.open .card-ico { background: var(--accent-soft); animation: ico-pop .4s var(--spring); }
+  #secPanorama.open .card-ico, #secProjecao.open .card-ico, #secEspelhoMetricas.open .card-ico, #secCardFerias.open .card-ico { background: var(--blue-soft); }
+  #secMetas.open .card-ico, #secCardAbonos.open .card-ico { background: var(--purple-soft); }
+  #secBanco.open .card-ico { background: var(--green-soft); }
+  #secCardFeriados.open .card-ico { background: var(--orange-soft); }
+  #secCardAtestados.open .card-ico { background: var(--red-soft); }
+  #secCardAniver.open .card-ico { background: var(--pink-soft); }
+  @keyframes ico-pop { 0% { transform: scale(.8); } 55% { transform: scale(1.12); } 100% { transform: none; } }
+
+  /* ===== ARRASTAR CARDS (reordenar; soltar na borda esq/dir = lado a lado) ===== */
+  /* metade do grid: -10px cobre o maior gap usado (18px em >=680px); sozinho na linha, o flex-grow devolve a largura total */
+  .card.w-half { flex-basis: calc(50% - 10px); min-width: min(100%, 300px); }
+  .drag-handle { color: var(--text-3); font-size: 20px; cursor: grab; opacity: 0; margin-left: 2px; border-radius: var(--r-full); padding: 2px; transition: opacity .2s, color .2s; }
+  .drag-handle:active { cursor: grabbing; }
+  .card:hover .drag-handle { opacity: 1; }
+  .drag-handle:hover { color: var(--accent); }
+  @media (hover: none) { .drag-handle { display: none; } } /* sem HTML5 dnd no touch */
+  .card.dragging { opacity: .45; }
+  /* indicador de onde o card vai cair (barra na borda do alvo) */
+  .card.drop-top    { box-shadow: inset 0 4px 0 0 var(--accent), var(--shadow); }
+  .card.drop-bottom { box-shadow: inset 0 -4px 0 0 var(--accent), var(--shadow); }
+  .card.drop-left   { box-shadow: inset 4px 0 0 0 var(--accent), var(--shadow); }
+  .card.drop-right  { box-shadow: inset -4px 0 0 0 var(--accent), var(--shadow); }
+

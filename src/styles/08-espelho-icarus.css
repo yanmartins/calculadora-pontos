@@ -1,0 +1,85 @@
+  /* ===== ESPELHO (batidas do período) ===== */
+  .esp-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+  .esp-nav-label { display: flex; flex-direction: column; gap: 2px; text-align: center; flex: 1; }
+  .esp-nav-name { font-size: .98rem; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; color: var(--accent); }
+  .esp-nav-dates { font-family: var(--mono); font-size: .8rem; font-weight: 700; color: var(--text-2); }
+  .esp-nav-btn { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: none; border-radius: var(--r-full); background: var(--accent-soft); color: var(--on-accent-c); cursor: pointer; transition: background .2s, opacity .2s; flex-shrink: 0; }
+  .esp-nav-btn .ms { font-size: 22px; }
+  .esp-nav-btn:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+  .esp-nav-btn:disabled { opacity: .3; cursor: default; background: var(--raised); }
+  .esp-nav-btn[hidden] { display: none; }
+  .esp-scroll { overflow-x: auto; margin: 0 -4px; padding: 0 4px; }
+  .esp-table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  .esp-table th { font-size: .74rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--text-2); text-align: left; padding: 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .esp-table td { padding: 10px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; text-align: left; }
+  .esp-table tbody tr:last-child td { border-bottom: none; }
+  .esp-table tbody tr:hover td { background: color-mix(in srgb, var(--raised) 60%, transparent); }
+  .esp-td-dia { font-family: var(--mono); font-weight: 700; color: var(--text-1); white-space: nowrap; }
+  .esp-td-dia small { font-weight: 600; font-size: .64rem; color: var(--text-3); text-transform: uppercase; }
+  .esp-td-bat { font-family: var(--mono); color: var(--text-2); font-size: .9rem; }
+  .esp-td-num { font-family: var(--mono); font-weight: 600; color: var(--text); text-align: left; white-space: nowrap; }
+  .esp-tr-falta td { background: color-mix(in srgb, var(--red) 6%, transparent); }
+  .esp-tr-abono td { background: color-mix(in srgb, var(--green) 6%, transparent); }
+  .esp-tr-descanso td { background: color-mix(in srgb, var(--purple) 5%, transparent); }
+  .esp-tr-descanso .esp-td-dia, .esp-tr-descanso .esp-td-num { opacity: .6; }
+  .esp-tag { display: inline-block; font-size: .68rem; font-weight: 700; padding: 3px 10px; border-radius: var(--r-full); }
+  .esp-tag-falta { color: var(--on-red-c); background: var(--red-soft); text-transform: uppercase; }
+  .esp-tag-abono { color: var(--on-green-c); background: var(--green-soft); }
+  .esp-tag-descanso { color: var(--on-purple-c); background: var(--purple-soft); }
+  .esp-has-he { border-bottom: 1px dotted var(--accent); cursor: help; }
+  /* aniversariantes */
+  .aniver-item { cursor: default; }
+  .aniver-date { font-family: var(--mono); font-weight: 700; color: var(--text-1); min-width: 48px; }
+  .aniver-badge { font-family: var(--mono); font-size: .62rem; font-weight: 700; color: var(--text-2); background: var(--input-bg); padding: 3px 10px; border-radius: var(--r-full); margin-left: auto; flex-shrink: 0; white-space: nowrap; }
+  .aniver-badge.soon { color: var(--on-pink-c); background: var(--pink-soft); }
+  .aniver-badge.today { color: var(--pink-soft); background: var(--pink); }
+  .aniver-badge.hol-soon { color: var(--on-orange-c); background: var(--orange-soft); }
+  .aniver-badge.hol-today { color: var(--orange-soft); background: var(--orange); }
+  .aniver-date small { font-size: .64rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; }
+  .hol-date { white-space: nowrap; position: relative; cursor: pointer; border-bottom: 1px dotted var(--text-3); }
+  .hol-date input { position: absolute; inset: 0; opacity: 0; width: 100%; cursor: pointer; }
+  .aniver-pick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .aniver-pick:empty { display: none; }
+  .aniver-pick-btn { border: 1px solid var(--border); background: var(--raised); color: var(--text); font: inherit; font-size: .8rem; padding: 6px 12px; border-radius: var(--r-full); cursor: pointer; }
+  .aniver-pick-btn:hover { background: var(--accent-soft); color: var(--on-accent-c); border-color: transparent; }
+  .aniver-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  /* inconsistências do período */
+  .esp-issues { margin-top: 14px; }
+  .esp-issues-head { display: flex; align-items: center; gap: 8px; font-size: .74rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--text-2); margin-bottom: 8px; }
+  .esp-issues-head .ms { font-size: 18px; color: var(--orange); }
+  .esp-issues-count { font-family: var(--mono); color: var(--on-orange-c); background: var(--orange-soft); padding: 1px 8px; border-radius: var(--r-full); }
+  .esp-issues-ok { display: flex; align-items: center; gap: 8px; font-size: .82rem; font-weight: 600; color: var(--on-green-c); background: var(--green-soft); padding: 10px 14px; border-radius: var(--r-lg); }
+  .esp-issues-ok .ms { font-size: 18px; }
+  .esp-issue-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; max-height: 300px; overflow-y: auto; }
+  .esp-issue { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--raised); border-radius: var(--r-md, 12px); border-left: 3px solid var(--orange); font-size: .84rem; }
+  .esp-issue.err { border-left-color: var(--red); }
+  .esp-issue-dia { font-family: var(--mono); font-weight: 700; color: var(--text-1); white-space: nowrap; }
+  .esp-issue-dia small { font-size: .62rem; color: var(--text-3); text-transform: uppercase; }
+  .esp-issue-txt { color: var(--text-2); flex: 1; }
+  .esp-issue-txt b { font-family: var(--mono); color: var(--text); }
+  .esp-warn { font-size: 15px; color: var(--orange); vertical-align: -3px; margin-left: 4px; cursor: help; }
+  .esp-warn.err { color: var(--red); }
+  .esp-abono-ico { font-size: 15px; color: var(--green); vertical-align: -3px; margin-left: 4px; cursor: help; }
+  .esp-falta-txt { color: var(--red); font-weight: 700; text-transform: uppercase; font-size: .72rem; }
+  @media (max-width: 420px) {
+    .esp-table { font-size: .84rem; }
+    .esp-td-bat { font-size: .78rem; }
+    .esp-table th { font-size: .64rem; }
+    .esp-table th, .esp-table td { padding: 8px 6px; }
+  }
+
+  /* ===== ÍCARUS ===== */
+  .icarus-status { font-size: .76rem; color: var(--text-2); margin-top: 8px; min-height: 1.2em; }
+  .icarus-status.ok { color: var(--green); }
+  .icarus-status.err { color: var(--red); }
+  .icarus-mini-input { background: var(--input-bg); border: 1px solid transparent; border-radius: var(--r-sm); color: var(--text); font-family: var(--mono); font-size: .95rem; padding: 6px 10px; width: 110px; min-height: 40px; outline: none; text-align: right; transition: border-color .2s; }
+  .icarus-mini-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  @keyframes icarusSpin { to { transform: rotate(360deg); } }
+
+  /* ===== TEMA (segmentado, aba Mais) ===== */
+  .theme-switcher { display: inline-flex; gap: 3px; background: var(--raised); border: none; border-radius: var(--r-full); padding: 4px; }
+  .theme-btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px; min-height: 40px; border: none; border-radius: var(--r-full); background: transparent; color: var(--text-3); font-size: .74rem; font-weight: 700; cursor: pointer; transition: all .25s var(--spring); }
+  .theme-btn:hover { color: var(--text-1); }
+  .theme-btn.active { background: var(--accent-soft); color: var(--on-accent-c); }
+  .theme-btn svg { width: 15px; height: 15px; }
+

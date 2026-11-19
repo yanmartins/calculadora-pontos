@@ -5,7 +5,7 @@ rem Uso: duplo-clique neste arquivo.
 setlocal
 cd /d "%~dp0"
 set "PORT=8000"
-set "URL=http://localhost:%PORT%/index.html"
+set "URL=http://localhost:%PORT%/calculadora-pontos.html"
 
 rem --- localizar Python 3 ---
 set "PY="

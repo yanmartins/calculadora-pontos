@@ -1,0 +1,41 @@
+  <!-- ================= TOOLS ================= -->
+
+  <!-- ================= ESPELHO (batidas do período via Ícarus) ================= -->
+
+  <section class="card collapsible" id="secEspelhoMetricas" data-page="espelho">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secEspelhoMetricas')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secEspelhoMetricas');}">
+      <span class="card-ico"><span class="ms" aria-hidden="true">monitoring</span></span>
+      <div class="card-titles">
+        <h2>M&eacute;tricas do per&iacute;odo</h2>
+        <p class="card-sub">M&eacute;dias e inconsist&ecirc;ncias das suas batidas reais</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div class="esp-nav">
+        <button class="esp-nav-btn" id="espelhoPrev" aria-label="Per&iacute;odo anterior" onclick="espelhoNav(-1)"><span class="ms" aria-hidden="true">chevron_left</span></button>
+        <span class="esp-nav-label" id="espelhoPeriodLabel"></span>
+        <button class="esp-nav-btn" id="espelhoNext" aria-label="Pr&oacute;ximo per&iacute;odo" onclick="espelhoNav(1)"><span class="ms" aria-hidden="true">chevron_right</span></button>
+        <button class="esp-nav-btn" id="espelhoToday" hidden aria-label="Per&iacute;odo atual" title="Per&iacute;odo atual" onclick="espelhoNav(0, true)"><span class="ms" aria-hidden="true">today</span></button>
+      </div>
+      <div class="cal-summary" id="espelhoMetrics"></div>
+      <div class="esp-issues" id="espelhoIssues"></div>
+    </div>
+  </section>
+
+  <section class="card collapsible" id="secEspelhoLista" data-page="espelho">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secEspelhoLista')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secEspelhoLista');}">
+      <span class="card-ico"><span class="ms" aria-hidden="true">overview</span></span>
+      <div class="card-titles">
+        <h2>Batidas do per&iacute;odo</h2>
+        <p class="card-sub">Espelho dia a dia, direto do &Iacute;carus</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div id="espelhoList"></div>
+      <div class="icarus-status" id="espelhoStatus" role="status"></div>
+    </div>
+  </section>
+
+

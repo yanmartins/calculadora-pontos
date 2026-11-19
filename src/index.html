@@ -1,0 +1,44 @@
+<!-- Fonte do app. O build (npm run build) gera dist/calculadora-pontos.html, um arquivo único. -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0e1513">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pontos">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./icon.svg">
+<!-- Tipografia M3 Expressive: Roboto Flex (variável). Offline cai no stack de sistema. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0&display=block">
+<title>Calculadora de Pontos</title>
+<!-- CSS: src/styles/*.css, importados (em ordem) pelo main.js -->
+<script type="module" src="./main.js"></script>
+</head>
+<body>
+
+<div class="app">
+<!-- @include html/header.html -->
+
+  <div class="card-grid">
+
+<!-- @include html/hoje.html -->
+<!-- @include html/banco.html -->
+<!-- @include html/calendario.html -->
+<!-- @include html/espelho.html -->
+<!-- @include html/bater-ponto.html -->
+<!-- @include html/conta.html -->
+  </div>
+</div>
+
+<!-- @include html/dialogos.html -->
+<!-- @include html/navegacao.html -->
+
+<!-- JS do app: src/js/*.js, concatenados em ordem num único escopo (ver vite.config.js) -->
+<!-- @app-script -->
+</body>
+</html>

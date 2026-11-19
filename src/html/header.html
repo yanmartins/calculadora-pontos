@@ -1,0 +1,26 @@
+  <header class="header">
+    <div class="header-floats">
+    <!-- dias até o próximo feriado / férias (renderHojeCountdown) -->
+    <div class="hdr-bubble hdr-cd" id="hdrCountdown"></div>
+    <div class="hdr-bubble header-actions">
+      <button class="acct-btn acct-punch" data-tip="Bater ponto" aria-label="Bater ponto no site do &Iacute;carus" onclick="baterPontoIcarus()">
+        <span class="ms" aria-hidden="true">punch_clock</span>
+      </button>
+      <button class="acct-btn" id="btnIcarusSync" data-tip="Sincronizar" aria-label="Sincronizar com o &Iacute;carus" onclick="headerSync()">
+        <span class="ms" aria-hidden="true">sync</span>
+      </button>
+      <button class="acct-btn" id="cfgBtn" data-tip="Configura&ccedil;&atilde;o" aria-label="Prefer&ecirc;ncias" onclick="openConfig()">
+        <span class="ms" aria-hidden="true">settings</span>
+      </button>
+      <button class="acct-btn" id="acctBtn" data-tip="Login" aria-label="Conta &Iacute;carus" onclick="icarusAccount()">
+        <span class="ms" id="acctIco" aria-hidden="true">login</span>
+      </button>
+    </div>
+    </div>
+    <div class="brand">
+      <span class="ms" aria-hidden="true">schedule</span>
+      CALCULADORA DE PONTOS
+    </div>
+    <div class="clock" id="clock">--:--</div>
+    <div class="timer" id="timer"></div>
+  </header>

@@ -1,0 +1,103 @@
+  /* ===== BATIDAS — mesma caixa dos tiles do Panorama (raio, padding, tipografia, ícone no canto) ===== */
+  .punch-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 4px; }
+  .punch-slot { position: relative; display: flex; flex-direction: column; align-items: center; overflow: hidden; text-align: center; padding: 10px 6px 8px; border-radius: var(--r-md); border: none; background: var(--raised); cursor: pointer; transition: background .25s, transform .3s var(--spring); }
+  .punch-slot:hover { transform: translateY(-2px); }
+  .punch-slot:active { transform: scale(.97); }
+  .punch-slot svg { position: absolute; top: 8px; right: 8px; width: 14px; height: 14px; color: var(--text-3); opacity: .75; flex-shrink: 0; transition: color .2s; }
+  .punch-lbl { order: 2; font-size: .58rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); white-space: nowrap; margin-top: 3px; }
+  .punch-slot input {
+    order: 1; background: transparent; border: none; color: var(--text-3);
+    font-family: var(--mono); font-size: 1.4rem; font-weight: 800; letter-spacing: -.01em; text-align: center; width: 100%;
+    outline: none; padding: 0; min-height: 30px; transition: color .2s;
+  }
+  .punch-slot input::-webkit-calendar-picker-indicator { display: none; }
+  .punch-actions { display: flex; justify-content: flex-end; gap: 6px; margin-top: 4px; }
+  .punch-act { display: inline-flex; align-items: center; gap: 4px; border: none; background: transparent; color: var(--text-2); font: inherit; font-size: .72rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; cursor: pointer; transition: background .2s, color .2s; }
+  .punch-act:hover { background: var(--raised); color: var(--text); }
+  .punch-act .ms { font-size: 16px; }
+  .punch-slot.done svg { color: var(--accent); }
+  .punch-slot.done input { color: var(--text); }
+  .punch-slot.next { background: var(--accent-soft); }
+  .punch-slot.next svg, .punch-slot.next .punch-lbl { color: var(--on-accent-c); }
+  /* saldo do Ícarus no Panorama: 5º box, largura total, cor própria; valor editável */
+  .dash-tile.t-saldo { cursor: text; }
+  .dash-tile.t-saldo input.dash-tile-val { width: 100%; background: transparent; border: none; outline: none; text-align: center; padding: 0; }
+  .dash-tile.t-saldo input.dash-tile-val::placeholder { color: var(--text-2); opacity: .55; }
+
+  /* ===== PANORAMA: progresso + tiles + saída ===== */
+  .board-empty, .empty-hint { padding: 16px 12px; text-align: center; color: var(--text-2); font-size: .88rem; }
+  .empty-hint { padding: 8px 0; font-style: italic; text-align: left; }
+  /* tile "panorama": valor grande e bold, label embaixo, ícone no canto —
+     padrão replicado nos slots de batida e no saldo. auto-fit quebra p/ 2x2 sem espremer. */
+  .dash-tiles { display: flex; flex-wrap: wrap; gap: 8px; }
+  /* base de 96px: abaixo disso o tile quebra pra linha seguinte em vez de sobrepor o conteúdo */
+  .dash-tile { flex: 1 1 96px; min-width: 96px; position: relative; overflow: hidden; text-align: center; border: none; border-radius: var(--r-md); padding: 12px 6px 10px; background: var(--raised); transition: background .3s, transform .3s var(--spring); }
+  .dash-tile:hover { transform: translateY(-2px); }
+  .dash-tile-ico { position: absolute; top: 9px; right: 9px; width: 14px; height: 14px; color: var(--text-3); opacity: .75; }
+  .dash-tile-val { font-family: var(--mono); font-size: 1.3rem; font-weight: 800; line-height: 1; color: var(--text); letter-spacing: -.01em; }
+  .dash-tile-lbl { font-size: .58rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); margin-top: 4px; }
+
+  /* ===== METAS (lista de saídas) ===== */
+  /* mesmo vocabulário de bordas dos dias da Projeção: moldura 2px + fio esquerdo 3px colorido */
+  /* ===== METAS: timeline vertical única ("linha de metrô") =====
+     linha contínua à esquerda, estações = metas, playhead "agora" entre elas */
+  .tl { position: relative; }
+  .tl-item, .tl-now { position: relative; padding-left: 36px; }
+  /* segmento da linha acima de cada nó: sobe até o nó anterior (o excesso fica
+     escondido atrás do nó, que é opaco); o primeiro não desenha */
+  .tl-item::before, .tl-now::before { content: ''; position: absolute; left: 12px; top: -30px; bottom: 50%; width: 3px; background: var(--border); }
+  .tl > :first-child::before { display: none; }
+  .tl-item.passed::before, .tl-now::before { background: var(--green); }
+  /* estação */
+  .tl-item { display: flex; align-items: center; gap: 10px; padding-top: 6px; padding-bottom: 6px; border-radius: var(--r-md); transition: background .3s; }
+  .tl-dot { position: absolute; z-index: 1; left: 4px; top: 50%; transform: translateY(-50%); width: 19px; height: 19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface); border: 2.5px solid var(--text-3); box-sizing: border-box; }
+  .tl-item.next .tl-dot { background: var(--accent); }
+  .tl-dot .ms { font-size: 12px; color: var(--ground); }
+  .tl-item[data-color="green"] .tl-dot { border-color: var(--green); }
+  .tl-item[data-color="amber"] .tl-dot { border-color: var(--accent); }
+  .tl-item[data-color="orange"] .tl-dot { border-color: var(--orange); }
+  .tl-item[data-color="red"] .tl-dot { border-color: var(--red); }
+  .tl-item[data-color="purple"] .tl-dot { border-color: var(--purple); }
+  .tl-time { font-family: var(--mono); font-size: 1.1rem; font-weight: 800; letter-spacing: -.01em; min-width: 58px; color: var(--text); transition: color .3s; }
+  .tl-info { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+  .tl-name { font-size: .82rem; font-weight: 700; color: var(--text-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tl-dur { font-family: var(--mono); font-size: .7rem; color: var(--text-2); }
+  .tl-badge { font-family: var(--mono); font-size: .66rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 5px 12px; border-radius: var(--r-full); white-space: nowrap; color: var(--text-2); background: color-mix(in srgb, var(--text-3) 14%, transparent); flex-shrink: 0; }
+  .tl-remove { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; min-height: 40px; background: none; border: none; color: var(--text-3); font-size: 1.15rem; line-height: 1; cursor: pointer; padding: 0; opacity: .45; transition: opacity .15s, color .15s; flex-shrink: 0; }
+  .tl-remove:hover { opacity: 1; color: var(--red); }
+  /* estados das estações */
+  .tl-item.passed .tl-dot { background: var(--green); border-color: var(--green); }
+  .tl-item.passed .tl-time { color: var(--green); opacity: .8; }
+  .tl-item.passed .tl-name, .tl-item.passed .tl-dur { color: var(--text-3); }
+  .tl-item.passed .tl-badge { color: var(--on-green-c); background: var(--green-soft); }
+  .tl-item.next { background: var(--accent-soft); padding-right: 10px; }
+  .tl-item.next .tl-dot { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent); }
+  .tl-item.next .tl-time, .tl-item.next .tl-name { color: var(--on-accent-c); }
+  .tl-item.next .tl-dur { color: var(--on-accent-c); opacity: .75; }
+  .tl-item.next .tl-badge { color: var(--on-accent); background: var(--accent); }
+  /* playhead "agora" */
+  .tl-now { display: flex; align-items: center; gap: 10px; padding-top: 7px; padding-bottom: 7px; }
+  .tl-now-dot { position: absolute; z-index: 1; left: 9px; top: 50%; transform: translateY(-50%); width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); }
+  .tl-now-chip { font-family: var(--mono); font-size: .7rem; font-weight: 700; color: var(--on-accent-c); background: var(--accent-soft); padding: 4px 12px; border-radius: var(--r-full); white-space: nowrap; }
+  .tl-now-line { flex: 1; border-top: 2px dashed color-mix(in srgb, var(--accent) 35%, transparent); }
+  .meta-add { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+  .meta-add input { background: var(--input-bg); border: 1px solid transparent; border-radius: var(--r-sm); color: var(--text); padding: 8px 14px; font-size: 1rem; min-height: 48px; outline: none; transition: border-color .2s, box-shadow .2s; min-width: 0; }
+  .meta-add input#metaNome { flex: 1; }
+  .meta-add input#metaDur { flex: 0 0 84px; width: 84px; text-align: center; font-family: var(--mono); }
+  .meta-add input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .meta-add-hint { font-size: .72rem; color: var(--text-2); margin-top: 6px; line-height: 1.4; }
+  .meta-add-hint b { color: var(--text-1); font-family: var(--mono); }
+
+  /* ===== TILES DE ESTATÍSTICA (Resumo do período) ===== */
+  .cal-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  /* contagem regressiva: rótulo em cima + detalhe, 2 colunas que preenchem a largura */
+  .cd-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  @media (max-width: 520px) { .cd-grid { grid-template-columns: 1fr; } }
+  /* tiles .cal-stat idênticos aos outros boxes; a cor vai só no fundo do box */
+  .cal-stat.cd-holiday { background: var(--orange-soft); }
+  .cal-stat.cd-ferias { background: var(--blue-soft); }
+  .cal-summary .cal-stat:nth-child(5) { grid-column: 1 / -1; }
+  .cal-stat { text-align: center; padding: 14px 6px 12px; background: var(--raised); border: none; border-radius: var(--r-lg); transition: background .3s; }
+  .cal-stat-val { font-family: var(--mono); font-size: 1.5rem; font-weight: 800; }
+  .cal-stat-lbl { font-size: .66rem; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: var(--text-2); line-height: 1.2; margin-top: 3px; }
+

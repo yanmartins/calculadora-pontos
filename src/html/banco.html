@@ -1,0 +1,49 @@
+  <!-- ================= BANCO ================= -->
+
+  <section class="card collapsible" id="secBanco" data-page="banco">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secBanco')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secBanco');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">savings</span>
+      </span>
+      <div class="card-titles">
+        <h2>Banco de horas</h2>
+        <p class="card-sub">Saldo atual e metas do per&iacute;odo</p>
+      </div>
+      <span class="chip" id="bankPeriodLabel"></span>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div id="bankResults"></div>
+    </div>
+  </section>
+
+  <section class="card collapsible" id="secProjecao" data-page="banco">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secProjecao')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secProjecao');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">refresh</span>
+      </span>
+      <div class="card-titles">
+        <h2>Proje&ccedil;&atilde;o para zerar</h2>
+        <p class="card-sub">Plano dia a dia at&eacute; o fim do per&iacute;odo</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div class="proj-config">
+        <div class="field"><label><span class="ms" aria-hidden="true">login</span>Entrada padr&atilde;o</label><input type="time" id="projEntrada" value="08:00" onblur="renderProjection()"></div>
+        <div class="field"><label><span class="ms" aria-hidden="true">logout</span>Sa&iacute;da m&aacute;xima</label><input type="time" id="projSaidaMax" value="18:00" onblur="renderProjection()"></div>
+        <div class="field"><label><span class="ms" aria-hidden="true">restaurant</span>Almo&ccedil;o (min)</label><input type="number" id="projAlmoco" value="60" min="0" max="180" onblur="renderProjection()"></div>
+        <div class="field"><label><span class="ms" aria-hidden="true">flag</span>Saldo-alvo</label><input type="text" id="projAlvo" value="0" placeholder="0 = zerar" onblur="renderProjection()"></div>
+      </div>
+      <div class="proj-prior">
+        <label class="proj-prior-chk"><input type="checkbox" id="projPrior" onchange="projPriorToggle()">
+          <span class="proj-prior-txt"><b id="projPriorTit">Priorizar 7:50</b><small id="projPriorDesc">Cada dia em 7:50 vale 8:00 (10 min de gra&ccedil;a). Os outros dias ficam mais curtos para compensar.</small></span></label>
+        <div class="proj-config proj-prior-opts" id="projPriorOpts" hidden>
+          <div class="field"><label><span class="ms" aria-hidden="true">vertical_align_bottom</span>Dia mais curto</label><input type="time" id="projPiso" value="07:00" onblur="renderProjection()"></div>
+          <div class="field"><label><span class="ms" aria-hidden="true">more_time</span><span id="projArredLbl">Completar 7:50</span> se faltar at&eacute; (min)</label><input type="number" id="projArred" value="10" min="0" max="60" onblur="renderProjection()"></div>
+        </div>
+      </div>
+      <div id="projResult"></div>
+    </div>
+  </section>
+

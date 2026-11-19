@@ -1,0 +1,154 @@
+  <!-- ================= CALENDÁRIO ================= -->
+
+  <section class="card collapsible" id="secResumo" data-page="calendario">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secResumo')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secResumo');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">calendar_month</span>
+      </span>
+      <div class="card-titles">
+        <h2>Resumo do per&iacute;odo</h2>
+        <p class="card-sub">Dias &uacute;teis, trabalhados e aus&ecirc;ncias</p>
+      </div>
+      <span class="chip" id="periodLabel"></span>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div class="cal-summary" id="calSummary"></div>
+    </div>
+  </section>
+
+  <section class="card collapsible" id="secCountdown" data-page="calendario">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secCountdown')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secCountdown');}">
+      <span class="card-ico"><span class="ms" aria-hidden="true">event_upcoming</span></span>
+      <div class="card-titles">
+        <h2>Contagem regressiva</h2>
+        <p class="card-sub">Pr&oacute;ximo feriado e f&eacute;rias</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div class="cd-grid" id="hojeCountdown"></div>
+    </div>
+  </section>
+
+  <section class="card collapsible" id="secCardFeriados" data-page="calendario">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secCardFeriados')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secCardFeriados');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">trip</span>
+      </span>
+      <div class="card-titles">
+        <h2>Feriados do ano</h2>
+        <p class="card-sub">Desmarque os que n&atilde;o valem para voc&ecirc;</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div class="holiday-list" id="holidayList"></div>
+      <div class="add-row">
+        <div class="field"><label><span class="ms" aria-hidden="true">calendar_month</span>Data</label><input type="date" id="feriadoData"></div>
+        <div class="field"><label><span class="ms" aria-hidden="true">label</span>Nome</label><input type="text" id="feriadoNome" placeholder="Feriado municipal"></div>
+        <button class="btn-add" aria-label="Adicionar feriado" onclick="addCustomHoliday()">
+          <span class="ms" aria-hidden="true">add</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card collapsible" id="secCardAniver" data-page="calendario">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secCardAniver')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secCardAniver');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">cake</span>
+      </span>
+      <div class="card-titles">
+        <h2>Aniversariantes</h2>
+        <p class="card-sub">Datas buscadas no &Iacute;carus pelos nomes que voc&ecirc; adicionar</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div class="holiday-list" id="aniverList"></div>
+      <div class="add-row">
+        <div class="field"><label><span class="ms" aria-hidden="true">person_search</span>Nome</label><input type="text" id="aniverNome" placeholder="Nome da pessoa" onkeydown="if(event.key==='Enter')addAniver()"></div>
+        <button class="btn-add" aria-label="Buscar e adicionar" onclick="addAniver()">
+          <span class="ms" aria-hidden="true">add</span>
+        </button>
+      </div>
+      <div class="aniver-pick" id="aniverPick"></div>
+      <div class="aniver-foot">
+        <div class="icarus-status" id="aniverStatus" role="status"></div>
+        <button class="punch-act" id="aniverRefresh" onclick="refreshAniver()" hidden><span class="ms" aria-hidden="true">sync</span>Atualizar datas</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card collapsible" id="secCardAbonos" data-page="calendario">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secCardAbonos')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secCardAbonos');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">more_time</span>
+      </span>
+      <div class="card-titles">
+        <h2>Abonos</h2>
+        <p class="card-sub">Dias ou horas abonadas no per&iacute;odo</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div id="abonoList"></div>
+      <div class="add-row" style="margin-top:10px">
+        <div class="field"><label><span class="ms" aria-hidden="true">calendar_month</span>Data</label><input type="date" id="abonoData"></div>
+        <div class="field"><label><span class="ms" aria-hidden="true">list</span>Tipo</label><select id="abonoTipo" onchange="toggleAbonoHoras()"><option value="integral">Dia inteiro</option><option value="parcial">Horas</option></select></div>
+        <div class="field" id="abonoHorasField" style="display:none"><label><span class="ms" aria-hidden="true">schedule</span>Horas</label><input type="number" id="abonoHoras" min="1" max="8" value="4"></div>
+        <button class="btn-add" aria-label="Adicionar abono" onclick="addAbono()">
+          <span class="ms" aria-hidden="true">add</span>
+        </button>
+      </div>
+      <div class="aniver-foot">
+        <div class="icarus-status abono-sync-status" role="status"></div>
+        <button class="punch-act" onclick="abonoSync(true)"><span class="ms" aria-hidden="true">sync</span>Buscar no &Iacute;carus</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card collapsible" id="secCardFerias" data-page="calendario">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secCardFerias')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secCardFerias');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">beach_access</span>
+      </span>
+      <div class="card-titles">
+        <h2>F&eacute;rias</h2>
+        <p class="card-sub">At&eacute; 3 per&iacute;odos no ciclo</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div id="feriasSlots"></div>
+    </div>
+  </section>
+
+  <section class="card collapsible" id="secCardAtestados" data-page="calendario">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="false" onclick="toggleCard('secCardAtestados')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secCardAtestados');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">coronavirus</span>
+      </span>
+      <div class="card-titles">
+        <h2>Atestados</h2>
+        <p class="card-sub">Aus&ecirc;ncias justificadas</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div class="range-list" id="atestadoList"></div>
+      <div class="add-row">
+        <div class="field"><label><span class="ms" aria-hidden="true">calendar_month</span>In&iacute;cio</label><input type="date" id="atestadoInicio"></div>
+        <div class="field"><label><span class="ms" aria-hidden="true">flag</span>Fim</label><input type="date" id="atestadoFim"></div>
+        <button class="btn-add" aria-label="Adicionar atestado" onclick="addAtestado()">
+          <span class="ms" aria-hidden="true">add</span>
+        </button>
+      </div>
+      <div class="aniver-foot">
+        <div class="icarus-status abono-sync-status" role="status"></div>
+        <button class="punch-act" onclick="abonoSync(true)"><span class="ms" aria-hidden="true">sync</span>Buscar no &Iacute;carus</button>
+      </div>
+    </div>
+  </section>
+

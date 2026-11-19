@@ -1,0 +1,106 @@
+  /* ===== ESTADOS SEMÂNTICOS ===== */
+  .positive { color: var(--green) !important; }
+  .negative { color: var(--red) !important; }
+  .warn { color: var(--orange) !important; }
+  .accent-c { color: var(--accent) !important; }
+
+  /* ===== NAVEGAÇÃO INFERIOR (navigation bar M3) ===== */
+  /* navigation bar M3: pill 64x32, ícone 24, label 12sp/500 (ativo on-surface, inativo on-surface-variant) */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-around;
+    padding: 12px 0 calc(14px + env(safe-area-inset-bottom, 0px)); z-index: 50;
+    background: var(--surface); border-top: none;
+    box-shadow: var(--shadow);
+  }
+  /* background blur estilo Android 16 QPR1: vidro só na camada flutuante de sistema */
+  @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .bottom-nav {
+      background: color-mix(in srgb, var(--surface) 70%, transparent);
+      -webkit-backdrop-filter: blur(18px) saturate(1.5);
+      backdrop-filter: blur(18px) saturate(1.5);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .bottom-nav { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  }
+  [data-theme="contrast"] .bottom-nav { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 4px; border: none; background: none; color: var(--text-2); font-size: .72rem; font-weight: 500; cursor: pointer; transition: color .2s; letter-spacing: .02em; }
+  .nav-pill { display: flex; align-items: center; justify-content: center; width: 56px; height: 32px; border-radius: var(--r-full); transition: background .35s var(--spring), color .2s, transform .35s var(--spring); }
+  .nav-pill svg { width: 24px; height: 24px; }
+  .nav-item:active .nav-pill { transform: scale(.92); }
+  .nav-item.active { color: var(--text); } /* M3 Expressive: label ativo não fica bold — seleção via cor + pill */
+  .nav-item.active .nav-pill { background: var(--sec-c); color: var(--on-sec-c); }
+  .nav-item:hover { color: var(--text-1); }
+
+  /* ===== PÁGINAS ===== */
+  .card[data-page] { display: none; }
+  .card[data-page].page-active { display: block; }
+  .card.collapsible[data-page].page-active { display: grid; } /* colapsáveis precisam do grid p/ animar */
+
+  /* ===== ALTO CONTRASTE: bordas explícitas ===== */
+  [data-theme="contrast"] .card, [data-theme="contrast"] .dash-tile, [data-theme="contrast"] .punch-slot,
+  [data-theme="contrast"] .cal-stat,
+  [data-theme="contrast"] .holiday-item, [data-theme="contrast"] .abono-item, [data-theme="contrast"] .range-item,
+  [data-theme="contrast"] .reverse-item { border: 2px solid var(--border); }
+  [data-theme="contrast"] .field input, [data-theme="contrast"] .field select { border: 2px solid var(--border); }
+  [data-theme="contrast"] .tl-item::before, [data-theme="contrast"] .tl-now::before { width: 4px; }
+  [data-theme="contrast"] .tl-time, [data-theme="contrast"] .tl-name,
+  [data-theme="contrast"] .stat-value, [data-theme="contrast"] .cal-stat-val { font-weight: 800; }
+
+  /* ===== RESPONSIVO ===== */
+  @media (max-width: 360px) {
+    .app { padding: 10px 8px 90px; }
+    .clock { font-size: 2.3rem; }
+    .brand { font-size: .58rem; }
+    .timer { font-size: .7rem; }
+    .card-head { padding: 14px 14px 2px; gap: 10px; }
+    .card-ico { width: 34px; height: 34px; border-radius: var(--r-sm); }
+    .card-ico svg { width: 17px; height: 17px; }
+    .card-titles h2 { font-size: .92rem; }
+    .card-body { padding: 10px 14px 14px; }
+    .grid-2 { gap: 8px; }
+    .field input, .field select { font-size: .9rem; padding: 6px 8px; }
+    .punch-slot input { font-size: 1.25rem; }
+    .punch-row { gap: 6px; grid-template-columns: repeat(2, 1fr); }
+    .punch-lbl, .dash-tile-lbl { font-size: .52rem; }
+    .tl-item, .tl-now { padding-left: 30px; }
+    .tl-time { font-size: 1rem; min-width: 52px; }
+    .tl-name { font-size: .72rem; }
+    .tl-badge { font-size: .56rem; padding: 3px 9px; }
+    .dash-tile-val { font-size: 1.25rem; }
+    .dash-tiles { gap: 6px; }
+    .cal-summary { grid-template-columns: repeat(2, 1fr); }
+    .cal-stat-val { font-size: 1.05rem; }
+    .cal-stat-lbl { font-size: .52rem; }
+    .reverse-label { font-size: .74rem; }
+    .reverse-time { font-size: .92rem; }
+    .bank-label, .bank-value { font-size: .74rem; }
+    .bank-hero-val { font-size: 2.2rem; }
+    .add-row { flex-direction: column; }
+    .add-row .btn-add { width: 100%; }
+  }
+  @media (min-width: 361px) and (max-width: 480px) {
+    .app { padding: 14px 12px 100px; }
+    .clock { font-size: 2.8rem; }
+  }
+  @media (min-width: 481px) and (max-width: 679px) {
+    .app { max-width: 540px; padding: 24px 20px 110px; }
+    .clock { font-size: 3.4rem; }
+    .grid-2 { gap: 14px; }
+  }
+  @media (min-width: 680px) {
+    .app { padding: 28px 24px 120px; }
+    .header { padding: 18px 0 30px; }
+    .clock { font-size: 3.8rem; }
+    .timer { font-size: .85rem; }
+    .card { border-radius: 30px; }
+    .card-head { padding: 16px 22px 4px; }
+    .card-body { padding: 10px 22px 16px; }
+    .card-grid { gap: 18px; }
+    .tl-time { font-size: 1.35rem; }
+    .bottom-nav { max-width: 460px; left: 50%; transform: translateX(-50%); border-radius: 28px 28px 0 0; }
+  }
+  @media (min-width: 1080px) {
+    .app { padding: 36px 32px 120px; }
+    .card-grid { gap: 18px; }
+  }

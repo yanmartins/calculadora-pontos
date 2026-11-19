@@ -1,0 +1,155 @@
+  /* ============================================================
+     DESIGN SYSTEM — Material Design 3 Expressive
+     Tokens de cor seguem papéis M3; os nomes antigos (--accent,
+     --blue, ...) são a API usada pelo JS e pelos componentes.
+     ============================================================ */
+  :root {
+    /* md.sys.shape — tokens oficiais; os --r-* são aliases internos */
+    --md-sys-shape-corner-extra-small: 4px;
+    --md-sys-shape-corner-small: 8px;
+    --md-sys-shape-corner-medium: 12px;
+    --md-sys-shape-corner-large: 16px;
+    --md-sys-shape-corner-large-increased: 20px;
+    --md-sys-shape-corner-extra-large: 28px;
+    --md-sys-shape-corner-full: 9999px;
+    --r-xs: var(--md-sys-shape-corner-small);
+    --r-sm: var(--md-sys-shape-corner-medium);
+    --r-md: var(--md-sys-shape-corner-large);
+    --r-lg: var(--md-sys-shape-corner-large-increased);
+    --r-xl: var(--md-sys-shape-corner-extra-large);
+    --r-full: var(--md-sys-shape-corner-full);
+    /* md.sys.motion — springs não existem na web; --spring é a aproximação expressiva */
+    --md-sys-motion-easing-standard: cubic-bezier(.2, 0, 0, 1);
+    --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(.05, .7, .1, 1);
+    --ease: var(--md-sys-motion-easing-standard);
+    --spring: cubic-bezier(.3, 1.3, .45, 1);
+    /* M3 usa uma família só: Roboto Flex; numerais alinham via tabular-nums (no body) */
+    --mono: 'Roboto Flex', 'Google Sans Text', Roboto, system-ui, sans-serif;
+    --text-1: color-mix(in srgb, var(--text) 72%, var(--text-2));
+    /* ruído fractal p/ grainy gradients (estilo Gemini/Pixel Weather) — inline, funciona offline */
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  }
+  :root, [data-theme="dark"] {
+    /* SchemeTonalSpot dark, seed #2DD4BF — gerado com @material/material-color-utilities */
+    --ground: #0e1513;          /* surface */
+    --surface: #1a211f;         /* surface-container */
+    --raised: #252b2a;          /* surface-container-high */
+    --input-bg: #303634;        /* surface-container-highest */
+    --border: #3f4946;          /* outline-variant */
+    --text: #dde4e1;            /* on-surface */
+    --text-2: #bec9c5;          /* on-surface-variant */
+    --text-3: #899390;          /* outline */
+    --accent: #83d5c7;          /* primary */
+    --on-accent: #003731;
+    --accent-soft: #005047;     /* primary-container */
+    --on-accent-c: #9ef2e3;
+    --sec-c: #334b47;           /* secondary-container (indicador da nav) */
+    --on-sec-c: #cde8e2;
+    --blue: #8dcdff;  --blue-soft: #004b70;  --on-blue-c: #cae6ff;
+    --purple: #c0c1ff; --purple-soft: #393b98; --on-purple-c: #e1e0ff;
+    --pink: #ffb1c2; --pink-soft: #8f003f; --on-pink-c: #ffd9df;
+    --green: #3de09e; --green-soft: #005235; --on-green-c: #62fdb9;
+    --orange: #ffba40; --orange-soft: #604100; --on-orange-c: #ffddae;
+    --red: #ffb4ab;   --red-soft: #93000a;   --on-red-c: #ffdad6;
+    --shadow: 0 1px 3px rgba(0,0,0,.28), 0 6px 20px rgba(0,0,0,.18);
+    --shadow-hover: 0 2px 6px rgba(0,0,0,.32), 0 10px 28px rgba(0,0,0,.22);
+    --picker-filter: invert(.7);
+  }
+  [data-theme="light"] {
+    --ground: #f4fbf8;
+    --surface: #e9efec;
+    --raised: #e3eae7;
+    --input-bg: #dde4e1;
+    --border: #bec9c5;
+    --text: #171d1b;
+    --text-2: #3f4946;
+    --text-3: #6f7976;
+    --accent: #006b5f;
+    --on-accent: #ffffff;
+    --accent-soft: #9ef2e3;
+    --on-accent-c: #005047;
+    --sec-c: #cde8e2;
+    --on-sec-c: #334b47;
+    --blue: #006493;  --blue-soft: #cae6ff;  --on-blue-c: #001e30;
+    --purple: #5154b2; --purple-soft: #e1e0ff; --on-purple-c: #06006c;
+    --pink: #bb0055; --pink-soft: #ffd9df; --on-pink-c: #3f0018;
+    --green: #006c48; --green-soft: #62fdb9; --on-green-c: #002113;
+    --orange: #7f5600; --orange-soft: #ffddae; --on-orange-c: #281800;
+    --red: #ba1a1a;   --red-soft: #ffdad6;   --on-red-c: #93000a;
+    --shadow: 0 1px 3px rgba(30,40,70,.07), 0 6px 20px rgba(30,40,70,.07);
+    --shadow-hover: 0 2px 6px rgba(30,40,70,.09), 0 10px 28px rgba(30,40,70,.1);
+    --picker-filter: none;
+  }
+  [data-theme="contrast"] {
+    /* SchemeTonalSpot dark com contraste 1.0 (alto contraste real do M3) */
+    --ground: #0e1513;
+    --surface: #2b3230;
+    --raised: #363d3b;
+    --input-bg: #424846;
+    --border: #bac5c1;
+    --text: #ffffff;
+    --text-2: #ffffff;
+    --text-3: #e8f2ef;
+    --accent: #b0fff0;
+    --on-accent: #000000;
+    --accent-soft: #7fd1c3;
+    --on-accent-c: #000e0b;
+    --sec-c: #adc8c2;
+    --on-sec-c: #000e0b;
+    --blue: #8dcdff;  --blue-soft: #004b70;  --on-blue-c: #cae6ff;
+    --purple: #c0c1ff; --purple-soft: #393b98; --on-purple-c: #e1e0ff;
+    --pink: #ffb1c2; --pink-soft: #8f003f; --on-pink-c: #ffd9df;
+    --green: #3de09e; --green-soft: #005235; --on-green-c: #62fdb9;
+    --orange: #ffba40; --orange-soft: #604100; --on-orange-c: #ffddae;
+    --red: #ffece9;   --red-soft: #ffaea4;   --on-red-c: #220001;
+    --shadow: 0 2px 8px rgba(0,0,0,.6);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,.7);
+    --picker-filter: invert(.8);
+  }
+
+  /* cor-tema: SchemeVibrant (@material/material-color-utilities) — superfícies + primária */
+  [data-theme="dark"][data-accent="red"] { --ground: #1e100e; --surface: #2b1c1a; --raised: #362624; --input-bg: #42302f; --border: #58413f; --text: #f9dcd9; --text-2: #dfbfbb; --text-3: #a78a87;
+    --accent: #ffb4ac; --on-accent: #690006; --accent-soft: #93000d; --on-accent-c: #ffdad6; --sec-c: #653c2a; --on-sec-c: #ffdbcd; }
+  [data-theme="light"][data-accent="red"] { --ground: #fff8f7; --surface: #ffe9e6; --raised: #ffe2de; --input-bg: #f9dcd9; --border: #dfbfbb; --text: #271816; --text-2: #58413f; --text-3: #8c716e;
+    --accent: #c00015; --on-accent: #ffffff; --accent-soft: #ffdad6; --on-accent-c: #93000d; --sec-c: #ffdbcd; --on-sec-c: #653c2a; }
+  [data-theme="dark"][data-accent="orange"] { --ground: #1c1108; --surface: #2a1d13; --raised: #35271c; --input-bg: #403226; --border: #564334; --text: #f6decd; --text-2: #dcc1ae; --text-3: #a48c7a;
+    --accent: #ffb77b; --on-accent: #4c2700; --accent-soft: #6d3a00; --on-accent-c: #ffdcc2; --sec-c: #5c421a; --on-sec-c: #ffddb3; }
+  [data-theme="light"][data-accent="orange"] { --ground: #fff8f5; --surface: #ffeadc; --raised: #fce4d3; --input-bg: #f6decd; --border: #dcc1ae; --text: #25190f; --text-2: #564334; --text-3: #897362;
+    --accent: #8f4e00; --on-accent: #ffffff; --accent-soft: #ffdcc2; --on-accent-c: #6d3a00; --sec-c: #ffddb3; --on-sec-c: #5c421a; }
+  [data-theme="dark"][data-accent="yellow"] { --ground: #171306; --surface: #241f11; --raised: #2e2a1a; --input-bg: #393525; --border: #4d4632; --text: #ebe2cb; --text-2: #d0c6ab; --text-3: #999077;
+    --accent: #e9c400; --on-accent: #3a3000; --accent-soft: #544600; --on-accent-c: #ffe16e; --sec-c: #4c481c; --on-sec-c: #ebe4aa; }
+  [data-theme="light"][data-accent="yellow"] { --ground: #fff9ef; --surface: #f7edd6; --raised: #f1e8d0; --input-bg: #ebe2cb; --border: #d0c6ab; --text: #1f1b0d; --text-2: #4d4632; --text-3: #7e775f;
+    --accent: #705d00; --on-accent: #ffffff; --accent-soft: #ffe16e; --on-accent-c: #544600; --sec-c: #ebe4aa; --on-sec-c: #4c481c; }
+  [data-theme="dark"][data-accent="green"] { --ground: #0e150c; --surface: #1a2218; --raised: #242c22; --input-bg: #2f372c; --border: #3f4a3c; --text: #dce5d6; --text-2: #becab8; --text-3: #889484;
+    --accent: #00e545; --on-accent: #00390a; --accent-soft: #005313; --on-accent-c: #70ff76; --sec-c: #2a4e39; --on-sec-c: #c4ecd0; }
+  [data-theme="light"][data-accent="green"] { --ground: #f3fcec; --surface: #e7f1e1; --raised: #e2ebdb; --input-bg: #dce5d6; --border: #becab8; --text: #161e14; --text-2: #3f4a3c; --text-3: #6f7a6b;
+    --accent: #006e1c; --on-accent: #ffffff; --accent-soft: #70ff76; --on-accent-c: #005313; --sec-c: #c4ecd0; --on-sec-c: #2a4e39; }
+  [data-theme="dark"][data-accent="blue"] { --ground: #0e141c; --surface: #1a2028; --raised: #252a33; --input-bg: #2f353e; --border: #404753; --text: #dde3ee; --text-2: #bfc7d5; --text-3: #8a919e;
+    --accent: #a2c9ff; --on-accent: #00315b; --accent-soft: #004881; --on-accent-c: #d3e4ff; --sec-c: #3c4665; --on-sec-c: #dae1ff; }
+  [data-theme="light"][data-accent="blue"] { --ground: #f8f9ff; --surface: #e9eefa; --raised: #e3e8f4; --input-bg: #dde3ee; --border: #bfc7d5; --text: #161c24; --text-2: #404753; --text-3: #707784;
+    --accent: #0060a8; --on-accent: #ffffff; --accent-soft: #d3e4ff; --on-accent-c: #004881; --sec-c: #dae1ff; --on-sec-c: #3c4665; }
+  [data-theme="dark"][data-accent="purple"] { --ground: #19111a; --surface: #251d26; --raised: #302731; --input-bg: #3b323c; --border: #4f4350; --text: #eedeeb; --text-2: #d3c1d1; --text-3: #9b8c9b;
+    --accent: #f3aeff; --on-accent: #55006a; --accent-soft: #790096; --on-accent-c: #fdd6ff; --sec-c: #5c3d56; --on-sec-c: #ffd7f3; }
+  [data-theme="light"][data-accent="purple"] { --ground: #fff7fb; --surface: #f9e9f7; --raised: #f3e4f1; --input-bg: #eedeeb; --border: #d3c1d1; --text: #211922; --text-2: #4f4350; --text-3: #817381;
+    --accent: #9e00c3; --on-accent: #ffffff; --accent-soft: #fdd6ff; --on-accent-c: #790096; --sec-c: #ffd7f3; --on-sec-c: #5c3d56; }
+  [data-theme="dark"][data-accent="pink"] { --ground: #1d1013; --surface: #2a1c1f; --raised: #352629; --input-bg: #413034; --border: #564145; --text: #f6dce0; --text-2: #ddbfc4; --text-3: #a58a8f;
+    --accent: #ffb1c2; --on-accent: #66002b; --accent-soft: #8f003f; --on-accent-c: #ffd9df; --sec-c: #663b37; --on-sec-c: #ffdad6; }
+  [data-theme="light"][data-accent="pink"] { --ground: #fff8f7; --surface: #ffe8eb; --raised: #fce2e6; --input-bg: #f6dce0; --border: #ddbfc4; --text: #26181b; --text-2: #564145; --text-3: #8a7175;
+    --accent: #bb0055; --on-accent: #ffffff; --accent-soft: #ffd9df; --on-accent-c: #8f003f; --sec-c: #ffdad6; --on-sec-c: #663b37; }
+  /* colorido: cada card ganha a primária de uma cor (fundo da página segue o teal padrão) */
+  [data-theme="dark"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+1) { --accent: #ffb4ac; --on-accent: #690006; --accent-soft: #93000d; --on-accent-c: #ffdad6; --sec-c: #653c2a; --on-sec-c: #ffdbcd; }
+  [data-theme="light"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+1) { --accent: #c00015; --on-accent: #ffffff; --accent-soft: #ffdad6; --on-accent-c: #93000d; --sec-c: #ffdbcd; --on-sec-c: #653c2a; }
+  [data-theme="dark"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+2) { --accent: #ffb77b; --on-accent: #4c2700; --accent-soft: #6d3a00; --on-accent-c: #ffdcc2; --sec-c: #5c421a; --on-sec-c: #ffddb3; }
+  [data-theme="light"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+2) { --accent: #8f4e00; --on-accent: #ffffff; --accent-soft: #ffdcc2; --on-accent-c: #6d3a00; --sec-c: #ffddb3; --on-sec-c: #5c421a; }
+  [data-theme="dark"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+3) { --accent: #e9c400; --on-accent: #3a3000; --accent-soft: #544600; --on-accent-c: #ffe16e; --sec-c: #4c481c; --on-sec-c: #ebe4aa; }
+  [data-theme="light"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+3) { --accent: #705d00; --on-accent: #ffffff; --accent-soft: #ffe16e; --on-accent-c: #544600; --sec-c: #ebe4aa; --on-sec-c: #4c481c; }
+  [data-theme="dark"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+4) { --accent: #00e545; --on-accent: #00390a; --accent-soft: #005313; --on-accent-c: #70ff76; --sec-c: #2a4e39; --on-sec-c: #c4ecd0; }
+  [data-theme="light"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+4) { --accent: #006e1c; --on-accent: #ffffff; --accent-soft: #70ff76; --on-accent-c: #005313; --sec-c: #c4ecd0; --on-sec-c: #2a4e39; }
+  [data-theme="dark"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+5) { --accent: #a2c9ff; --on-accent: #00315b; --accent-soft: #004881; --on-accent-c: #d3e4ff; --sec-c: #3c4665; --on-sec-c: #dae1ff; }
+  [data-theme="light"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+5) { --accent: #0060a8; --on-accent: #ffffff; --accent-soft: #d3e4ff; --on-accent-c: #004881; --sec-c: #dae1ff; --on-sec-c: #3c4665; }
+  [data-theme="dark"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+6) { --accent: #f3aeff; --on-accent: #55006a; --accent-soft: #790096; --on-accent-c: #fdd6ff; --sec-c: #5c3d56; --on-sec-c: #ffd7f3; }
+  [data-theme="light"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+6) { --accent: #9e00c3; --on-accent: #ffffff; --accent-soft: #fdd6ff; --on-accent-c: #790096; --sec-c: #ffd7f3; --on-sec-c: #5c3d56; }
+  [data-theme="dark"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+7) { --accent: #ffb1c2; --on-accent: #66002b; --accent-soft: #8f003f; --on-accent-c: #ffd9df; --sec-c: #663b37; --on-sec-c: #ffdad6; }
+  [data-theme="light"][data-accent="rainbow"] .card-grid > .card:nth-child(7n+7) { --accent: #bb0055; --on-accent: #ffffff; --accent-soft: #ffd9df; --on-accent-c: #8f003f; --sec-c: #ffdad6; --on-sec-c: #663b37; }
+
+

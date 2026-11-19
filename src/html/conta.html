@@ -1,0 +1,106 @@
+  <!-- ================= CONTA / CONFIG ================= -->
+
+  <div class="card page-conta" data-page="conta">
+    <button class="conta-back" onclick="screenBack()"><span class="ms" aria-hidden="true">arrow_back</span> Voltar</button>
+  </div>
+  <section class="card" id="secIcarus" data-page="conta">
+    <header class="card-head">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">cloud</span>
+      </span>
+      <div class="card-titles">
+        <h2>Conta &Iacute;carus</h2>
+        <p class="card-sub">Busca batidas e saldo automaticamente</p>
+      </div>
+      <span class="chip" id="icarusHeadStatus"></span>
+    </header>
+    <div class="card-body">
+      <div id="icarusLoginForm">
+        <div class="grid-2">
+          <div class="field">
+            <label for="icarusUser"><span class="ms" aria-hidden="true">person</span>Usu&aacute;rio</label>
+            <input type="text" id="icarusUser" autocomplete="username" autocapitalize="none">
+          </div>
+          <div class="field">
+            <label for="icarusPass"><span class="ms" aria-hidden="true">lock</span>Senha</label>
+            <input type="password" id="icarusPass" autocomplete="current-password" onkeydown="if(event.key==='Enter')icarusLogin()">
+          </div>
+        </div>
+        <button class="btn-primary" id="btnIcarusLogin" onclick="icarusLogin()" style="margin-top:14px">Conectar</button>
+        <div class="meta-add-hint">A senha n&atilde;o &eacute; armazenada — somente o token de acesso fica salvo neste dispositivo. Ao conectar, as batidas de hoje e o saldo de ontem s&atilde;o preenchidos automaticamente.</div>
+      </div>
+      <div id="icarusConnected" style="display:none">
+        <div class="config-row">
+          <span class="config-label" id="icarusWho">Conectado</span>
+          <button class="btn-config" onclick="icarusLogout()">Desconectar</button>
+        </div>
+        <div class="config-row">
+          <span class="config-label">ID do colaborador</span>
+          <input type="text" class="icarus-mini-input" id="icarusIdColab" inputmode="numeric" placeholder="&mdash;" onchange="icarusSetId(this.value)">
+        </div>
+        <div class="config-row">
+          <span class="config-label">Buscar batidas e saldo agora</span>
+          <button class="btn-config" onclick="icarusSync()">Sincronizar</button>
+        </div>
+      </div>
+      <div class="icarus-status" id="icarusLoginStatus" role="status"></div>
+    </div>
+  </section>
+
+  <div class="card page-back-bar" data-page="config">
+    <button class="conta-back" onclick="screenBack()"><span class="ms" aria-hidden="true">arrow_back</span> Voltar</button>
+  </div>
+  <section class="card" id="secConfig" data-page="config">
+    <header class="card-head">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">settings</span>
+      </span>
+      <div class="card-titles">
+        <h2>Prefer&ecirc;ncias</h2>
+        <p class="card-sub">Tema, notifica&ccedil;&otilde;es, exportar e importar</p>
+      </div>
+    </header>
+    <div class="card-body">
+      <div class="config-row">
+        <span class="config-label">Tema</span>
+        <div class="theme-switcher">
+          <button class="theme-btn" data-theme-val="light" title="Claro" onclick="setTheme('light')">
+            <span class="ms" aria-hidden="true">light_mode</span>
+          </button>
+          <button class="theme-btn active" data-theme-val="dark" title="Escuro" onclick="setTheme('dark')">
+            <span class="ms" aria-hidden="true">dark_mode</span>
+          </button>
+          <button class="theme-btn" data-theme-val="contrast" title="Alto contraste" onclick="setTheme('contrast')">
+            <span class="ms" aria-hidden="true">contrast</span>
+          </button>
+        </div>
+      </div>
+      <div class="config-row">
+        <span class="config-label">Cor do tema</span>
+        <div class="accent-switcher" role="group" aria-label="Cor do tema">
+          <button class="accent-btn" data-accent-val="teal" style="--sw:#2dd4bf" title="Verde-&aacute;gua (padr&atilde;o)" aria-label="Verde-&aacute;gua" onclick="setAccent('teal')"></button>
+          <button class="accent-btn" data-accent-val="red" style="--sw:#e53935" title="Vermelho" aria-label="Vermelho" onclick="setAccent('red')"></button>
+          <button class="accent-btn" data-accent-val="orange" style="--sw:#fb8c00" title="Laranja" aria-label="Laranja" onclick="setAccent('orange')"></button>
+          <button class="accent-btn" data-accent-val="yellow" style="--sw:#fdd835" title="Amarelo" aria-label="Amarelo" onclick="setAccent('yellow')"></button>
+          <button class="accent-btn" data-accent-val="green" style="--sw:#43a047" title="Verde" aria-label="Verde" onclick="setAccent('green')"></button>
+          <button class="accent-btn" data-accent-val="blue" style="--sw:#1e88e5" title="Azul" aria-label="Azul" onclick="setAccent('blue')"></button>
+          <button class="accent-btn" data-accent-val="purple" style="--sw:#8e24aa" title="Roxo" aria-label="Roxo" onclick="setAccent('purple')"></button>
+          <button class="accent-btn" data-accent-val="pink" style="--sw:#ec407a" title="Rosa" aria-label="Rosa" onclick="setAccent('pink')"></button>
+          <button class="accent-btn" data-accent-val="rainbow" title="Colorido" aria-label="Colorido" onclick="setAccent('rainbow')"></button>
+        </div>
+      </div>
+      <div class="config-row">
+        <span class="config-label">Notifica&ccedil;&otilde;es de sa&iacute;da (5 min antes)</span>
+        <button class="btn-config" id="btnNotif" onclick="toggleNotifications()">Ativar</button>
+      </div>
+      <div class="config-row">
+        <span class="config-label">Exportar e importar<br><small class="config-hint">Arquivo .json &mdash; voc&ecirc; escolhe o que entra</small></span>
+        <div class="config-actions">
+          <button class="btn-config" onclick="xferOpen('export')">Exportar</button>
+          <button class="btn-config" onclick="document.getElementById('cfgFile').click()">Importar</button>
+          <input type="file" id="cfgFile" accept=".json,application/json,text/plain" hidden onchange="importConfig(this)">
+        </div>
+      </div>
+    </div>
+  </section>
+

@@ -1,0 +1,40 @@
+  /* ===== CHIPS ===== */
+  .chip { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: .72rem; font-weight: 600; color: var(--on-blue-c); background: var(--blue-soft); padding: 5px 12px; border-radius: var(--r-full); white-space: nowrap; }
+  .nolunch-chip { display: inline-block; font-family: var(--mono); font-size: .58rem; font-weight: 700; color: var(--on-orange-c); background: var(--orange-soft); padding: 2px 8px; border-radius: var(--r-full); letter-spacing: .03em; text-transform: uppercase; vertical-align: middle; margin-left: 5px; }
+  .bank-stale { display: inline-block; margin-top: 10px; font-size: .7rem; font-weight: 600; color: var(--on-orange-c); background: var(--orange-soft); padding: 4px 12px; border-radius: var(--r-full); }
+
+  /* ===== CAMPOS (text field preenchido, M3) ===== */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: .78rem; font-weight: 600; color: var(--text-2); display: flex; align-items: center; gap: 5px; }
+  .field label svg, .lbl-ico { width: 13px; height: 13px; color: var(--accent); flex-shrink: 0; stroke-width: 2; }
+  .field input, .field select {
+    background: var(--input-bg); border: 1px solid transparent; border-radius: var(--r-sm); color: var(--text);
+    font-family: var(--mono); font-size: 1.02rem; padding: 8px 14px; outline: none; width: 100%;
+    transition: border-color .2s, background .3s, box-shadow .2s;
+    -webkit-appearance: none; -moz-appearance: textfield; min-height: 48px;
+  }
+  .field input:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .field input::placeholder { color: var(--text-3); }
+  .field input[readonly] { opacity: .55; cursor: default; }
+  input[type="time"]::-webkit-calendar-picker-indicator,
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: var(--picker-filter); cursor: pointer; }
+  .add-row { display: flex; gap: 8px; align-items: flex-end; }
+  .add-row .field { flex: 1; }
+
+  /* ===== BOTÕES (pill; filled / tonal / texto / remover) ===== */
+  .btn-primary { width: 100%; padding: 14px; border: none; border-radius: var(--r-full); background: var(--accent); color: var(--on-accent); font-size: .92rem; font-weight: 700; cursor: pointer; transition: opacity .15s, transform .3s var(--spring); letter-spacing: .02em; }
+  .btn-primary:hover { opacity: .88; }
+  .btn-primary:active { transform: scale(.98); }
+  .btn-primary:disabled { opacity: .35; cursor: default; transform: none; }
+  .btn-add { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--accent); border: none; color: var(--on-accent); font-size: .8rem; font-weight: 700; padding: 0 20px; min-height: 48px; border-radius: var(--r-full); cursor: pointer; white-space: nowrap; transition: opacity .15s, transform .3s var(--spring); }
+  .btn-add:hover { opacity: .85; }
+  .btn-add:active { transform: scale(.96); }
+  .btn-add svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .btn-config { padding: 10px 18px; border: none; border-radius: var(--r-full); background: var(--accent-soft); color: var(--on-accent-c); font-size: .82rem; font-weight: 700; cursor: pointer; transition: background .2s, transform .3s var(--spring); white-space: nowrap; }
+    .btn-config:active { transform: scale(.96); }
+  .config-hint { display: block; font-size: .7rem; font-weight: 500; color: var(--text-3); margin-top: 2px; }
+  .btn-config.active { background: var(--green-soft); color: var(--on-green-c); }
+  .btn-remove { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; background: none; border: none; color: var(--red); font-size: .9rem; cursor: pointer; padding: 0 6px; border-radius: var(--r-full); line-height: 1; opacity: .6; transition: opacity .15s, background .15s; }
+  .btn-remove:hover { opacity: 1; background: var(--red-soft); }
+

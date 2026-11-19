@@ -1,0 +1,45 @@
+<!-- DIALOG: login obrigatório (aparece quando uma ação exige conexão) -->
+<div class="drop-overlay" id="dropOverlay" hidden>
+  <div class="drop-box"><span class="ms" aria-hidden="true">download</span>Solte o arquivo para importar</div>
+</div>
+
+<div class="scrim" id="xferScrim" hidden onclick="if(event.target===this)xferClose()">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="xferTitle">
+    <span class="ms dialog-ico" aria-hidden="true" id="xferIco">upload</span>
+    <h2 class="dialog-title" id="xferTitle"></h2>
+    <p class="dialog-sub" id="xferSub"></p>
+    <div class="xfer-list" id="xferList"></div>
+    <div class="dialog-actions">
+      <button class="btn-text" onclick="xferClose()">Cancelar</button>
+      <button class="btn-primary btn-dlg" id="xferGo" onclick="xferGo()"></button>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="loginScrim" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="loginDlgTitle">
+    <span class="ms dialog-ico" aria-hidden="true">cloud</span>
+    <h2 class="dialog-title" id="loginDlgTitle">Conectar ao &Iacute;carus</h2>
+    <p class="dialog-sub">Isso precisa da sua conta &Iacute;carus.</p>
+    <div class="dialog-fields">
+      <div class="field">
+        <label for="dlgUser"><span class="ms" aria-hidden="true">person</span>Usu&aacute;rio</label>
+        <input type="text" id="dlgUser" autocomplete="username" autocapitalize="none">
+      </div>
+      <div class="field">
+        <label for="dlgPass"><span class="ms" aria-hidden="true">lock</span>Senha</label>
+        <input type="password" id="dlgPass" autocomplete="current-password" onkeydown="if(event.key==='Enter')icarusDlgLogin()">
+      </div>
+    </div>
+    <div class="icarus-status" id="dlgLoginStatus" role="status"></div>
+    <div class="dialog-actions">
+      <button class="btn-text" onclick="loginClose()">Cancelar</button>
+      <button class="btn-primary btn-dlg" id="dlgLoginBtn" onclick="icarusDlgLogin()">Conectar</button>
+    </div>
+    <p class="dialog-note">A senha n&atilde;o &eacute; armazenada — s&oacute; o token fica neste dispositivo.</p>
+  </div>
+</div>
+
+<!-- SWEEP de confirmação de sincronização -->
+<div class="sync-sweep" id="syncSweep" aria-hidden="true"></div>
+

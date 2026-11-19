@@ -1,0 +1,101 @@
+  <!-- ================= HOJE ================= -->
+
+  <!-- Card 1: Registro -->
+  <section class="card collapsible open page-active" id="secRegistro" data-page="hoje">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="true" onclick="toggleCard('secRegistro')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secRegistro');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">schedule</span>
+      </span>
+      <div class="card-titles">
+        <h2>Registro</h2>
+        <p class="card-sub">Batidas de hoje e saldo do &Iacute;carus</p>
+      </div>
+      <span class="chip" id="todayLabel"></span>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <!-- slots gerados por renderPunchSlots(): entrada, pares de intervalo e saída -->
+      <div class="punch-row" id="punchRow"></div>
+      <div class="punch-actions">
+        <button type="button" class="punch-act" onclick="addPunchPair()">
+          <span class="ms" aria-hidden="true">add</span>Intervalo
+        </button>
+        <button type="button" class="punch-act" id="btnPunchRemove" onclick="removePunchPair()" hidden>
+          <span class="ms" aria-hidden="true">remove</span>Remover intervalo
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Card 2: Panorama -->
+  <section class="card collapsible open page-active" id="secPanorama" data-page="hoje">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="true" onclick="toggleCard('secPanorama')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secPanorama');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">monitoring</span>
+      </span>
+      <div class="card-titles">
+        <h2>Panorama</h2>
+        <p class="card-sub">Progresso do dia e previs&atilde;o de sa&iacute;da</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div class="dash-tiles">
+        <div class="dash-tile t-work">
+          <span class="ms dash-tile-ico" aria-hidden="true">schedule</span>
+          <div class="dash-tile-val" id="trabalhado">--:--</div>
+          <div class="dash-tile-lbl">Trabalhado</div>
+        </div>
+        <div class="dash-tile t-rest">
+          <span class="ms dash-tile-ico" aria-hidden="true">hourglass_top</span>
+          <div class="dash-tile-val" id="dashRestante">--:--</div>
+          <div class="dash-tile-lbl">Restante</div>
+        </div>
+        <div class="dash-tile t-lunch">
+          <span class="ms dash-tile-ico" aria-hidden="true">restaurant</span>
+          <div class="dash-tile-val" id="dashIntervalo">--:--</div>
+          <div class="dash-tile-lbl">Intervalo</div>
+        </div>
+        <div class="dash-tile t-bank">
+          <span class="ms dash-tile-ico" aria-hidden="true">savings</span>
+          <div class="dash-tile-val" id="dashBanco">--:--</div>
+          <div class="dash-tile-lbl">Banco</div>
+        </div>
+        <label class="dash-tile t-saldo" for="saldoIcarus" title="Saldo do banco no fim de ontem, direto do &Iacute;carus">
+          <span class="ms dash-tile-ico" aria-hidden="true">monitoring</span>
+          <input type="text" id="saldoIcarus" class="dash-tile-val" placeholder="-12:10" inputmode="text">
+          <div class="dash-tile-lbl">Saldo &Iacute;carus ontem</div>
+        </label>
+      </div>
+      <div class="icarus-status" id="icarusSyncStatus" role="status"></div>
+    </div>
+  </section>
+
+  <!-- Card 3: Metas de saída -->
+  <section class="card collapsible open page-active" id="secMetas" data-page="hoje">
+    <header class="card-head" role="button" tabindex="0" aria-expanded="true" onclick="toggleCard('secMetas')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('secMetas');}">
+      <span class="card-ico">
+        <span class="ms" aria-hidden="true">flag</span>
+      </span>
+      <div class="card-titles">
+        <h2>Metas de sa&iacute;da</h2>
+        <p class="card-sub">Hor&aacute;rios-alvo a partir da sua entrada</p>
+      </div>
+      <span class="ms card-caret" aria-hidden="true">expand_more</span>
+    </header>
+    <div class="card-body">
+      <div id="board">
+        <div class="board-empty">Insira o hor&aacute;rio de entrada</div>
+      </div>
+      <div class="meta-add">
+        <input type="text" id="metaNome" placeholder="Nome (opcional)" maxlength="22">
+        <input type="text" id="metaDur" placeholder="6:00" inputmode="text" onkeydown="if(event.key==='Enter')addMeta()">
+        <button class="btn-add" onclick="addMeta()">
+          <span class="ms" aria-hidden="true">add</span>
+          Adicionar
+        </button>
+      </div>
+      <div class="meta-add-hint">Informe as horas trabalhadas (ex.: <b>6:00</b> ou <b>6.5</b>) para ver a que horas voc&ecirc; atinge essa meta. Jornadas de at&eacute; <b>6h</b> n&atilde;o somam o almo&ccedil;o.</div>
+    </div>
+  </section>
+

@@ -16,7 +16,7 @@ fi
 
 # PORTA FIXA (8000): origem estável = o login do site de ponto no iframe persiste.
 # Se a porta já estiver ocupada, o app provavelmente já está rodando — só reabrimos.
-URL="http://localhost:${PORT}/index.html"
+URL="http://localhost:${PORT}/calculadora-pontos.html"
 SRV=""
 if command -v ss >/dev/null 2>&1 && ss -ltn 2>/dev/null | grep -q ":${PORT} "; then
   echo "Servidor já ativo na porta ${PORT} — reabrindo o app."

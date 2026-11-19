@@ -1,0 +1,43 @@
+  /* ============================================================
+     >>> TESTE: TYPE SCALE M3 EXATA (tabela sp baseline) <<<
+     Para reverter: apagar deste marcador até o marcador de fim.
+     Numerais mantêm peso forte = variantes "emphasized" (spec).
+     ============================================================ */
+  :root {
+    --tt-d-l: 3.5625rem; /* display-large 57sp */
+    --tt-d-s: 2.25rem;   /* display-small 36sp */
+    --tt-h-s: 1.5rem;    /* headline-small 24sp */
+    --tt-t-l: 1.375rem;  /* title-large 22sp */
+    --tt-t-m: 1rem;      /* title-medium 16sp */
+    --tt-t-s: .875rem;   /* title-small 14sp */
+    --tt-b-l: 1rem;      /* body-large 16sp */
+    --tt-b-m: .875rem;   /* body-medium 14sp */
+    --tt-b-s: .75rem;    /* body-small 12sp */
+    --tt-l-l: .875rem;   /* label-large 14sp */
+    --tt-l-m: .75rem;    /* label-medium 12sp */
+    --tt-l-s: .6875rem;  /* label-small 11sp */
+  }
+  .card-titles h2 { font-size: var(--tt-t-m); font-weight: 500; letter-spacing: .009375rem; }
+  .card-sub { font-size: var(--tt-b-m); }
+  .btn-primary, .btn-add, .btn-config, .proj-falta-btn, .theme-btn { font-size: var(--tt-l-l); font-weight: 500; letter-spacing: .00625rem; }
+  .nav-item { font-size: var(--tt-l-m); letter-spacing: .03125rem; }
+  .chip { font-size: var(--tt-l-l); font-weight: 500; }
+  .tl-badge, .nolunch-chip, .bank-stale, .proj-fds-badge, .holiday-period-badge, .abono-period-badge { font-size: var(--tt-l-s); }
+  .field input, .field select, .meta-add input, .proj-table input[type="time"], .proj-table input[type="number"], .holiday-date-edit, .icarus-mini-input { font-size: var(--tt-b-l); letter-spacing: .03125rem; }
+  .field label { font-size: var(--tt-b-s); font-weight: 400; }
+  .holiday-item, .range-item, .abono-item, .reverse-label, .config-label { font-size: var(--tt-b-l); }
+  .tl-name { font-size: var(--tt-t-s); font-weight: 500; }
+  .tl-dur, .reverse-time { font-size: var(--tt-b-m); }
+  .esp-table { font-size: var(--tt-b-m); }
+  .esp-td-bat { font-size: var(--tt-b-m); }
+  .esp-table th { font-size: var(--tt-l-m); }
+  .clock { font-size: var(--tt-d-l); }
+  .bank-hero-val { font-size: var(--tt-d-s); }
+  .dash-tile-val, .punch-slot input, .cal-stat-val { font-size: var(--tt-h-s); }
+  .tl-time { font-size: var(--tt-t-l); }
+  .timer, .brand { font-size: var(--tt-l-m); }
+  .bank-sec-title, .dash-tile-lbl, .punch-lbl, .cal-stat-lbl, .esp-td-dia small { font-size: var(--tt-l-s); letter-spacing: .03125rem; }
+  .meta-add-hint, .icarus-status, .empty-hint, .board-empty { font-size: var(--tt-b-s); }
+  /* >>> FIM DO TESTE DE TYPE SCALE <<< */
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; animation-iteration-count: 1 !important; } }

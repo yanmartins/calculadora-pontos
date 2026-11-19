@@ -5,7 +5,7 @@
 cd "$(dirname "$0")" || exit 1
 PORT=8000
 PROFILE="$HOME/Library/Application Support/pontos-app"   # perfil dedicado (mantém o login do iframe)
-URL="http://localhost:${PORT}/index.html"
+URL="http://localhost:${PORT}/calculadora-pontos.html"
 
 # --- localizar Python 3 ---
 if command -v python3 >/dev/null 2>&1; then PY=python3
