@@ -1097,10 +1097,10 @@
       </div>
       <div class="proj-prior">
         <label class="proj-prior-chk"><input type="checkbox" id="projPrior" onchange="projPriorToggle()">
-          <span class="proj-prior-txt"><b>Priorizar 8:38</b><small>Cada dia em 8:38 vale 8:48 (10 min de gra&ccedil;a). Os outros dias ficam mais curtos para compensar.</small></span></label>
+          <span class="proj-prior-txt"><b id="projPriorTit">Priorizar 7:50</b><small id="projPriorDesc">Cada dia em 7:50 vale 8:00 (10 min de gra&ccedil;a). Os outros dias ficam mais curtos para compensar.</small></span></label>
         <div class="proj-config proj-prior-opts" id="projPriorOpts" hidden>
           <div class="field"><label><span class="ms" aria-hidden="true">vertical_align_bottom</span>Dia mais curto</label><input type="time" id="projPiso" value="07:00" onblur="renderProjection()"></div>
-          <div class="field"><label><span class="ms" aria-hidden="true">more_time</span>Completar 8:38 se faltar at&eacute; (min)</label><input type="number" id="projArred" value="10" min="0" max="60" onblur="renderProjection()"></div>
+          <div class="field"><label><span class="ms" aria-hidden="true">more_time</span><span id="projArredLbl">Completar 7:50</span> se faltar at&eacute; (min)</label><input type="number" id="projArred" value="10" min="0" max="60" onblur="renderProjection()"></div>
         </div>
       </div>
       <div id="projResult"></div>
@@ -1526,24 +1526,38 @@
   })();
 
   // ===== CONSTANTS =====
-  var TARGETS = [
-    { id: 'okr',      label: 'OKR',           desc: '8h',    mins: 480, color: 'green' },
-    { id: 'completo', label: 'Completo',       desc: '8h38',  mins: 518, color: 'green' },
-    { id: 'extra',    label: 'Hora Extra',     desc: '8h59',  mins: 539, color: 'amber' },
-    { id: 'limite',   label: 'Limite CLT',     desc: '10h48', mins: 648, color: 'red' }
-  ];
-  var ABONO = 48, PLR_LIMIT = -528, LUNCH_MIN_WORK = 360; // até 6h de trabalho não exige intervalo
-  // tolerância de 10 min (CLT art. 58 §1º): qualquer jornada entre 8h38 e 8h58 conta como 8h48 cheia
-  var JORNADA = 480 + ABONO, TOLERANCIA = 10, TOL_MIN = JORNADA - TOLERANCIA, TOL_MAX = JORNADA + TOLERANCIA;
+  var LUNCH_MIN_WORK = 360; // até 6h de trabalho não exige intervalo
+  // Jornada: até 30/11/2026 eram 44h semanais (jornada 8h48 com abono de 48 min/dia trabalhado = 8h líquidas).
+  // A partir de 01/12/2026 são 40h: jornada de 8h, sem abono; hora extra já conta a partir das 8h.
+  var CORTE_40H = '2026-12-01', TOLERANCIA = 10;
+  // regras do dia (string AAAA-MM-DD; padrão = hoje). Tolerância de 10 min (CLT art. 58 §1º) em torno da jornada:
+  // 44h → 8h38..8h58 valem 8h48; 40h → 7h50..8h10 valem 8h. Limite CLT = jornada + 2h extras (art. 59).
+  function regra(ds) {
+    ds = ds || toStr(new Date());
+    var abono = ds < CORTE_40H ? 48 : 0, jornada = 480 + abono;
+    return { abono: abono, jornada: jornada, tolMin: jornada - TOLERANCIA, tolMax: jornada + TOLERANCIA, maxDia: jornada + 120 };
+  }
   // quanto um dia útil trabalhado vale no banco (já com o abono): dentro da tolerância vale a jornada inteira
-  function tolWork(w) { return w >= TOL_MIN && w <= TOL_MAX ? JORNADA : w; }
-  // menor jornada diária que rende pelo menos m: 8h39..8h58 não rendem nada além de 8h38, então vira 8h38 ou 8h59
-  function tolMeta(m) { return m > TOL_MIN - 1 && m <= TOL_MAX ? (m <= JORNADA ? TOL_MIN : TOL_MAX + 1) : m; }
+  function tolWork(w, r) { r = r || regra(); return w >= r.tolMin && w <= r.tolMax ? r.jornada : w; }
+  // menor jornada diária que rende pelo menos m: dentro da faixa não rende nada além do piso, então vira o piso ou tolMax+1
+  function tolMeta(m, r) { r = r || regra(); return m > r.tolMin - 1 && m <= r.tolMax ? (m <= r.jornada ? r.tolMin : r.tolMax + 1) : m; }
+  // limite de saldo negativo da PLR: uma jornada (−8h48 na escala de 44h, −8h na de 40h), pela regra do fim do período
+  function plrLimit() { return -regra(toStr(period.fim)).jornada; }
+  // metas fixas da regra de hoje
+  function baseTargets() {
+    var r = regra();
+    return [
+      { id: 'okr',      label: 'OKR',        desc: '8h',               mins: 480,          color: 'green' },
+      { id: 'completo', label: 'Completo',   desc: fmtHoras(r.tolMin), mins: r.tolMin,     color: 'green' },
+      { id: 'extra',    label: 'Hora Extra', desc: fmtHoras(r.tolMax + 1), mins: r.tolMax + 1, color: 'amber' },
+      { id: 'limite',   label: 'Limite CLT', desc: fmtHoras(r.maxDia), mins: r.maxDia,     color: 'red' }
+    ];
+  }
 
   // metas fixas + personalizadas, ordenadas por minutos trabalhados
   function fmtHoras(m) { var h=Math.floor(m/60),mm=m%60; return h+'h'+String(mm).padStart(2,'0'); }
   function getTargets() {
-    var all = TARGETS.slice();
+    var all = baseTargets();
     customTargets.forEach(function (t) {
       all.push({ id:t.id, label:t.label, desc:fmtHoras(t.mins), mins:t.mins, color:'purple', custom:true });
     });
@@ -1652,7 +1666,7 @@
   }
   function calcCalendar() {
     var hd = getActiveHolidayDates(), abonoInt = getAbonoIntegralDates(), todayStr = toStr(new Date());
-    var diasUteis=0, diasTrab=0, diasFerias=0, diasAtest=0, diasAbono=0, diasRest=0, abonoMinutos=0;
+    var diasUteis=0, diasTrab=0, diasFerias=0, diasAtest=0, diasAbono=0, diasRest=0, abonoMinutos=0, abonoTrab=0, abonoRest=0, diasTrabAbono=0;
     var ini=toStr(period.inicio),fim=toStr(period.fim);
     var d = new Date(period.inicio);
     while (d <= period.fim) {
@@ -1665,15 +1679,15 @@
           var abonoParc = null;
           abonos.forEach(function(a){ if(a.tipo==='parcial'&&a.date===ds) abonoParc=a; });
           if(abonoParc) abonoMinutos+=abonoParc.minutos;
-          if (ds < todayStr) diasTrab++;
-          else diasRest++;
+          if (ds < todayStr) { diasTrab++; abonoTrab += regra(ds).abono; if (regra(ds).abono) diasTrabAbono++; }
+          else { diasRest++; abonoRest += regra(ds).abono; }
         }
       } else if(!isWeekend(d) && abonoInt[ds]) {
         diasAbono++;
       }
       d = addDays(d, 1);
     }
-    return {diasUteis:diasUteis,diasTrab:diasTrab,diasFerias:diasFerias,diasAtest:diasAtest,diasAbono:diasAbono,diasRest:diasRest,abonoMinutos:abonoMinutos};
+    return {diasUteis:diasUteis,diasTrab:diasTrab,diasFerias:diasFerias,diasAtest:diasAtest,diasAbono:diasAbono,diasRest:diasRest,abonoMinutos:abonoMinutos,abonoTrab:abonoTrab,abonoRest:abonoRest,diasTrabAbono:diasTrabAbono};
   }
 
   // ===== TIME HELPERS =====
@@ -1717,7 +1731,8 @@
       saldoIcarus: parseSaldo($('saldoIcarus').value),
       diasUteis:cal.diasUteis, diasTrab:cal.diasTrab,
       diasAtest:cal.diasAtest, diasFerias:cal.diasFerias, diasAbono:cal.diasAbono,
-      diasRest:cal.diasRest, abonoMinutos:cal.abonoMinutos
+      diasRest:cal.diasRest, abonoMinutos:cal.abonoMinutos,
+      abonoTrab:cal.abonoTrab, abonoRest:cal.abonoRest, diasTrabAbono:cal.diasTrabAbono
     };
   }
 
@@ -1732,8 +1747,8 @@
   function calcBank(st) {
     if (st.saldoIcarus == null || !st.diasUteis) return null;
     var dr = st.diasRest; if (dr <= 0) return null;
-    var abono = st.diasTrab * ABONO, saldoPos = st.saldoIcarus + abono + (st.abonoMinutos||0);
-    var porDia = saldoPos / dr, margemPlr = saldoPos - PLR_LIMIT, plrPorDia = margemPlr / dr;
+    var abono = st.abonoTrab, saldoPos = st.saldoIcarus + abono + (st.abonoMinutos||0);
+    var porDia = saldoPos / dr, margemPlr = saldoPos - plrLimit(), plrPorDia = margemPlr / dr;
     var saidaBonus = null;
     if (st.entrada != null) saidaBonus = st.entrada + tolMeta(480 - porDia) + st.almoco;
     return {diasRest:dr,abono:abono,saldoPos:saldoPos,porDia:porDia,margemPlr:margemPlr,plrPorDia:plrPorDia,saidaBonus:saidaBonus};
@@ -1875,8 +1890,8 @@
       {v:st.diasRest,l:'Restantes',c:st.diasRest<=3?'warn':''},
       {v:ausencias,l:'Ausências',c:ausencias>0?'negative':''}
     ];
-    var diasDeTrabalho = st.diasTrab + st.diasRest; // dias úteis em que se bate ponto (exclui ausências)
-    var abonoTotal = diasDeTrabalho * ABONO + (st.abonoMinutos||0);
+    // abono de 48 min só nos dias úteis trabalhados até 30/11/2026 (escala 44h) + abonos parciais do Ícarus
+    var abonoTotal = st.abonoTrab + st.abonoRest + (st.abonoMinutos||0);
     items.push({v:fmtDur(abonoTotal),l:'Abono Período',c:'positive'});
     setHTML($('calSummary'), items.map(function(i){
       return '<div class="cal-stat"><div class="cal-stat-val '+i.c+'">'+i.v+'</div><div class="cal-stat-lbl">'+i.l+'</div></div>';
@@ -2005,7 +2020,7 @@
       '<div class="bank-hero-val '+(bank.saldoPos>=0?'positive':'negative')+'">'+fmtSaldo(bank.saldoPos)+'</div>'+
       '<div class="bank-hero-src">Icarus <b>'+fmtSaldo(st.saldoIcarus)+'</b>'+
         (saldoIcarusDate?' ('+fmtDateBr(saldoIcarusDate)+')':'')+
-        ' + abono <b>'+fmtDur(ABONO)+'</b> × <b>'+st.diasTrab+'</b> dias trabalhados'+
+        (st.diasTrabAbono?' + abono <b>'+fmtDur(48)+'</b> × <b>'+st.diasTrabAbono+'</b> dias trabalhados':'')+
         (st.abonoMinutos?' + <b>'+fmtDur(st.abonoMinutos)+'</b> de abonos parciais':'')+'</div>';
     // o saldo é naturalmente "de ontem"; só está defasado se houver dia ÚTIL completo depois dele
     var saldoStale=false;
@@ -2021,7 +2036,7 @@
     html+='</div>';
 
     // Para zerar até o fim do período
-    var metaDia=tolMeta(Math.max(0,480-bank.porDia)); // 8h líquidas/dia ± ajuste do saldo, respeitando a tolerância
+    var metaDia=tolMeta(Math.max(0,480-bank.porDia)); // 8h líquidas/dia ± ajuste do saldo, respeitando a tolerância de hoje
     html+='<div class="bank-sec-title">Para zerar até '+fmtDateBr(toStr(period.fim))+'</div>';
     html+='<div class="bank-tiles">';
     html+=tile(bank.diasRest,'Dias úteis restantes','');
@@ -2037,7 +2052,7 @@
     // PLR
     html+='<div class="bank-sec-title">PLR</div>';
     html+='<div class="bank-tiles">';
-    html+=tile(fmtSaldo(PLR_LIMIT),'Limite do período','');
+    html+=tile(fmtSaldo(plrLimit()),'Limite do período','');
     html+=tile(fmtSaldo(bank.margemPlr),'Margem até o limite',bank.margemPlr>0?'positive':'negative');
     html+=tile(fmtSaldo(bank.plrPorDia),'Tolerância por dia',bank.plrPorDia>0?'positive':'negative');
     html+='</div>';
@@ -2109,49 +2124,50 @@
     return days;
   }
   // enche sempre o dia mais leve, minuto a minuto, contando cada dia pelo que vale no banco (tolWork).
-  // Na faixa de tolerância não adianta ficar: de 8h38 (já vale 8h48) o próximo passo útil é 8h59.
+  // Na faixa de tolerância não adianta ficar: do piso (8h38 / 7h50, já vale a jornada) o próximo passo útil é tolMax+1.
   function distributeWork(dayConfigs,totalWork){
     var n=dayConfigs.length,w=dayConfigs.map(function(){return 0;});
     if(totalWork<=0||!n) return w;
-    // ponto de partida: divisão igual abaixo da faixa (o laço só acerta o resto)
-    var base=Math.floor(Math.min(totalWork/n,TOL_MIN-1)),got=0;
-    dayConfigs.forEach(function(dc,i){ w[i]=Math.max(0,Math.min(base,Math.floor(dc.maxWork))); got+=w[i]; });
-    function next(v){ return v===TOL_MIN?TOL_MAX+1:v+1; }
+    // ponto de partida: divisão igual abaixo da faixa de cada dia (o laço só acerta o resto)
+    var base=Math.floor(totalWork/n),got=0;
+    dayConfigs.forEach(function(dc,i){ w[i]=Math.max(0,Math.min(base,dc.r.tolMin-1,Math.floor(dc.maxWork))); got+=w[i]; });
+    function next(v,r){ return v===r.tolMin?r.tolMax+1:v+1; }
     while(got<totalWork){
       var best=-1;
-      for(var i=0;i<n;i++) if(next(w[i])<=dayConfigs[i].maxWork&&(best<0||w[i]<w[best])) best=i;
+      for(var i=0;i<n;i++) if(next(w[i],dayConfigs[i].r)<=dayConfigs[i].maxWork&&(best<0||w[i]<w[best])) best=i;
       if(best<0) break; // todos no limite de saída
-      var nx=next(w[best]);
-      got+=tolWork(nx)-tolWork(w[best]); w[best]=nx;
+      var r=dayConfigs[best].r,nx=next(w[best],r);
+      got+=tolWork(nx,r)-tolWork(w[best],r); w[best]=nx;
     }
     return w;
   }
-  // "Priorizar 8:38": fixa 8h38 do primeiro dia em diante enquanto isso diminui o trabalho total e os outros dias
-  // não ficam abaixo do piso; no fim, quem ficou a até `arred` min de 8h38 sobe para 8h38 (você aceita trabalhar um pouco a mais)
+  // "Priorizar piso da tolerância" (8h38 na escala 44h, 7h50 na de 40h): fixa o piso do primeiro dia em diante enquanto
+  // isso diminui o trabalho total e os outros dias não ficam abaixo do piso; no fim, quem ficou a até `arred` min do
+  // piso sobe para ele (você aceita trabalhar um pouco a mais)
   var priorCache={key:null,val:null};
   function priorWork(dayConfigs,totalWork,piso,arred){
-    var key=JSON.stringify([dayConfigs.map(function(dc){return dc.maxWork;}),totalWork,piso,arred]);
+    var key=JSON.stringify([dayConfigs.map(function(dc){return [dc.date,dc.maxWork];}),totalWork,piso,arred]);
     if(priorCache.key===key) return priorCache.val.slice();
     var n=dayConfigs.length,fix=dayConfigs.map(function(){return false;});
     function plan(){
       var rest=[],idx=[],need=totalWork,w=[];
-      dayConfigs.forEach(function(dc,i){ if(fix[i]){w[i]=TOL_MIN;need-=JORNADA;} else {rest.push(dc);idx.push(i);} });
+      dayConfigs.forEach(function(dc,i){ if(fix[i]){w[i]=dc.r.tolMin;need-=dc.r.jornada;} else {rest.push(dc);idx.push(i);} });
       var a=distributeWork(rest,need);
       idx.forEach(function(i,j){w[i]=a[j];});
-      var vale=a.reduce(function(t,v){return t+tolWork(v);},0);
+      var vale=a.reduce(function(t,v,j){return t+tolWork(v,rest[j].r);},0);
       return {w:w,ok:vale>=need-0.5&&idx.every(function(i){return w[i]>=piso;}),total:w.reduce(function(t,v){return t+v;},0)};
     }
     var best=plan(),i;
     if(best.ok) for(i=0;i<n;i++){
-      if(dayConfigs[i].maxWork<TOL_MIN) continue;
+      if(dayConfigs[i].maxWork<dayConfigs[i].r.tolMin) continue;
       fix[i]=true; var p=plan();
       if(p.ok&&p.total<=best.total) best=p; else { fix[i]=false; break; }
     }
     for(i=0;i<n;i++){
-      var w=best.w[i];
-      if(fix[i]||w>=TOL_MIN||w<TOL_MIN-arred||dayConfigs[i].maxWork<TOL_MIN) continue;
+      var w=best.w[i],tm=dayConfigs[i].r.tolMin;
+      if(fix[i]||w>=tm||w<tm-arred||dayConfigs[i].maxWork<tm) continue;
       fix[i]=true; var q=plan();
-      if(q.ok) best=q; else { fix[i]=false; best.w[i]=TOL_MIN; } // os outros já estão no piso: só este sobe
+      if(q.ok) best=q; else { fix[i]=false; best.w[i]=tm; } // os outros já estão no piso: só este sobe
     }
     priorCache={key:key,val:best.w.slice()};
     return best.w;
@@ -2178,8 +2194,8 @@
       var almoco=ov.almoco!=null?ov.almoco:(hoje?almocoHoje:almocoDef);
       var maxWork=falta?0:Math.max(0,saidaMaxMins-entrada-almoco);
       var saidaLock=ov.saida!=null?ov.saida:null;
-      var expected=weekend?0:480; // meta líquida: 8h/dia (jornada 8h48 − 48min de abono); FDS não tem meta
-      return {date:ds,weekend:weekend,entrada:entrada,almoco:almoco,maxWork:maxWork,saidaLock:saidaLock,falta:falta,expected:expected};
+      var expected=weekend?0:480; // meta líquida: 8h/dia (44h: jornada 8h48 − 48min de abono; 40h: jornada 8h); FDS não tem meta
+      return {date:ds,r:regra(ds),weekend:weekend,entrada:entrada,almoco:almoco,maxWork:maxWork,saidaLock:saidaLock,falta:falta,expected:expected};
     });
     var totalExpected=0;
     dayConfigs.forEach(function(dc){totalExpected+=dc.expected;});
@@ -2192,7 +2208,7 @@
         allocated[i]=0;
       } else if(dc.saidaLock!=null){
         var w=Math.max(0,dc.saidaLock-dc.entrada-dc.almoco);
-        allocated[i]=w;lockedWork+=dc.weekend?w:tolWork(w);
+        allocated[i]=w;lockedWork+=dc.weekend?w:tolWork(w,dc.r);
       } else if(dc.weekend){
         allocated[i]=0; // fim de semana desligado por padrão; só conta se você definir uma saída
       } else {
@@ -2210,7 +2226,7 @@
       if(dc.falta||(dc.weekend&&dc.saidaLock==null)) dc.saida=null;
       else dc.saida=dc.saidaLock!=null?dc.saidaLock:Math.round(dc.entrada+work+dc.almoco);
     });
-    var deficit=Math.round(freeWork-freeAlloc.reduce(function(a,b){return a+tolWork(b);},0));
+    var deficit=Math.round(freeWork-freeAlloc.reduce(function(a,b,j){return a+tolWork(b,freeConfigs[j].r);},0));
     return {dayConfigs:dayConfigs,allocated:allocated,saldoPos:saldoPos,deficit:deficit,todayStr:todayStr};
   }
   var projRendering=false;
@@ -2221,13 +2237,24 @@
     var proj=calcProjection(bank);
     if(!proj){c.innerHTML='<div class="empty-hint">Nenhum dia restante no período</div>';projRendering=false;return;}
     var dayConfigs=proj.dayConfigs,allocated=proj.allocated,saldoPos=proj.saldoPos,todayStr=proj.todayStr;
+    // rótulos do "Priorizar" seguem a regra dos dias projetados (44h até 30/11/2026, 40h depois)
+    var regrasProj={};
+    dayConfigs.forEach(function(dc){ if(!dc.weekend) regrasProj[dc.r.jornada]=dc.r; });
+    var rp=Object.keys(regrasProj).sort().reverse().map(function(k){return regrasProj[k];});
+    if(rp.length){
+      var fh=function(m){return fmtTime(m);};
+      $('projPriorTit').textContent='Priorizar '+rp.map(function(r){return fh(r.tolMin);}).join(' / ');
+      $('projPriorDesc').textContent='Cada dia em '+rp.map(function(r){return fh(r.tolMin)+' vale '+fh(r.jornada);}).join(' (at\u00e9 30/11) e em ')+
+        (rp.length>1?' (a partir de 01/12)':'')+' \u2014 10 min de gra\u00e7a. Os outros dias ficam mais curtos para compensar.';
+      $('projArredLbl').textContent='Completar '+rp.map(function(r){return fh(r.tolMin);}).join(' / ');
+    }
     var weekDays=['dom','seg','ter','qua','qui','sex','sáb'];
     var html='<div class="esp-scroll proj-scroll"><table class="esp-table proj-table"><thead><tr>'+
       '<th scope="col">Dia</th><th scope="col">Entrada</th><th scope="col">Almo&ccedil;o</th><th scope="col">Sa&iacute;da</th><th scope="col">Trabalho</th><th scope="col">Saldo</th><th scope="col"></th></tr></thead><tbody>',totalAlloc=0;
     var runningSaldo=saldoPos; // mesma régua do card Banco: saldo pós abono, meta líquida de 8h/dia
     dayConfigs.forEach(function(dc,i){
       var work=Math.max(0,allocated[i]);totalAlloc+=work;
-      var vale=dc.weekend?work:tolWork(work); // FDS não tem jornada, então não tem tolerância
+      var vale=dc.weekend?work:tolWork(work,dc.r); // FDS não tem jornada, então não tem tolerância
       runningSaldo+=vale-dc.expected;
       var saida=dc.saida!=null?dc.saida:Math.round(dc.entrada+work+dc.almoco);
       var isLocked=dc.saidaLock!=null;
@@ -2249,7 +2276,7 @@
             (isLocked?'<button class="proj-reset" aria-label="Resetar sa\u00edda" onclick="resetProjSaida(\''+dc.date+'\')" title="Resetar">&times;</button>':'')+'</span></td>';
         }
       }
-      var tolTxt=!dc.falta&&!dc.weekend&&vale!==work?' <small class="proj-tol" title="Dentro da toler\u00e2ncia de 10 min: conta como '+fmtDur(JORNADA)+'">= '+fmtDur(JORNADA)+'</small>':'';
+      var tolTxt=!dc.falta&&!dc.weekend&&vale!==work?' <small class="proj-tol" title="Dentro da toler\u00e2ncia de 10 min: conta como '+fmtDur(dc.r.jornada)+'">= '+fmtDur(dc.r.jornada)+'</small>':'';
       html+='<td class="esp-td-num">'+(dc.falta?'\u2014':(weekendOff?'folga':(work>0&&dc.weekend?'+'+fmtDur(work)+' HE':fmtDur(work))))+tolTxt+'</td>';
       html+='<td class="esp-td-num '+(runningSaldo<0?'negative':'positive')+'">'+fmtSaldo(Math.round(runningSaldo))+'</td>';
       html+='<td>'+(!dc.weekend?'<button class="proj-falta-btn'+(dc.falta?' active':'')+'" onclick="toggleProjFalta(\''+dc.date+'\')">'+(dc.falta?'Desmarcar':'Falta')+'</button>':'')+'</td>';
@@ -2257,7 +2284,7 @@
     });
     html+='</tbody></table></div>';
     var saldoFinal=Math.round(saldoPos);
-    dayConfigs.forEach(function(dc,i){var w=Math.max(0,allocated[i]);saldoFinal+=Math.round((dc.weekend?w:tolWork(w))-dc.expected);});
+    dayConfigs.forEach(function(dc,i){var w=Math.max(0,allocated[i]);saldoFinal+=Math.round((dc.weekend?w:tolWork(w,dc.r))-dc.expected);});
     var deficit=proj.deficit;
     var alvoFinal=parseSaldo($('projAlvo').value)||0;
     var metaTxt=alvoFinal===0?'zerar':'atingir '+fmtSaldo(alvoFinal);
@@ -2601,7 +2628,7 @@
     { id: 'layout', ico: 'dashboard', lbl: 'Layout dos cards', sub: 'ordem, largura e cards abertos', keys: ['calc-layout', 'calc-cards'] },
     { id: 'aniver', ico: 'cake', lbl: 'Aniversariantes', keys: ['icarus-aniver'] },
     { id: 'feriados', ico: 'trip', lbl: 'Feriados', sub: 'adicionados, desmarcados e datas alteradas', pontos: ['customHolidays', 'disabledHolidays', 'holidayOverrides'] },
-    { id: 'projecao', ico: 'schedule', lbl: 'Projeção', sub: 'entrada, saída máxima, almoço e priorizar 8:38', pontos: ['projEntrada', 'projSaidaMax', 'projAlmoco', 'projPrior', 'projPiso', 'projArred'] },
+    { id: 'projecao', ico: 'schedule', lbl: 'Projeção', sub: 'entrada, saída máxima, almoço e priorizar piso da tolerância', pontos: ['projEntrada', 'projSaidaMax', 'projAlmoco', 'projPrior', 'projPiso', 'projArred'] },
     { id: 'metas', ico: 'flag', lbl: 'Metas', pontos: ['customTargets'], pessoal: true },
     { id: 'ausencias', ico: 'beach_access', lbl: 'Férias, atestados e abonos', pontos: ['ferias', 'atestados', 'abonos'], pessoal: true },
     { id: 'batidas', ico: 'fingerprint', lbl: 'Batidas do dia e saldo', pontos: ['punches', 'punchesDate', 'saldoIcarus', 'saldoIcarusDate'], pessoal: true }
@@ -3203,7 +3230,6 @@
   }
 
   // inconsistências: almoço curto, batidas ímpares, jornada sem intervalo/excessiva, interjornada curta, falta
-  var ESP_MAX_DIA = 480 + ABONO + 120; // jornada 8h48 + 2h extras (CLT art. 59) = 10h48
   function espelhoIssues(days) {
     var todayStr = toStr(new Date()), out = [];
     function add(dy, txt, err) { out.push({ d: dy.d, dw: dy.dw, txt: txt, err: !!err }); }
@@ -3216,7 +3242,8 @@
       if (closed && n === 2 && mins[1] - mins[0] > 360) add(dy, 'Jornada de <b>' + fmtDur(mins[1] - mins[0]) + '</b> sem intervalo');
       var trab = 0;
       for (var i = 1; i < n; i += 2) trab += mins[i] - mins[i - 1];
-      if (trab > ESP_MAX_DIA) add(dy, 'Jornada de <b>' + fmtDur(trab) + '</b> (acima de ' + fmtDur(ESP_MAX_DIA) + ')');
+      var maxDia = regra(dy.d).maxDia; // jornada + 2h extras (CLT art. 59): 10h48 até 30/11/2026, 10h depois
+      if (trab > maxDia) add(dy, 'Jornada de <b>' + fmtDur(trab) + '</b> (acima de ' + fmtDur(maxDia) + ')');
     });
     // interjornada: dias consecutivos (lista vem do mais recente para o mais antigo)
     for (var k = 0; k < days.length - 1; k++) {
